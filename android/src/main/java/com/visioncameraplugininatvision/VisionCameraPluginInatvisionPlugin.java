@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class VisionCameraImageLabelerPlugin extends FrameProcessorPlugin {
+public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
   private final ImageLabeler labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS);
 
   @Override
@@ -50,7 +50,7 @@ public class VisionCameraImageLabelerPlugin extends FrameProcessorPlugin {
     return null;
   }
 
-  VisionCameraImageLabelerPlugin() {
+  VisionCameraPluginInatvisionPlugin() {
     super("inatVision");
   }
 }

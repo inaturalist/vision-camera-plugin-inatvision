@@ -95,6 +95,9 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
+    "react-native": "*",
+    "react-native-reanimated": ">=2.1.0",
+    "react-native-vision-camera": ">=2.0.0"
   },
   "release-it": {
     "git": {

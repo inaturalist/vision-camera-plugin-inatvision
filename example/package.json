@@ -1,5 +1,6 @@
 {
-  "name": "VisionCameraPluginInatvisionExample",
+  "name": "vision-camera-plugin-inatvision-example",
+  "description": "Example app for vision-camera-plugin-inatvision",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +11,9 @@
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.71.3"
+    "react-native": "0.71.3",
+    "react-native-reanimated": "^2.14.4",
+    "react-native-vision-camera": "^2.15.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

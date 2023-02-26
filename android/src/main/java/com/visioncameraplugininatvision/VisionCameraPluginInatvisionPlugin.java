@@ -66,7 +66,6 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
       bmp.recycle();
       Log.d(TAG, "Predictions: " + predictions.size());
 
-
       for (Prediction prediction : predictions) {
         // only KPCOFGS ranks qualify as "top" predictions
         // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10

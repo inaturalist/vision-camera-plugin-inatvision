@@ -6,9 +6,14 @@ import {
   useCameraDevices,
   useFrameProcessor,
 } from 'react-native-vision-camera';
+import RNFS from 'react-native-fs';
+
 import { inatVision } from 'vision-camera-plugin-inatvision';
 
 import { Label } from './components/Label';
+
+const modelFilename = 'small_inception_tf1.tflite';
+const taxonomyFilename = 'small_export_tax.csv';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -24,13 +29,30 @@ export default function App() {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      await RNFS.copyFileAssets(
+        modelFilename,
+        `${RNFS.DocumentDirectoryPath}/${modelFilename}`,
+      );
+      await RNFS.copyFileAssets(
+        taxonomyFilename,
+        `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`,
+      );
+    })();
+  }, []);
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      const labels = inatVision(frame, "", "");
+      const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
+      const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
 
-      console.log('Labels:', labels);
-      currentLabel.value = labels[0]?.label;
+      const results = inatVision(frame, modelPath, taxonomyPath);
+      const prediction = results.predictions[0];
+      const rank = Object.keys(prediction)[0];
+      const predictionDetails = prediction[rank];
+      currentLabel.value = rank + ": " + predictionDetails[0]?.name;
     },
     [currentLabel]
   );

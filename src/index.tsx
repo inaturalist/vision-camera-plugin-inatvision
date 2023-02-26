@@ -1,15 +1,20 @@
 /* globals __inatVision */
 import type { Frame } from 'react-native-vision-camera';
 
+interface PredictionDetails {
+  ancestor_ids: number[];
+  name: string;
+  rank: number;
+  score: number;
+  taxon_id: number;
+}
+
+interface Prediction {
+  [rank: string]: PredictionDetails[];
+}
+
 interface ImageLabel {
-  /**
-   * A label describing the image, in english.
-   */
-  label: string;
-  /**
-   * A floating point number from 0 to 1, describing the confidence (percentage).
-   */
-  confidence: number;
+  predictions: Prediction[];
 }
 
 /**

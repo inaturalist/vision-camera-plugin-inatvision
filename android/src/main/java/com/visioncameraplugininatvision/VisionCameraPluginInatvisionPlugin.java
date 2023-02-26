@@ -49,7 +49,7 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeMap result = new WritableNativeMap();
+    WritableNativeArray results = new WritableNativeArray();
 
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
@@ -63,12 +63,10 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
       bmp = rescaledBitmap;
       Log.d(TAG, "getBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
+      bmp.recycle();
       Log.d(TAG, "Predictions: " + predictions.size());
 
-      // Return only one prediction, as accurate as possible (e.g. prefer species over family), that passes the minimal threshold
-      Prediction selectedPrediction = null;
 
-      Collections.reverse(predictions);
       for (Prediction prediction : predictions) {
         // only KPCOFGS ranks qualify as "top" predictions
         // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
@@ -76,20 +74,14 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
           continue;
         }
         if (prediction.probability > DEFAULT_CONFIDENCE_THRESHOLD) {
-          selectedPrediction = prediction;
-          break;
+          WritableNativeMap map = Taxonomy.predictionToMap(prediction);
+          if (map == null) continue;
+          results.pushMap(map);
         }
       }
-
-      WritableNativeArray results = new WritableNativeArray();
-      if (selectedPrediction != null) {
-        results.pushMap(Taxonomy.predictionToMap(selectedPrediction));
-      }
-
-      result.putArray("predictions", results);
     }
 
-    return result;
+    return results;
   }
 
   public VisionCameraPluginInatvisionPlugin() {

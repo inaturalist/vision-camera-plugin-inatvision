@@ -1,4 +1,4 @@
-package org.inaturalist.seek.inatvisionframeprocessorplugin;
+package com.visioncameraplugininatvision;
 
 import android.util.Log;
 import java.io.BufferedReader;

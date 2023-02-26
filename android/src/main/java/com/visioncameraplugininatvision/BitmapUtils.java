@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.inaturalist.seek.inatvisionframeprocessorplugin;
+package com.visioncameraplugininatvision;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;

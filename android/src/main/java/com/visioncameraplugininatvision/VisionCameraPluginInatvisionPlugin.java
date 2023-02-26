@@ -1,12 +1,4 @@
-package com.visioncameraplugininatvision.visioncameraplugininatvision;
-
-import android.annotation.SuppressLint;
-import android.media.Image;
-
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-
-import java.util.concurrent.ExecutionException;
+package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -21,7 +13,6 @@ import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 import org.jetbrains.annotations.NotNull;
 import timber.log.*;
 import java.io.IOException;
-
 
 public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
   private ImageClassifier mImageClassifier = null;
@@ -38,12 +29,12 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
 
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
-      String modelFilename = (String)params[0];
-      String taxonomyFilename = (String)params[1];
-      Log.d(TAG, "Initializing classifier: " + modelFilename + " / " + taxonomyFilename);
+      String modelPath = (String)params[0];
+      String taxonomyPath = (String)params[1];
+      Log.d(TAG, "Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
-        mImageClassifier = new ImageClassifier(modelFilename, taxonomyFilename);
+        mImageClassifier = new ImageClassifier(modelPath, taxonomyPath);
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException("Failed to initialize an image mClassifier: " + e.getMessage());

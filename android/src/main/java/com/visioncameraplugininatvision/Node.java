@@ -1,4 +1,4 @@
-package org.inaturalist.seek.inatvisionframeprocessorplugin;
+package com.visioncameraplugininatvision;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.inaturalist.seek.inatvisionframeprocessorplugin;
+package com.visioncameraplugininatvision;
 
 /** Describing a frame info. */
 public class FrameMetadata {

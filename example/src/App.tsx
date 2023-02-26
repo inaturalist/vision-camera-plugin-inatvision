@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import { runOnJS } from 'react-native-reanimated';
 import {
   Camera,
   useCameraDevices,
@@ -10,14 +10,12 @@ import RNFS from 'react-native-fs';
 
 import { inatVision } from 'vision-camera-plugin-inatvision';
 
-import { Label } from './components/Label';
-
 const modelFilename = 'small_inception_tf1.tflite';
 const taxonomyFilename = 'small_export_tax.csv';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
-  const currentLabel = useSharedValue('');
+  const [results, setResult] = useState([]);
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -49,12 +47,15 @@ export default function App() {
       const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
 
       const results = inatVision(frame, modelPath, taxonomyPath);
-      const prediction = results.predictions[0];
-      const rank = Object.keys(prediction)[0];
-      const predictionDetails = prediction[rank];
-      currentLabel.value = rank + ": " + predictionDetails[0]?.name;
+      const predictions = results.map((result) => {
+        const rank = Object.keys(result)[0];
+        const prediction = result[rank][0];
+        prediction.rank = rank;
+        return prediction;
+      });
+      runOnJS(setResult)(predictions);
     },
-    [currentLabel]
+    []
   );
 
   return (
@@ -68,7 +69,16 @@ export default function App() {
             frameProcessor={frameProcessor}
             frameProcessorFps={3}
           />
-          <Label sharedValue={currentLabel} />
+          {results.map((result: { rank: string, name: string}) => {
+            return (
+              <Text
+                key={result.rank}
+                style={styles.text}
+              >
+                {result.name}
+              </Text>
+            );
+          })}
         </>
       ) : (
         <ActivityIndicator size="large" color="white" />
@@ -87,5 +97,15 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     width: '100%',
+  },
+  text: {
+    position: 'absolute',
+    top: 48,
+    padding: 4,
+    marginHorizontal: 20,
+    backgroundColor: '#000000',
+    fontSize: 26,
+    color: 'white',
+    textAlign: 'center',
   },
 });

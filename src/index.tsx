@@ -15,8 +15,8 @@ interface ImageLabel {
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision( frame: Frame, modelFilename: string, taxonomyFilename: string ): ImageLabel[] {
+export function inatVision( frame: Frame, modelPath: string, taxonomyPath: string ): ImageLabel[] {
   "worklet";
   // @ts-expect-error Frame Processors are not typed.
-  return __inatVision( frame, modelFilename, taxonomyFilename );
+  return __inatVision( frame, modelPath, taxonomyPath );
 }

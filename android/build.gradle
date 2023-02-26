@@ -62,9 +62,14 @@ dependencies {
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native"
-  api project(":react-native-vision-camera")
-  implementation "androidx.camera:camera-core:1.1.0-alpha06"
-  implementation 'com.google.mlkit:image-labeling:17.0.5'
+  // Basic dependencies for the frame processor using vision camera
+  implementation project(':react-native-vision-camera')
+  implementation "androidx.camera:camera-core:1.1.0-alpha08"
+  // Requirements for our custom image labeling and processing
+  implementation 'androidx.exifinterface:exifinterface:1.2.0'
+  implementation 'org.tensorflow:tensorflow-lite:+'
+  implementation 'com.jakewharton.timber:timber:4.7.0'
+
 }
 
 if (isNewArchitectureEnabled()) {

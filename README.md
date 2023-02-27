@@ -1,21 +1,53 @@
 # vision-camera-plugin-inatvision
 
-react-native-vision-camera frame processor plugin
+A [VisionCamera](https://github.com/mrousavy/react-native-vision-camera) Frame Processor Plugin to label images using iNaturalist's computer vision model on device.
 
 ## Installation
 
-```sh
-npm install vision-camera-plugin-inatvision
+1. Add the plugin to your package.json file directly from GitHub, because it's not published to npm:
+
+```json
+{
+  "dependencies": {
+    "vision-camera-plugin-inatvision": "github:inaturalist/vision-camera-plugin-inatvision"
+  }
+}
 ```
+
+2. Install the plugin:
+```sh
+npm install
+cd ios && pod install
+```
+
+3. Add the plugin to your `babel.config.js`:
+
+```js
+module.exports = {
+  plugins: [
+    [
+      'react-native-reanimated/plugin',
+      {
+        globals: ['__inatVision'],
+      },
+    ],
+
+    // ...
+```
+
+> Note: You have to restart metro-bundler for changes in the `babel.config.js` file to take effect.
 
 ## Usage
 
 ```js
-import { multiply } from 'vision-camera-plugin-inatvision';
+import { inatVision } from "vision-camera-plugin-inatvision";
 
 // ...
 
-const result = await multiply(3, 7);
+const frameProcessor = useFrameProcessor((frame) => {
+  'worklet';
+  const labels = inatVision(frame);
+}, []);
 ```
 
 ## Contributing

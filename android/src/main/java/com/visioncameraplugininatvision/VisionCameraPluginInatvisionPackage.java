@@ -11,11 +11,11 @@ import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 import java.util.Collections;
 import java.util.List;
 
-public class VisionCameraPluginInatvisionPackage implements ReactPackage {
+public class VisionCameraPluginInatVisionPackage implements ReactPackage {
   @NonNull
   @Override
   public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
-    FrameProcessorPlugin.register(new VisionCameraPluginInatvisionPlugin());
+    FrameProcessorPlugin.register(new VisionCameraPluginInatVisionPlugin());
     return Collections.emptyList();
   }
 

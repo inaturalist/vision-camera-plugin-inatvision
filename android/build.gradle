@@ -20,11 +20,11 @@ if (isNewArchitectureEnabled()) {
 }
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["VisionCameraPluginInatvision_" + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["VisionCameraPluginInatVision_" + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["VisionCameraPluginInatvision_" + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["VisionCameraPluginInatVision_" + name]).toInteger()
 }
 
 android {
@@ -75,7 +75,7 @@ dependencies {
 if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
-    libraryName = "VisionCameraPluginInatvision"
+    libraryName = "VisionCameraPluginInatVision"
     codegenJavaPackageName = "com.visioncameraplugininatvision"
   }
 }

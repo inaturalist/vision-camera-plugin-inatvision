@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import timber.log.*;
 import java.io.IOException;
 
-public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
+public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   private ImageClassifier mImageClassifier = null;
 
   public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
-  private final static String TAG = "VisionCameraPluginInatvisionPlugin";
+  private final static String TAG = "VisionCameraPluginInatVisionPlugin";
 
   @Override
   public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
@@ -83,7 +83,7 @@ public class VisionCameraPluginInatvisionPlugin extends FrameProcessorPlugin {
     return results;
   }
 
-  public VisionCameraPluginInatvisionPlugin() {
+  public VisionCameraPluginInatVisionPlugin() {
     super("inatVision");
   }
 }

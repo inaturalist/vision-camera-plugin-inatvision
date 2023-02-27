@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  VisionCameraPluginInatvisionExample
+//  VisionCameraPluginInatVisionExample
 //
 
 import Foundation

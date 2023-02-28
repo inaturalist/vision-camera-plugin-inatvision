@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  Text,
+  Platform,
+} from 'react-native';
 import { runOnJS } from 'react-native-reanimated';
 import {
   Camera,
@@ -28,35 +34,39 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      return;
+    }
     (async () => {
       await RNFS.copyFileAssets(
         modelFilename,
-        `${RNFS.DocumentDirectoryPath}/${modelFilename}`,
+        `${RNFS.DocumentDirectoryPath}/${modelFilename}`
       );
       await RNFS.copyFileAssets(
         taxonomyFilename,
-        `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`,
+        `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`
       );
     })();
   }, []);
 
-  const frameProcessor = useFrameProcessor(
-    (frame) => {
-      'worklet';
-      const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
-      const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
+  const frameProcessor = useFrameProcessor((frame) => {
+    'worklet';
+    // On iOS return
+    if (Platform.OS === 'ios') {
+      return;
+    }
+    const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
+    const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
 
-      const results = inatVision(frame, modelPath, taxonomyPath);
-      const predictions = results.map((result) => {
-        const rank = Object.keys(result)[0];
-        const prediction = result[rank][0];
-        prediction.rank = rank;
-        return prediction;
-      });
-      runOnJS(setResult)(predictions);
-    },
-    []
-  );
+    const results = inatVision(frame, modelPath, taxonomyPath);
+    const predictions = results.map((result) => {
+      const rank = Object.keys(result)[0];
+      const prediction = result[rank][0];
+      prediction.rank = rank;
+      return prediction;
+    });
+    runOnJS(setResult)(predictions);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -69,12 +79,9 @@ export default function App() {
             frameProcessor={frameProcessor}
             frameProcessorFps={3}
           />
-          {results.map((result: { rank: string, name: string}) => {
+          {results.map((result: { rank: string; name: string }) => {
             return (
-              <Text
-                key={result.rank}
-                style={styles.text}
-              >
+              <Text key={result.rank} style={styles.text}>
                 {result.name}
               </Text>
             );

@@ -53,9 +53,15 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
+      // Crop the center square of the frame
+      int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
+      int cropX = (bmp.getWidth() - minDim) / 2;
+      int cropY = (bmp.getHeight() - minDim) / 2;
+      Bitmap croppedBitmap = Bitmap.createBitmap(bmp, cropX, cropY, minDim, minDim);
+
       // Resize to expected classifier input size
       Bitmap rescaledBitmap = Bitmap.createScaledBitmap(
-        bmp,
+        croppedBitmap,
         ImageClassifier.DIM_IMG_SIZE_X,
         ImageClassifier.DIM_IMG_SIZE_Y,
         false);

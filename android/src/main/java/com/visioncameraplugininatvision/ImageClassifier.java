@@ -1,6 +1,7 @@
 package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
 import timber.log.*;
@@ -143,24 +144,31 @@ public class ImageClassifier {
         imgData.rewind();
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
-        try {
-            // Convert the image to floating point.
-            int pixel = 0;
-            long startTime = SystemClock.uptimeMillis();
-            for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
-                for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
-                    final int val = intValues[pixel++];
-                    imgData.putFloat((((val >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-                    imgData.putFloat((((val >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-                    imgData.putFloat((((val) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+        // Convert the Bitmap to ByteBuffer
+        float[][][][] input = new float[1][ImageClassifier.DIM_IMG_SIZE_X][ImageClassifier.DIM_IMG_SIZE_Y][3];
+        for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
+            for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
+                int pixel = bitmap.getPixel(x, y);
+                // Normalize channel values to [0.0, 1.0]
+                input[0][x][y][0] = Color.red(pixel) / 255.0f;
+                input[0][x][y][1] = Color.green(pixel) / 255.0f;
+                input[0][x][y][2] = Color.blue(pixel) / 255.0f;
+            }
+        }
+        // Convert to ByteBuffer
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * input.length * input[0].length * input[0][0].length * input[0][0][0].length);
+        byteBuffer.order(ByteOrder.nativeOrder());
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[0].length; j++) {
+                for (int k = 0; k < input[0][0].length; k++) {
+                    for (int l = 0; l < input[0][0][0].length; l++) {
+                        byteBuffer.putFloat(input[i][j][k][l]);
+                    }
                 }
             }
-            long endTime = SystemClock.uptimeMillis();
-            Timber.tag(TAG).d("Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
-        } catch (BufferOverflowException exc) {
-            Timber.tag(TAG).e("Exception while converting to byte buffer: " + exc);
-            Timber.tag(TAG).e(exc);
         }
+        byteBuffer.rewind();
+        imgData.put(byteBuffer);
     }
 
 }

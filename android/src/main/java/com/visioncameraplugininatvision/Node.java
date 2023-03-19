@@ -14,6 +14,8 @@ public class Node {
 
     public String leafId;
 
+    public String iconicId;
+
     public transient Node parent;
 
     public transient List<Node> children = new ArrayList<>();
@@ -28,13 +30,14 @@ public class Node {
     // OLD:
     // parent_taxon_id,taxon_id,class_id,rank_level,leaf_class_id,name
     public Node(String line) {
-        String[] parts = line.trim().split(",", 6);
+        String[] parts = line.trim().split(",", 7);
 
         this.parentKey = parts[0];
         this.key = parts[1];
         this.rank = Float.parseFloat(parts[2]);
         this.leafId = parts[3];
-        this.name = parts[4];
+        this.iconicId = parts[4];
+        this.name = parts[5];
     }
 
     public Node() {

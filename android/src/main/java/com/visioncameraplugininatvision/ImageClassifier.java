@@ -142,9 +142,9 @@ public class ImageClassifier {
             return;
         }
         imgData.rewind();
-        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        long startTime = SystemClock.uptimeMillis();
 
-        // Convert the Bitmap to ByteBuffer
+        // Convert pixel values to be float from 0 to 1
         float[][][][] input = new float[1][ImageClassifier.DIM_IMG_SIZE_X][ImageClassifier.DIM_IMG_SIZE_Y][3];
         for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
@@ -156,19 +156,26 @@ public class ImageClassifier {
             }
         }
         // Convert to ByteBuffer
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * input.length * input[0].length * input[0][0].length * input[0][0][0].length);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[0].length; j++) {
-                for (int k = 0; k < input[0][0].length; k++) {
-                    for (int l = 0; l < input[0][0][0].length; l++) {
-                        byteBuffer.putFloat(input[i][j][k][l]);
+        try {
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * input.length * input[0].length * input[0][0].length * input[0][0][0].length);
+            byteBuffer.order(ByteOrder.nativeOrder());
+            for (int i = 0; i < input.length; i++) {
+                for (int j = 0; j < input[0].length; j++) {
+                    for (int k = 0; k < input[0][0].length; k++) {
+                        for (int l = 0; l < input[0][0][0].length; l++) {
+                            byteBuffer.putFloat(input[i][j][k][l]);
+                        }
                     }
                 }
             }
+            byteBuffer.rewind();
+            imgData.put(byteBuffer);
+            long endTime = SystemClock.uptimeMillis();
+            Timber.tag(TAG).d("Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
+        } catch (BufferOverflowException exc) {
+            Timber.tag(TAG).e("Exception while converting to byte buffer: " + exc);
+            Timber.tag(TAG).e(exc);
         }
-        byteBuffer.rewind();
-        imgData.put(byteBuffer);
     }
 
 }

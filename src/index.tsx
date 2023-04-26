@@ -20,9 +20,17 @@ export function inatVision(
   frame: Frame,
   modelPath: string,
   taxonomyPath: string,
-  confidenceThreshold: string
+  // TODO: make this an optional parameter here and in the native code
+  confidenceThreshold: string,
+  filterByTaxonId: null | string
 ): Prediction[] {
   'worklet';
   // @ts-expect-error Frame Processors are not typed.
-  return __inatVision(frame, modelPath, taxonomyPath, confidenceThreshold);
+  return __inatVision(
+    frame,
+    modelPath,
+    taxonomyPath,
+    confidenceThreshold,
+    filterByTaxonId
+  );
 }

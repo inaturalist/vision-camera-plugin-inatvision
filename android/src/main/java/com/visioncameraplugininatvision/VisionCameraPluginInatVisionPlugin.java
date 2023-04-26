@@ -26,8 +26,13 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       mConfidenceThreshold = confidence;
   }
 
-  public float getConfidenceThreshold() {
-      return mConfidenceThreshold;
+  private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
+
+  public void setFilterByTaxonId(Integer taxonId) {
+      mFilterByTaxonId = taxonId;
+      if (mImageClassifier != null) {
+          mImageClassifier.setFilterByTaxonId(mFilterByTaxonId);
+      }
   }
 
   @Override
@@ -42,11 +47,15 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       String modelPath = (String)params[0];
       String taxonomyPath = (String)params[1];
       // The third parameter is the confidence threshold
-      setConfidenceThreshold(Float.valueOf((String)params[2]));
-      Log.d(TAG, "Initializing classifier: " + modelPath + " / " + taxonomyPath);
+      String confidenceThreshold = (String)params[2];
+      // The fourth parameter is the taxon ID to filter by
+      String filterByTaxonId = (String)params[3];
+      setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+      Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
         mImageClassifier = new ImageClassifier(modelPath, taxonomyPath);
+        setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException("Failed to initialize an image mClassifier: " + e.getMessage());

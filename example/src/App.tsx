@@ -58,14 +58,18 @@ export default function App() {
     const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
     const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
     const confidenceThreshold = '0.7';
-    const filterByTaxonId = null; // '47126'; // Plants
+    // const filterByTaxonId = null;
+    const filterByTaxonId = '47126'; // Plants
+    // const negativeFilter = null;
+    const negativeFilter = true;
 
     const results = inatVision(
       frame,
       modelPath,
       taxonomyPath,
       confidenceThreshold,
-      filterByTaxonId
+      filterByTaxonId,
+      negativeFilter
     );
     const predictions = results.map((result) => {
       const rank = Object.keys(result)[0];

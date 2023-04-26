@@ -22,7 +22,8 @@ export function inatVision(
   taxonomyPath: string,
   // TODO: make this an optional parameter here and in the native code
   confidenceThreshold: string,
-  filterByTaxonId: null | string
+  filterByTaxonId: null | string,
+  negativeFilter: null | boolean
 ): Prediction[] {
   'worklet';
   // @ts-expect-error Frame Processors are not typed.
@@ -31,6 +32,7 @@ export function inatVision(
     modelPath,
     taxonomyPath,
     confidenceThreshold,
-    filterByTaxonId
+    filterByTaxonId,
+    negativeFilter
   );
 }

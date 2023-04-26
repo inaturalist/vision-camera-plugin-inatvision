@@ -35,6 +35,15 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  private boolean mNegativeFilter = false;
+
+  public void setNegativeFilter(boolean negative) {
+      mNegativeFilter = negative;
+      if (mImageClassifier != null) {
+        mImageClassifier.setNegativeFilter(mNegativeFilter);
+      }
+  }
+
   @Override
   public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
     Log.d(TAG, "2: " + frame.getWidth() + " x " + frame.getHeight() + " frame with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:" + params.length);
@@ -50,12 +59,17 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       String confidenceThreshold = (String)params[2];
       // The fourth parameter is the taxon ID to filter by
       String filterByTaxonId = (String)params[3];
+      // The fifth parameter is negative filter
+      Boolean negative = (Boolean)params[4];
+
       setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
         mImageClassifier = new ImageClassifier(modelPath, taxonomyPath);
         setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
+        setNegativeFilter(negative != null ? negative : false);
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException("Failed to initialize an image mClassifier: " + e.getMessage());

@@ -18,7 +18,17 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   private ImageClassifier mImageClassifier = null;
 
   public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
+  private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
+
   private final static String TAG = "VisionCameraPluginInatVisionPlugin";
+
+  public void setConfidenceThreshold(float confidence) {
+      mConfidenceThreshold = confidence;
+  }
+
+  public float getConfidenceThreshold() {
+      return mConfidenceThreshold;
+  }
 
   @Override
   public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
@@ -31,6 +41,8 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     if (mImageClassifier == null) {
       String modelPath = (String)params[0];
       String taxonomyPath = (String)params[1];
+      // The third parameter is the confidence threshold
+      setConfidenceThreshold(Float.valueOf((String)params[2]));
       Log.d(TAG, "Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
@@ -78,7 +90,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
         if (prediction.rank % 10 != 0) {
           continue;
         }
-        if (prediction.probability > DEFAULT_CONFIDENCE_THRESHOLD) {
+        if (prediction.probability > mConfidenceThreshold) {
           WritableNativeMap map = Taxonomy.predictionToMap(prediction);
           if (map == null) continue;
           results.pushMap(map);

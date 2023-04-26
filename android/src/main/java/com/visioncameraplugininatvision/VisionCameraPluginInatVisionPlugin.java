@@ -51,25 +51,26 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Log.d(TAG, "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
     }
 
+    // The third parameter is the confidence threshold
+    String confidenceThreshold = (String)params[2];
+    // The fourth parameter is the taxon ID to filter by
+    String filterByTaxonId = (String)params[3];
+    // The fifth parameter is negative filter
+    Boolean negative = (Boolean)params[4];
+    setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+    setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
+    setNegativeFilter(negative != null ? negative : false);
+
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
       String modelPath = (String)params[0];
       String taxonomyPath = (String)params[1];
-      // The third parameter is the confidence threshold
-      String confidenceThreshold = (String)params[2];
-      // The fourth parameter is the taxon ID to filter by
-      String filterByTaxonId = (String)params[3];
-      // The fifth parameter is negative filter
-      Boolean negative = (Boolean)params[4];
-
-      setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
-
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
         mImageClassifier = new ImageClassifier(modelPath, taxonomyPath);
-        setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
-        setNegativeFilter(negative != null ? negative : false);
+        setFilterByTaxonId(mFilterByTaxonId);
+        setNegativeFilter(mNegativeFilter);
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException("Failed to initialize an image mClassifier: " + e.getMessage());

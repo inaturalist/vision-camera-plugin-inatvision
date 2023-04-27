@@ -4,22 +4,22 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
-import timber.log.*;
 
 import org.tensorflow.lite.Interpreter;
 
-import java.util.ArrayList;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.BufferOverflowException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
+
+import timber.log.Timber;
 
 /** Classifies images with Tensorflow Lite. */
 public class ImageClassifier {

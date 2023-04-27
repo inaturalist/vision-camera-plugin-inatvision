@@ -1,22 +1,19 @@
 package com.visioncameraplugininatvision;
 
-import android.util.Log;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.Collections;
-import timber.log.*;
-import com.facebook.react.bridge.WritableNativeMap;
-import com.facebook.react.bridge.WritableNativeArray;
+
+import timber.log.Timber;
 
 /** Taxonomy data structure */
 public class Taxonomy {

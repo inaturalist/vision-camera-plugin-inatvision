@@ -2,17 +2,19 @@ package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Collection;
+
 import androidx.camera.core.ImageProxy;
+
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
+
 import org.jetbrains.annotations.NotNull;
-import timber.log.*;
+
 import java.io.IOException;
+import java.util.List;
+
+import timber.log.Timber;
 
 public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   private ImageClassifier mImageClassifier = null;

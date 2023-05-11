@@ -17,12 +17,12 @@ import java.util.List;
 import timber.log.Timber;
 
 public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
+  private final static String TAG = "VisionCameraPluginInatVisionPlugin";
+
   private ImageClassifier mImageClassifier = null;
 
   public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
   private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-
-  private final static String TAG = "VisionCameraPluginInatVisionPlugin";
 
   public void setConfidenceThreshold(float confidence) {
       mConfidenceThreshold = confidence;

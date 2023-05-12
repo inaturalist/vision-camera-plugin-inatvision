@@ -50,12 +50,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    InatVision.addListener((event) => {
+    InatVision.addLogListener((event) => {
       console.log('event', event);
     });
 
     return () => {
-      InatVision.removeListener();
+      InatVision.removeLogListener();
     };
   }, []);
 

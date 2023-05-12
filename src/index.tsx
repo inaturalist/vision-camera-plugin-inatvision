@@ -65,7 +65,7 @@ const state: State = {
 /**
  *  Adds a listener for the camera log event
  */
-export function addListener(callback: Function): void {
+export function addLogListener(callback: Function): void {
   // Remove the previous listener if it exists
   if (state.eventListener) {
     state.eventListener.remove();
@@ -80,7 +80,7 @@ export function addListener(callback: Function): void {
 /**
  *  Removes the listener
  */
-export function removeListener(): void {
+export function removeLogListener(): void {
   // Remove the listener if it exists
   if (!state.eventListener) {
     return;

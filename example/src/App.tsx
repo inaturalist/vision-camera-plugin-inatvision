@@ -14,7 +14,7 @@ import {
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
 
-import { inatVision } from 'vision-camera-plugin-inatvision';
+import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilename = 'small_inception_tf1.tflite';
 const taxonomyFilename = 'small_export_tax.csv';
@@ -47,6 +47,16 @@ export default function App() {
       const status = await Camera.requestCameraPermission();
       setHasPermission(status === 'authorized');
     })();
+  }, []);
+
+  useEffect(() => {
+    InatVision.addListener((event) => {
+      console.log('event', event);
+    });
+
+    return () => {
+      InatVision.removeListener();
+    };
   }, []);
 
   useEffect(() => {
@@ -103,7 +113,7 @@ export default function App() {
             device={device}
             isActive={true}
             frameProcessor={frameProcessor}
-            frameProcessorFps={3}
+            frameProcessorFps={1}
           />
           <Text style={styles.text} onPress={toggleNegativeFilter}>
             {negativeFilter ? 'Negative Filter' : 'Positive Filter'}

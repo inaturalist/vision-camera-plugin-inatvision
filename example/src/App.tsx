@@ -85,21 +85,26 @@ export default function App() {
       const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
       const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
 
-      const results = inatVision(
-        frame,
-        modelPath,
-        taxonomyPath,
-        confidenceThreshold,
-        filterByTaxonId,
-        negativeFilter
-      );
-      const predictions = results.map((result) => {
-        const rank = Object.keys(result)[0];
-        const prediction = result[rank][0];
-        prediction.rank = rank;
-        return prediction;
-      });
-      runOnJS(setResult)(predictions);
+      try {
+        const results = InatVision.inatVision(
+          frame,
+          modelPath,
+          taxonomyPath,
+          confidenceThreshold,
+          filterByTaxonId,
+          negativeFilter
+        );
+        const predictions = results.map((result) => {
+          const rank = Object.keys(result)[0];
+          const prediction = result[rank][0];
+          prediction.rank = rank;
+          return prediction;
+        });
+        runOnJS(setResult)(predictions);
+      } catch (classifierError) {
+        // TODO: needs to throw Exception in the native code for it to work here?
+        console.log(`Error: ${classifierError}`);
+      }
     },
     [confidenceThreshold, filterByTaxonId, negativeFilter]
   );

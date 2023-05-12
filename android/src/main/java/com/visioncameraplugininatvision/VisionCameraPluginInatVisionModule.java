@@ -47,8 +47,10 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     }
 
     @ReactMethod
-    public void removeListeners() {
-      mListenerCount = 0;
-      Timber.uprootAll();
+    public void removeListeners(Integer count) {
+      mListenerCount -= count;
+      if (mListenerCount == 0) {
+        Timber.uprootAll();
+      }
     }
 }

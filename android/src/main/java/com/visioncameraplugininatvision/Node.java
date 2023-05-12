@@ -25,10 +25,10 @@ public class Node {
     }
 
     // Initialize the node from a CSV line
-    // NEW:
+    // Seek model 2.3:
+    // parent_taxon_id,taxon_id,rank_level,leaf_class_id,iconic_taxon_id,name
+    // Seek model 1.0:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,name
-    // OLD:
-    // parent_taxon_id,taxon_id,class_id,rank_level,leaf_class_id,name
     public Node(String line) {
         String[] parts = line.trim().split(",", 7);
 
@@ -36,8 +36,9 @@ public class Node {
         this.key = parts[1];
         this.rank = Float.parseFloat(parts[2]);
         this.leafId = parts[3];
-        this.iconicId = parts[4];
-        this.name = parts[5];
+        // this.iconicId = parts[4];
+        this.name = parts[4];
+        // this.name = parts[5];
     }
 
     public Node() {

@@ -173,8 +173,7 @@ public class ImageClassifier {
             long endTime = SystemClock.uptimeMillis();
             Timber.tag(TAG).d("Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
         } catch (BufferOverflowException exc) {
-            Timber.tag(TAG).e("Exception while converting to byte buffer: " + exc);
-            Timber.tag(TAG).e(exc);
+            Timber.tag(TAG).w("Exception while converting to byte buffer: " + exc);
         }
     }
 

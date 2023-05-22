@@ -1,7 +1,7 @@
 /* globals __inatVision */
-import type { Frame } from 'react-native-vision-camera';
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
+import type { Frame } from 'react-native-vision-camera';
 
 interface PredictionDetails {
   ancestor_ids: number[];

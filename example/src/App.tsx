@@ -18,7 +18,7 @@ import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
-const modelFilenameIOS = 'small_inception_tf1.mlmodel';
+const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
 
 export default function App() {

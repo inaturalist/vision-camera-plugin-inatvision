@@ -23,9 +23,9 @@ const taxonomyFilenameIOS = 'small_export_tax.json';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
-  const [results, setResult] = useState([]);
-  const [filterByTaxonId, setFilterByTaxonId] = useState(null);
-  const [negativeFilter, setNegativeFilter] = useState(null);
+  const [results, setResult] = useState<any[]>([]);
+  const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
+  const [negativeFilter, setNegativeFilter] = useState(false);
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -56,7 +56,7 @@ export default function App() {
       return;
     }
 
-    InatVision.addLogListener((event) => {
+    InatVision.addLogListener((event: any) => {
       console.log('event', event);
     });
 
@@ -127,9 +127,12 @@ export default function App() {
         if (Platform.OS === 'ios') {
           predictions = cvResults;
         } else {
-          predictions = cvResults.map((result) => {
+          predictions = cvResults.map((result: InatVision.Prediction) => {
             const rank = Object.keys(result)[0];
-            const prediction = result[rank][0];
+            if (!rank || !result[rank]) {
+              return result;
+            }
+            const prediction: any = result[rank][0];
             prediction.rank = rank;
             return prediction;
           });

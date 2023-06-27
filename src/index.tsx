@@ -11,7 +11,7 @@ interface PredictionDetails {
   taxon_id: number;
 }
 
-interface Prediction {
+export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 

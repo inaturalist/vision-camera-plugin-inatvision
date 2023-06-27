@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraPluginInatVision.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraPluginInatVision.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VisionCameraPluginInatVision.m; path = VisionCameraPluginInatVision/VisionCameraPluginInatVision.m; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* VisionCameraPluginInatVision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionCameraPluginInatVision.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* VisionCameraPluginInatVision.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisionCameraPluginInatVision.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -52,7 +54,16 @@
 				B3E7B5881CC2AC0600A0062D /* VisionCameraPluginInatVision.h */,
 				B3E7B5891CC2AC0600A0062D /* VisionCameraPluginInatVision.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
+				6F9375745A1D82230DA6C3CF /* VisionCameraPluginInatVision */,
 			);
+			sourceTree = "<group>";
+		};
+		6F9375745A1D82230DA6C3CF /* VisionCameraPluginInatVision */ = {
+			isa = PBXGroup;
+			children = (
+				64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */,
+			);
+			name = VisionCameraPluginInatVision;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +123,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -78,15 +78,11 @@ export default function App() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      // On iOS return
-      if (Platform.OS === 'ios') {
-        return;
-      }
       const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
       const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
 
       try {
-        const results = InatVision.inatVision(
+        const cvResults = InatVision.inatVision(
           frame,
           modelPath,
           taxonomyPath,
@@ -94,7 +90,8 @@ export default function App() {
           filterByTaxonId,
           negativeFilter
         );
-        const predictions = results.map((result) => {
+        console.log('cvResults :>> ', cvResults);
+        const predictions = cvResults.map((result) => {
           const rank = Object.keys(result)[0];
           const prediction = result[rank][0];
           prediction.rank = rank;

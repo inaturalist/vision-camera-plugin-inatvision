@@ -52,6 +52,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      return;
+    }
+
     InatVision.addLogListener((event) => {
       console.log('event', event);
     });

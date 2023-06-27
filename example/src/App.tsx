@@ -67,16 +67,26 @@ export default function App() {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      (async () => {
-        await RNFS.copyFile(
-          `${RNFS.MainBundlePath}/${modelFilenameIOS}`,
-          `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
-        );
-        await RNFS.copyFile(
-          `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
-          `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
-        );
-      })();
+      RNFS.copyFile(
+        `${RNFS.MainBundlePath}/${modelFilenameIOS}`,
+        `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+      )
+        .then((result) => {
+          console.log(`moved model file from`, result);
+        })
+        .catch((error) => {
+          console.log(`error moving model file from`, error);
+        });
+      RNFS.copyFile(
+        `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
+        `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+      )
+        .then((result) => {
+          console.log(`moved file from`, result);
+        })
+        .catch((error) => {
+          console.log(`error moving file from`, error);
+        });
     } else {
       (async () => {
         await RNFS.copyFileAssets(

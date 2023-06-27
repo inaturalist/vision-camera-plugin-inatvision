@@ -16,8 +16,10 @@ import RNFS from 'react-native-fs';
 
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
-const modelFilename = 'small_inception_tf1.tflite';
-const taxonomyFilename = 'small_export_tax.csv';
+const modelFilenameAndroid = 'small_inception_tf1.tflite';
+const taxonomyFilenameAndroid = 'small_export_tax.csv';
+const modelFilenameIOS = 'small_inception_tf1.mlmodel';
+const taxonomyFilenameIOS = 'small_export_tax.json';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -61,25 +63,41 @@ export default function App() {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      return;
+      (async () => {
+        await RNFS.copyFile(
+          `${RNFS.MainBundlePath}/${modelFilenameIOS}`,
+          `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+        );
+        await RNFS.copyFile(
+          `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
+          `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+        );
+      })();
+    } else {
+      (async () => {
+        await RNFS.copyFileAssets(
+          modelFilenameAndroid,
+          `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`
+        );
+        await RNFS.copyFileAssets(
+          taxonomyFilenameAndroid,
+          `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`
+        );
+      })();
     }
-    (async () => {
-      await RNFS.copyFileAssets(
-        modelFilename,
-        `${RNFS.DocumentDirectoryPath}/${modelFilename}`
-      );
-      await RNFS.copyFileAssets(
-        taxonomyFilename,
-        `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`
-      );
-    })();
   }, []);
 
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      const modelPath = `${RNFS.DocumentDirectoryPath}/${modelFilename}`;
-      const taxonomyPath = `${RNFS.DocumentDirectoryPath}/${taxonomyFilename}`;
+      const modelPath =
+        Platform.OS === 'ios'
+          ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+          : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+      const taxonomyPath =
+        Platform.OS === 'ios'
+          ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+          : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
       try {
         const cvResults = InatVision.inatVision(

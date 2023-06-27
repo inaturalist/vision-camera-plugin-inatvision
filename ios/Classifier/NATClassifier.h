@@ -23,7 +23,7 @@ typedef void(^BranchClassificationHandler)(NSArray *topBranch, NSError *error);
 @property (readonly) NSArray *bestRecentBranch;
 
 - (instancetype)initWithModelFile:(NSString *)modelPath
-                      taxonmyFile:(NSString *)taxonomyPath
+                      taxonomyFile:(NSString *)taxonomyPath
                          delegate:(id <NATClassifierDelegate>)delegate;
 - (void)classifyFrame:(CVImageBufferRef)pixelBuf orientation:(CGImagePropertyOrientation)orientation;
 - (void)classifyImageData:(NSData *)data orientation:(CGImagePropertyOrientation)orientation handler:(BranchClassificationHandler)handler;

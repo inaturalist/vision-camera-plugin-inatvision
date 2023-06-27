@@ -30,24 +30,24 @@
 @implementation NATClassifier
 
 - (instancetype)initWithModelFile:(NSString *)modelPath
-                      taxonmyFile:(NSString *)taxonomyPath
+                      taxonomyFile:(NSString *)taxonomyPath
                          delegate:(id<NATClassifierDelegate>)delegate {
-    
+
     if (self = [super init]) {
         self.delegate = delegate;
         self.modelPath = modelPath;
         self.taxonomy = [[NATTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
-        
+
         // default prediction threshold
         self.threshold = 0.70;
-        
+
         [self setupVision];
-        
+
         self.recentTopBranches = [NSMutableArray array];
         self.recentTopPredictions = [NSMutableArray array];
 
     }
-    
+
     return self;
 }
 
@@ -99,7 +99,7 @@
         [self.delegate classifierError:@"no file for optimized model"];
         return;
     }
-    
+
     NSError *loadError = nil;
     MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
                                                error:&loadError];
@@ -114,7 +114,7 @@
         return;
 
     }
-    
+
     NSError *modelError = nil;
     VNCoreMLModel *visionModel = [VNCoreMLModel modelForMLModel:model
                                                           error:&modelError];
@@ -129,16 +129,16 @@
         return;
     }
     self.visionModel = visionModel;
-    
-    
+
+
     VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];
-    
-    
+
+
     VNRequestCompletionHandler handler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
         VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
         MLFeatureValue *firstFV = firstResult.featureValue;
         MLMultiArray *mm = firstFV.multiArrayValue;
-        
+
         // evaluate the best branch
         NSArray *bestBranch = [self.taxonomy inflateTopBranchFromClassification:mm];
         // add this to the end of the recent top branches array
@@ -147,7 +147,7 @@
         while (self.recentTopBranches.count > NUM_RECENT_PREDICTIONS) {
             [self.recentTopBranches removeObjectAtIndex:0];
         }
-        
+
         // evaluate the top prediction
         NATPrediction *topPrediction = [self.taxonomy inflateTopPredictionFromClassification:mm
                                                                          confidenceThreshold:self.threshold];
@@ -157,7 +157,7 @@
         while (self.recentTopPredictions.count > NUM_RECENT_PREDICTIONS) {
             [self.recentTopPredictions removeObjectAtIndex:0];
         }
-        
+
         // find the recent prediction with the most specific rank
         NATPrediction *bestRecentPrediction = [self.recentTopPredictions lastObject];
         for (NATPrediction *candidateRecentPrediction in [self.recentTopPredictions reverseObjectEnumerator]) {
@@ -165,10 +165,10 @@
                 bestRecentPrediction = candidateRecentPrediction;
             }
         }
-        
+
         [self.delegate topClassificationResult:[bestRecentPrediction asDict]];
     };
-    
+
     VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
                                                               completionHandler:handler];
     objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
@@ -190,25 +190,25 @@
 }
 
 -(void)classifyImageData:(NSData *)data orientation:(CGImagePropertyOrientation)orientation handler:(BranchClassificationHandler)predictionCompletion {
-    
+
     VNImageRequestHandler *imageRequestHandler = [[VNImageRequestHandler alloc] initWithData:data
                                                                                  orientation:orientation
                                                                                      options:@{}];
-    
+
     VNRequestCompletionHandler requestHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
         VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
         MLFeatureValue *firstFV = firstResult.featureValue;
         MLMultiArray *mm = firstFV.multiArrayValue;
         NSArray *topBranch = [self.taxonomy inflateTopBranchFromClassification:mm];
-        
+
         NSMutableArray *topBranchDicts = [NSMutableArray arrayWithCapacity:topBranch.count];
         for (NATPrediction *branch in topBranch) {
             [topBranchDicts addObject:[branch asDict]];
         }
-        
+
         predictionCompletion(topBranchDicts, nil);
     };
-    
+
     VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:self.visionModel
                                                               completionHandler:requestHandler];
     objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
@@ -222,24 +222,24 @@
 }
 
 - (void)classifyImageData:(NSData *)data handler:(BranchClassificationHandler)predictionCompletion {
-    
+
     VNImageRequestHandler *imageRequestHandler = [[VNImageRequestHandler alloc] initWithData:data
                                                                                      options:@{ }];
-    
+
     VNRequestCompletionHandler requestHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
         VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
         MLFeatureValue *firstFV = firstResult.featureValue;
         MLMultiArray *mm = firstFV.multiArrayValue;
         NSArray *topBranch = [self.taxonomy inflateTopBranchFromClassification:mm];
-        
+
         NSMutableArray *topBranchDicts = [NSMutableArray arrayWithCapacity:topBranch.count];
         for (NATPrediction *branch in topBranch) {
             [topBranchDicts addObject:[branch asDict]];
         }
-        
+
         predictionCompletion(topBranchDicts, nil);
     };
-    
+
     VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:self.visionModel
                                                               completionHandler:requestHandler];
     objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;

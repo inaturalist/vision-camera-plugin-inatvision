@@ -1,23 +1,23 @@
 //
-//  NATPrediction.m
+//  VCPPrediction.m
 //  RNTestLibrary
 //
 //  Created by Alex Shepard on 3/13/19.
 //  Copyright © 2019 California Academy of Sciences. All rights reserved.
 //
 
-#import "NATPrediction.h"
-#import "NATNode.h"
+#import "VCPPrediction.h"
+#import "VCPNode.h"
 
-@implementation NATPrediction
+@implementation VCPPrediction
 
-- (instancetype)initWithNode:(NATNode *)node score:(double)score {
+- (instancetype)initWithNode:(VCPNode *)node score:(double)score {
     if (self = [super init]) {
         self.node = node;
         self.score = score;
         self.rank = node.rank.integerValue;
     }
-    
+
     return self;
 }
 

@@ -6,39 +6,39 @@
 //  Copyright © 2019 California Academy of Sciences. All rights reserved.
 //
 
-#import "NATNode.h"
+#import "VCPNode.h"
 
-@interface NATNode ()
+@interface VCPNode ()
 
 @end
 
-@implementation NATNode
+@implementation VCPNode
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         if ([dict valueForKey:@"parent_taxon_id"] && [dict valueForKey:@"parent_taxon_id"] != [NSNull null]) {
             self.parentTaxonId = [dict valueForKey:@"parent_taxon_id"];
         }
-        
+
         if ([dict valueForKey:@"taxon_id"] && [dict valueForKey:@"taxon_id"] != [NSNull null]) {
             self.taxonId = [dict valueForKey:@"taxon_id"];
         }
-        
+
         if ([dict valueForKey:@"rank_level"] && [dict valueForKey:@"rank_level"] != [NSNull null]) {
             self.rank = [dict valueForKey:@"rank_level"];
         }
-        
+
         if ([dict valueForKey:@"leaf_class_id"] && [dict valueForKey:@"leaf_class_id"] != [NSNull null]) {
             self.leafId = [dict valueForKey:@"leaf_class_id"];
         }
-        
+
         if ([dict valueForKey:@"name"] && [dict valueForKey:@"name"] != [NSNull null]) {
             self.name = [dict valueForKey:@"name"];
         }
-        
+
         self.children = [NSMutableArray array];
     }
-    
+
     return self;
 }
 
@@ -49,7 +49,7 @@
     return self;
 }
 
-- (void)addChild:(NATNode *)child {
+- (void)addChild:(VCPNode *)child {
     [self.children addObject:child];
 }
 
@@ -58,7 +58,7 @@
                            @"taxon_id": self.taxonId,
                            @"rank": self.rank,
                            };
-    
+
     NSMutableDictionary *mutableDict = [dict mutableCopy];
     if (self.leafId) {
         mutableDict[@"leaf_id"] = self.leafId;
@@ -66,15 +66,15 @@
     if (self.name) {
         mutableDict[@"name"] = self.name;
     }
-    
+
     return [NSDictionary dictionaryWithDictionary:mutableDict];
 }
 
 - (BOOL)isEqual:(id)object {
-    if ([object isKindOfClass:[NATNode class]]) {
+    if ([object isKindOfClass:[VCPNode class]]) {
         return NO;
     }
-    NATNode *otherNode = (NATNode *)object;
+    VCPNode *otherNode = (VCPNode *)object;
     return otherNode.taxonId == self.taxonId;
 }
 

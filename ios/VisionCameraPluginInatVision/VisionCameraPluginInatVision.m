@@ -5,8 +5,8 @@
 @import Vision;
 @import CoreML;
 
-#import "NATTaxonomy.h"
-#import "NATPrediction.h"
+#import "VCPTaxonomy.h"
+#import "VCPPrediction.h"
 
 @interface VisionCameraPluginInatVisionPlugin : NSObject
 @end
@@ -35,7 +35,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   NSMutableArray *recentTopPredictions = [NSMutableArray array];
 
   // Setup taxonomy
-  NATTaxonomy *taxonomy = [[NATTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+  VCPTaxonomy *taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
 
   // Setup threshold
   float threshold = 0.70;
@@ -99,7 +99,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
 
     // evaluate the top prediction
-    NATPrediction *topPrediction = [taxonomy inflateTopPredictionFromClassification:mm
+    VCPPrediction *topPrediction = [taxonomy inflateTopPredictionFromClassification:mm
                                                                       confidenceThreshold:threshold];
 
     // add this top prediction to the recent top predictions array
@@ -129,8 +129,8 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   }
 
   // find the recent prediction with the most specific rank
-  NATPrediction *bestRecentPrediction = [recentTopPredictions lastObject];
-  for (NATPrediction *candidateRecentPrediction in [recentTopPredictions reverseObjectEnumerator]) {
+  VCPPrediction *bestRecentPrediction = [recentTopPredictions lastObject];
+  for (VCPPrediction *candidateRecentPrediction in [recentTopPredictions reverseObjectEnumerator]) {
       if (candidateRecentPrediction.rank < bestRecentPrediction.rank) {
           bestRecentPrediction = candidateRecentPrediction;
       }

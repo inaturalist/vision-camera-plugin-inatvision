@@ -1,5 +1,5 @@
 //
-//  NATClassifier.h
+//  VCPClassifier.h
 //  RNTestLibrary
 //
 //  Created by Alex Shepard on 3/13/19.
@@ -16,7 +16,7 @@
 
 typedef void(^BranchClassificationHandler)(NSArray *topBranch, NSError *error);
 
-@interface NATClassifier : NSObject
+@interface VCPClassifier : NSObject
 
 @property (assign) id <NATClassifierDelegate> delegate;
 @property float threshold;

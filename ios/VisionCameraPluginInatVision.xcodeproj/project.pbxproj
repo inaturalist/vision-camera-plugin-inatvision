@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */; };
-		8F3C41822A4AFF5B008FBC67 /* NATNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417A2A4AFF5B008FBC67 /* NATNode.m */; };
-		8F3C41832A4AFF5B008FBC67 /* NATClassifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417C2A4AFF5B008FBC67 /* NATClassifier.m */; };
-		8F3C41842A4AFF5B008FBC67 /* NATTaxonomy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41802A4AFF5B008FBC67 /* NATTaxonomy.m */; };
-		8F3C41852A4AFF5B008FBC67 /* NATPrediction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41812A4AFF5B008FBC67 /* NATPrediction.m */; };
+		8F3C41822A4AFF5B008FBC67 /* VCPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417A2A4AFF5B008FBC67 /* VCPNode.m */; };
+		8F3C41832A4AFF5B008FBC67 /* VCPClassifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */; };
+		8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */; };
+		8F3C41852A4AFF5B008FBC67 /* VCPPrediction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,14 +29,14 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraPluginInatVision.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraPluginInatVision.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VisionCameraPluginInatVision.m; path = VisionCameraPluginInatVision/VisionCameraPluginInatVision.m; sourceTree = "<group>"; };
-		8F3C417A2A4AFF5B008FBC67 /* NATNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATNode.m; sourceTree = "<group>"; };
-		8F3C417B2A4AFF5B008FBC67 /* NATPrediction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATPrediction.h; sourceTree = "<group>"; };
-		8F3C417C2A4AFF5B008FBC67 /* NATClassifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATClassifier.m; sourceTree = "<group>"; };
-		8F3C417D2A4AFF5B008FBC67 /* NATNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATNode.h; sourceTree = "<group>"; };
-		8F3C417E2A4AFF5B008FBC67 /* NATClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATClassifier.h; sourceTree = "<group>"; };
-		8F3C417F2A4AFF5B008FBC67 /* NATTaxonomy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATTaxonomy.h; sourceTree = "<group>"; };
-		8F3C41802A4AFF5B008FBC67 /* NATTaxonomy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATTaxonomy.m; sourceTree = "<group>"; };
-		8F3C41812A4AFF5B008FBC67 /* NATPrediction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NATPrediction.m; sourceTree = "<group>"; };
+		8F3C417A2A4AFF5B008FBC67 /* VCPNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPNode.m; sourceTree = "<group>"; };
+		8F3C417B2A4AFF5B008FBC67 /* VCPPrediction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPPrediction.h; sourceTree = "<group>"; };
+		8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPClassifier.m; sourceTree = "<group>"; };
+		8F3C417D2A4AFF5B008FBC67 /* VCPNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPNode.h; sourceTree = "<group>"; };
+		8F3C417E2A4AFF5B008FBC67 /* VCPClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPClassifier.h; sourceTree = "<group>"; };
+		8F3C417F2A4AFF5B008FBC67 /* VCPTaxonomy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPTaxonomy.h; sourceTree = "<group>"; };
+		8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPTaxonomy.m; sourceTree = "<group>"; };
+		8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPPrediction.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,14 +78,14 @@
 		8F3C41792A4AFEFE008FBC67 /* Classifier */ = {
 			isa = PBXGroup;
 			children = (
-				8F3C417E2A4AFF5B008FBC67 /* NATClassifier.h */,
-				8F3C417C2A4AFF5B008FBC67 /* NATClassifier.m */,
-				8F3C417D2A4AFF5B008FBC67 /* NATNode.h */,
-				8F3C417A2A4AFF5B008FBC67 /* NATNode.m */,
-				8F3C417B2A4AFF5B008FBC67 /* NATPrediction.h */,
-				8F3C41812A4AFF5B008FBC67 /* NATPrediction.m */,
-				8F3C417F2A4AFF5B008FBC67 /* NATTaxonomy.h */,
-				8F3C41802A4AFF5B008FBC67 /* NATTaxonomy.m */,
+				8F3C417E2A4AFF5B008FBC67 /* VCPClassifier.h */,
+				8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */,
+				8F3C417D2A4AFF5B008FBC67 /* VCPNode.h */,
+				8F3C417A2A4AFF5B008FBC67 /* VCPNode.m */,
+				8F3C417B2A4AFF5B008FBC67 /* VCPPrediction.h */,
+				8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */,
+				8F3C417F2A4AFF5B008FBC67 /* VCPTaxonomy.h */,
+				8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */,
 			);
 			path = Classifier;
 			sourceTree = "<group>";
@@ -147,11 +147,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F3C41852A4AFF5B008FBC67 /* NATPrediction.m in Sources */,
-				8F3C41832A4AFF5B008FBC67 /* NATClassifier.m in Sources */,
+				8F3C41852A4AFF5B008FBC67 /* VCPPrediction.m in Sources */,
+				8F3C41832A4AFF5B008FBC67 /* VCPClassifier.m in Sources */,
 				1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */,
-				8F3C41842A4AFF5B008FBC67 /* NATTaxonomy.m in Sources */,
-				8F3C41822A4AFF5B008FBC67 /* NATNode.m in Sources */,
+				8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */,
+				8F3C41822A4AFF5B008FBC67 /* VCPNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

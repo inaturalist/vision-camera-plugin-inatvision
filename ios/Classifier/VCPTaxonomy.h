@@ -1,5 +1,5 @@
 //
-//  NATTaxonomy.h
+//  VCPTaxonomy.h
 //  RNTestLibrary
 //
 //  Created by Alex Shepard on 3/13/19.
@@ -9,14 +9,14 @@
 @import Foundation;
 @import CoreML;
 
-@class NATPrediction;
+@class VCPPrediction;
 
-@interface NATTaxonomy : NSObject
+@interface VCPTaxonomy : NSObject
 
 @property BOOL linneanPredictionsOnly;
 
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
-- (NATPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
+- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
 
 @end

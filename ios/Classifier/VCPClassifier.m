@@ -1,5 +1,5 @@
 //
-//  NATClassifier.m
+//  VCPClassifier.m
 //  RNTestLibrary
 //
 //  Created by Alex Shepard on 3/13/19.
@@ -12,14 +12,14 @@
 
 #define NUM_RECENT_PREDICTIONS 5
 
-#import "NATClassifier.h"
-#import "NATTaxonomy.h"
-#import "NATPrediction.h"
+#import "VCPClassifier.h"
+#import "VCPTaxonomy.h"
+#import "VCPPrediction.h"
 
-@interface NATClassifier ()
+@interface VCPClassifier ()
 @property NSString *modelPath;
 @property VNCoreMLModel *visionModel;
-@property NATTaxonomy *taxonomy;
+@property VCPTaxonomy *taxonomy;
 @property NSArray *requests;
 
 @property NSMutableArray *recentTopBranches;
@@ -27,7 +27,7 @@
 
 @end
 
-@implementation NATClassifier
+@implementation VCPClassifier
 
 - (instancetype)initWithModelFile:(NSString *)modelPath
                       taxonomyFile:(NSString *)taxonomyPath
@@ -36,7 +36,7 @@
     if (self = [super init]) {
         self.delegate = delegate;
         self.modelPath = modelPath;
-        self.taxonomy = [[NATTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+        self.taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
 
         // default prediction threshold
         self.threshold = 0.70;
@@ -87,7 +87,7 @@
 
     // convert the NATPredictions in the bestRecentBranch into dicts
     NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
-    for (NATPrediction *prediction in bestRecentBranch) {
+    for (VCPPrediction *prediction in bestRecentBranch) {
         [bestRecentBranchAsDict addObject:[prediction asDict]];
     }
     return bestRecentBranchAsDict;
@@ -149,7 +149,7 @@
         }
 
         // evaluate the top prediction
-        NATPrediction *topPrediction = [self.taxonomy inflateTopPredictionFromClassification:mm
+        VCPPrediction *topPrediction = [self.taxonomy inflateTopPredictionFromClassification:mm
                                                                          confidenceThreshold:self.threshold];
         // add this top prediction to the recent top predictions array
         [self.recentTopPredictions addObject:topPrediction];
@@ -159,8 +159,8 @@
         }
 
         // find the recent prediction with the most specific rank
-        NATPrediction *bestRecentPrediction = [self.recentTopPredictions lastObject];
-        for (NATPrediction *candidateRecentPrediction in [self.recentTopPredictions reverseObjectEnumerator]) {
+        VCPPrediction *bestRecentPrediction = [self.recentTopPredictions lastObject];
+        for (VCPPrediction *candidateRecentPrediction in [self.recentTopPredictions reverseObjectEnumerator]) {
             if (candidateRecentPrediction.rank < bestRecentPrediction.rank) {
                 bestRecentPrediction = candidateRecentPrediction;
             }
@@ -202,7 +202,7 @@
         NSArray *topBranch = [self.taxonomy inflateTopBranchFromClassification:mm];
 
         NSMutableArray *topBranchDicts = [NSMutableArray arrayWithCapacity:topBranch.count];
-        for (NATPrediction *branch in topBranch) {
+        for (VCPPrediction *branch in topBranch) {
             [topBranchDicts addObject:[branch asDict]];
         }
 
@@ -233,7 +233,7 @@
         NSArray *topBranch = [self.taxonomy inflateTopBranchFromClassification:mm];
 
         NSMutableArray *topBranchDicts = [NSMutableArray arrayWithCapacity:topBranch.count];
-        for (NATPrediction *branch in topBranch) {
+        for (VCPPrediction *branch in topBranch) {
             [topBranchDicts addObject:[branch asDict]];
         }
 

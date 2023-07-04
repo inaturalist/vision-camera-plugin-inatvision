@@ -1,5 +1,5 @@
 //
-//  NATPrediction.h
+//  VCPPrediction.h
 //  RNTestLibrary
 //
 //  Created by Alex Shepard on 3/13/19.
@@ -8,15 +8,15 @@
 
 @import Foundation;
 
-@class NATNode;
+@class VCPNode;
 
-@interface NATPrediction : NSObject
+@interface VCPPrediction : NSObject
 
-@property NATNode *node;
+@property VCPNode *node;
 @property double score;
 @property NSInteger rank;
 
-- (instancetype)initWithNode:(NATNode *)node score:(double)score;
+- (instancetype)initWithNode:(VCPNode *)node score:(double)score;
 
 - (NSDictionary *)asDict;
 

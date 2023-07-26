@@ -32,7 +32,6 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   }
 
   int NUM_RECENT_PREDICTIONS = 5;
-  NSMutableArray *recentTopPredictions = [NSMutableArray array];
 
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
@@ -89,6 +88,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];
   NSLog(@" made objectRec");
 
+  NSMutableArray *recentTopBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
     MLFeatureValue *firstFV = firstResult.featureValue;
@@ -96,16 +96,11 @@ static inline id inatVision(Frame* frame, NSArray* args) {
 
     // evaluate the best branch
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
-
-    // evaluate the top prediction
-    VCPPrediction *topPrediction = [taxonomy inflateTopPredictionFromClassification:mm
-                                                                      confidenceThreshold:threshold];
-
-    // add this top prediction to the recent top predictions array
-    [recentTopPredictions addObject:topPrediction];
+    // add this to the end of the recent top branches array
+    [recentTopBranches addObject:bestBranch];
     // trim stuff from the beginning
-    while (recentTopPredictions.count > NUM_RECENT_PREDICTIONS) {
-        [recentTopPredictions removeObjectAtIndex:0];
+    while (recentTopBranches.count > NUM_RECENT_PREDICTIONS) {
+        [recentTopBranches removeObjectAtIndex:0];
     }
   };
 
@@ -127,17 +122,35 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       return nil;
   }
 
-  // find the recent prediction with the most specific rank
-  VCPPrediction *bestRecentPrediction = [recentTopPredictions lastObject];
-  for (VCPPrediction *candidateRecentPrediction in [recentTopPredictions reverseObjectEnumerator]) {
-      if (candidateRecentPrediction.rank < bestRecentPrediction.rank) {
-          bestRecentPrediction = candidateRecentPrediction;
+  NSArray *bestRecentBranch = nil;
+  if (recentTopBranches.count == 0) {
+      return nil;
+  } else if (recentTopBranches.count == 1) {
+      bestRecentBranch = recentTopBranches.firstObject;
+  } else {
+      // return the recent best branch with the best, most specific score
+      bestRecentBranch = [recentTopBranches lastObject];
+      // most specific score is last in each branch
+      float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
+      for (NSArray *candidateRecentBranch in [recentTopBranches reverseObjectEnumerator]) {
+          float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
+          if (candidateRecentBranchScore > bestRecentBranchScore) {
+              bestRecentBranch = candidateRecentBranch;
+              bestRecentBranchScore = candidateRecentBranchScore;
+          }
       }
   }
-  NSDictionary *topPredictionDict = [bestRecentPrediction asDict];
-  NSLog(@"topPredictionDict: %@", topPredictionDict);
-  return @[topPredictionDict];
 
+  // convert the VCPPredictions in the bestRecentBranch into dicts
+  NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
+  for (VCPPrediction *prediction in bestRecentBranch) {
+      // only add predictions that are above the threshold
+      if (prediction.score < threshold) {
+          continue;
+      }
+      [bestRecentBranchAsDict addObject:[prediction asDict]];
+  }
+  return bestRecentBranchAsDict;
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(inatVision)

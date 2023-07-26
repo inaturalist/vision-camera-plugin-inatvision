@@ -90,7 +90,6 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   NSLog(@" made objectRec");
 
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-    NSLog(@"request.results: %@", request.results);
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
     MLFeatureValue *firstFV = firstResult.featureValue;
     MLMultiArray *mm = firstFV.multiArrayValue;

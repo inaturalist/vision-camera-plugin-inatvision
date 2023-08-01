@@ -41,6 +41,7 @@ public class ImageClassifier {
     private final Taxonomy mTaxonomy;
     private final String mModelFilename;
     private final String mTaxonomyFilename;
+    private final String mModelVersion;
     private int mModelSize;
 
     /* Preallocated buffers for storing image data in. */
@@ -70,9 +71,10 @@ public class ImageClassifier {
 
 
     /** Initializes an {@code ImageClassifier}. */
-    public ImageClassifier(String modelPath, String taxonomyPath) throws IOException {
+    public ImageClassifier(String modelPath, String taxonomyPath, String version) throws IOException {
         mModelFilename = modelPath;
         mTaxonomyFilename = taxonomyPath;
+        mModelVersion = version;
         mTFlite = new Interpreter(loadModelFile());
         imgData =
                 ByteBuffer.allocateDirect(
@@ -80,7 +82,7 @@ public class ImageClassifier {
         imgData.order(ByteOrder.nativeOrder());
         Timber.tag(TAG).d("Created a Tensorflow Lite Image Classifier.");
 
-        mTaxonomy = new Taxonomy(new FileInputStream(mTaxonomyFilename));
+        mTaxonomy = new Taxonomy(new FileInputStream(mTaxonomyFilename), mModelVersion);
         mModelSize = mTaxonomy.getModelSize();
     }
 
@@ -95,8 +97,8 @@ public class ImageClassifier {
             return null;
         }
 
-        convertBitmapToByteBuffer(bitmap);
         long startTime = SystemClock.uptimeMillis();
+        convertBitmapToByteBuffer(bitmap);
 
         byte[] arr = new byte[imgData.remaining()];
         imgData.get(arr);
@@ -149,10 +151,17 @@ public class ImageClassifier {
         for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
                 int pixel = bitmap.getPixel(x, y);
-                // Normalize channel values to [0.0, 1.0]
-                input[0][x][y][0] = Color.red(pixel) / 255.0f;
-                input[0][x][y][1] = Color.green(pixel) / 255.0f;
-                input[0][x][y][2] = Color.blue(pixel) / 255.0f;
+                // TODO: rephrase to check for 1.0 version and have 2 as else
+                if (mModelVersion.equals("2.3")) {
+                  input[0][x][y][0] = Color.red(pixel);
+                  input[0][x][y][1] = Color.green(pixel);
+                  input[0][x][y][2] = Color.blue(pixel);
+                } else {
+                  // Normalize channel values to [0.0, 1.0] for version 1.0
+                  input[0][x][y][0] = Color.red(pixel) / 255.0f;
+                  input[0][x][y][1] = Color.green(pixel) / 255.0f;
+                  input[0][x][y][2] = Color.blue(pixel) / 255.0f;
+                }
             }
         }
         // Convert to ByteBuffer

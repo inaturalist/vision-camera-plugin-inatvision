@@ -36,6 +36,15 @@
             self.name = [dict valueForKey:@"name"];
         }
 
+        // Information available in model v2.3
+        if ([dict valueForKey:@"iconic_class_id"] && [dict valueForKey:@"iconic_class_id"] != [NSNull null]) {
+            self.iconicId = [dict valueForKey:@"iconic_class_id"];
+        }
+
+        if ([dict valueForKey:@"spatial_class_id"] && [dict valueForKey:@"spatial_class_id"] != [NSNull null]) {
+            self.spatialId = [dict valueForKey:@"spatial_class_id"];
+        }
+
         self.children = [NSMutableArray array];
     }
 
@@ -55,9 +64,9 @@
 
 - (NSDictionary *)asDict {
     NSDictionary *dict = @{
-                           @"taxon_id": self.taxonId,
-                           @"rank": self.rank,
-                           };
+                            @"taxon_id": self.taxonId,
+                            @"rank": self.rank,
+                            };
 
     NSMutableDictionary *mutableDict = [dict mutableCopy];
     if (self.leafId) {
@@ -65,6 +74,12 @@
     }
     if (self.name) {
         mutableDict[@"name"] = self.name;
+    }
+    if (self.iconicId) {
+        mutableDict[@"iconic_class_id"] = self.iconicId;
+    }
+    if (self.spatialId) {
+        mutableDict[@"spatial_class_id"] = self.spatialId;
     }
 
     return [NSDictionary dictionaryWithDictionary:mutableDict];

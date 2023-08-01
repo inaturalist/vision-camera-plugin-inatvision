@@ -20,6 +20,7 @@ const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
 const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
+const modelVersion = '1.0';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
@@ -115,7 +116,7 @@ export default function App() {
 
       try {
         const cvResults = InatVision.inatVision(frame, {
-          version: '1',
+          version: modelVersion,
           modelPath,
           taxonomyPath,
           confidenceThreshold,
@@ -163,11 +164,17 @@ export default function App() {
           <Text style={styles.text} onPress={changeFilterByTaxonId}>
             {filterByTaxonId ? 'Plant filter' : 'No filter'}
           </Text>
-          {results.map((result: { rank: string; name: string }) => {
+          {results.map((result: InatVision.Prediction) => {
             return (
-              <Text key={result.rank} style={[styles.text, styles.label]}>
-                {result.name}
-              </Text>
+              <View key={result.rank} style={styles.labels}>
+                <Text style={styles.text}>{result.name}</Text>
+                <Text style={styles.smallLabel}>
+                  spatial_class_id {result.spatial_class_id}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  iconic_class_id {result.iconic_class_id}
+                </Text>
+              </View>
             );
           })}
         </>
@@ -189,16 +196,24 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
-  text: {
+  labels: {
+    position: 'absolute',
+    top: 30,
     padding: 4,
     marginHorizontal: 20,
     backgroundColor: '#000000',
+  },
+  text: {
     fontSize: 26,
     color: 'white',
     textAlign: 'center',
   },
-  label: {
-    position: 'absolute',
-    top: 48,
+  smallLabel: {
+    padding: 4,
+    marginHorizontal: 20,
+    backgroundColor: '#000000',
+    fontSize: 10,
+    color: 'white',
+    textAlign: 'center',
   },
 });

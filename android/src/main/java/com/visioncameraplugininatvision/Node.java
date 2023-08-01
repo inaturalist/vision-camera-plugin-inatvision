@@ -16,6 +16,8 @@ public class Node {
 
     public String iconicId;
 
+    public String spatialId;
+
     public transient Node parent;
 
     public transient List<Node> children = new ArrayList<>();
@@ -26,19 +28,23 @@ public class Node {
 
     // Initialize the node from a CSV line
     // Seek model 2.3:
-    // parent_taxon_id,taxon_id,rank_level,leaf_class_id,iconic_taxon_id,name
+    // parent_taxon_id,taxon_id,rank_level,leaf_class_id,iconic_class_id,spatial_class_id,name
     // Seek model 1.0:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,name
-    public Node(String line) {
+    public Node(String line, String version) {
         String[] parts = line.trim().split(",", 7);
 
         this.parentKey = parts[0];
         this.key = parts[1];
         this.rank = Float.parseFloat(parts[2]);
         this.leafId = parts[3];
-        // this.iconicId = parts[4];
-        this.name = parts[4];
-        // this.name = parts[5];
+        if (version.equals("2.3")) {
+            this.iconicId = parts[4];
+            this.spatialId = parts[5];
+            this.name = parts[6];
+        } else {
+            this.name = parts[4];
+        }
     }
 
     public Node() {

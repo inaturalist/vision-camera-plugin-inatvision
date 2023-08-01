@@ -89,7 +89,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {
-        mImageClassifier = new ImageClassifier(modelPath, taxonomyPath);
+        mImageClassifier = new ImageClassifier(modelPath, taxonomyPath, version);
         setFilterByTaxonId(mFilterByTaxonId);
         setNegativeFilter(mNegativeFilter);
       } catch (IOException e) {

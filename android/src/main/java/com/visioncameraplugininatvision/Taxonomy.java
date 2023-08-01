@@ -19,6 +19,8 @@ import timber.log.Timber;
 public class Taxonomy {
     private static final String TAG = "Taxonomy";
 
+    private static String mModelVersion;
+
     private static final Map<Float, String> RANK_LEVEL_TO_NAME;
     static {
         Map<Float, String> map = new HashMap<>() ;
@@ -82,9 +84,9 @@ public class Taxonomy {
         return mNegativeFilter;
     }
 
-    Taxonomy(InputStream is) {
+    Taxonomy(InputStream is, String version) {
+        mModelVersion = version;
         // Read the taxonomy CSV file into a list of nodes
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         try {
             reader.readLine(); // Skip the first line (header line)
@@ -92,7 +94,7 @@ public class Taxonomy {
             mNodes = new ArrayList<>();
             mLeaves = new ArrayList<>();
             for (String line; (line = reader.readLine()) != null; ) {
-                Node node = new Node(line);
+                Node node = new Node(line, mModelVersion);
                 mNodes.add(node);
                 if ((node.leafId != null) && (node.leafId.length() > 0)) {
                     mLeaves.add(node);
@@ -280,6 +282,14 @@ public class Taxonomy {
             result.putString("name", prediction.node.name);
             result.putDouble("score", prediction.probability);
             result.putDouble("rank", prediction.node.rank);
+            if (mModelVersion.equals("2.3")) {
+              if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
+                result.putInt("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
+              }
+              if ((prediction.node.spatialId != null) && (prediction.node.spatialId.length() > 0)) {
+                result.putInt("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
+              }
+            }
         } catch (NumberFormatException exc) {
             // Invalid node key or class ID
             exc.printStackTrace();

@@ -9,15 +9,22 @@ interface PredictionDetails {
   rank: number;
   score: number;
   taxon_id: number;
+  iconic_class_id?: number;
+  spatial_class_id?: number;
 }
 
 export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
+enum SupportedVersions {
+  V1_0 = '1.0',
+  V2_3 = '2.3',
+}
+
 interface Options {
   // Required
-  version: string;
+  version: SupportedVersions;
   modelPath: string;
   taxonomyPath: string;
   // Optional
@@ -31,6 +38,9 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Prediction[] {
   'worklet';
+  if (!Object.values(SupportedVersions).includes(options.version)) {
+    throw new Error('This model version is not supported.');
+  }
   // @ts-expect-error Frame Processors are not typed.
   return __inatVision(frame, options);
 }

@@ -74,6 +74,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     // Destructure optional parameters
     String confidenceThreshold = options.getString("confidenceThreshold");
+    if (confidenceThreshold == null) {
+      confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
+    }
     String filterByTaxonId = options.getString("filterByTaxonId");
     Boolean negativeFilter = options.getBoolean("negativeFilter");
     // Set values

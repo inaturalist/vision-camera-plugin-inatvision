@@ -21,7 +21,6 @@ interface Options {
   modelPath: string;
   taxonomyPath: string;
   // Optional
-  // TODO: make this an optional parameter here and in the native code
   confidenceThreshold?: string;
   filterByTaxonId?: null | string;
   negativeFilter?: null | boolean;

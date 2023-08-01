@@ -114,14 +114,14 @@ export default function App() {
           : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
       try {
-        const cvResults = InatVision.inatVision(
-          frame,
+        const cvResults = InatVision.inatVision(frame, {
+          version: '1',
           modelPath,
           taxonomyPath,
           confidenceThreshold,
           filterByTaxonId,
-          negativeFilter
-        );
+          negativeFilter,
+        });
         console.log('cvResults :>> ', cvResults);
         let predictions = [];
         if (Platform.OS === 'ios') {

@@ -15,28 +15,25 @@ export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
+interface Options {
+  // Required
+  version: string;
+  modelPath: string;
+  taxonomyPath: string;
+  // Optional
+  // TODO: make this an optional parameter here and in the native code
+  confidenceThreshold?: string;
+  filterByTaxonId?: null | string;
+  negativeFilter?: null | boolean;
+}
+
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision(
-  frame: Frame,
-  modelPath: string,
-  taxonomyPath: string,
-  // TODO: make this an optional parameter here and in the native code
-  confidenceThreshold: string,
-  filterByTaxonId: null | string,
-  negativeFilter: null | boolean
-): Prediction[] {
+export function inatVision(frame: Frame, options: Options): Prediction[] {
   'worklet';
   // @ts-expect-error Frame Processors are not typed.
-  return __inatVision(
-    frame,
-    modelPath,
-    taxonomyPath,
-    confidenceThreshold,
-    filterByTaxonId,
-    negativeFilter
-  );
+  return __inatVision(frame, options);
 }
 
 const LINKING_ERROR =

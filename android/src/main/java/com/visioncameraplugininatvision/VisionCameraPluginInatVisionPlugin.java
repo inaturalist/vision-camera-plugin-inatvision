@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.camera.core.ImageProxy;
 
+import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
@@ -23,13 +24,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
   public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
   private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-
   public void setConfidenceThreshold(float confidence) {
       mConfidenceThreshold = confidence;
   }
 
   private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
-
   public void setFilterByTaxonId(Integer taxonId) {
       mFilterByTaxonId = taxonId;
       if (mImageClassifier != null) {
@@ -38,9 +37,8 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   }
 
   private boolean mNegativeFilter = false;
-
-  public void setNegativeFilter(boolean negative) {
-      mNegativeFilter = negative;
+  public void setNegativeFilter(boolean negativeFilter) {
+      mNegativeFilter = negativeFilter;
       if (mImageClassifier != null) {
         mImageClassifier.setNegativeFilter(mNegativeFilter);
       }
@@ -53,20 +51,38 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Log.d(TAG, "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
     }
 
-    // The third parameter is the confidence threshold
-    String confidenceThreshold = (String)params[2];
-    // The fourth parameter is the taxon ID to filter by
-    String filterByTaxonId = (String)params[3];
-    // The fifth parameter is negative filter
-    Boolean negative = (Boolean)params[4];
+    // The first parameter is the options object
+    ReadableNativeMap options = (ReadableNativeMap)params[0];
+    if (options == null) {
+      throw new RuntimeException("Options object is null");
+    };
+    // Destructure the version from the options map
+    String version = options.getString("version");
+    if (version == null) {
+      throw new RuntimeException("Version is null");
+    };
+    // Destructure the model path from the options map
+    String modelPath = options.getString("modelPath");
+    if (modelPath == null) {
+      throw new RuntimeException("Model path is null");
+    };
+    // Destructure the taxonomy path from the options map
+    String taxonomyPath = options.getString("taxonomyPath");
+    if (taxonomyPath == null) {
+      throw new RuntimeException("Taxonomy path is null");
+    };
+
+    // Destructure optional parameters
+    String confidenceThreshold = options.getString("confidenceThreshold");
+    String filterByTaxonId = options.getString("filterByTaxonId");
+    Boolean negativeFilter = options.getBoolean("negativeFilter");
+    // Set values
     setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
     setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
-    setNegativeFilter(negative != null ? negative : false);
+    setNegativeFilter(negativeFilter != null ? negativeFilter : false);
 
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
-      String modelPath = (String)params[0];
-      String taxonomyPath = (String)params[1];
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
 
       try {

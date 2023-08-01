@@ -16,12 +16,17 @@
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Log args
   NSLog(@"inatVision args: %@", args);
-  // First arg is model path
-  NSString* modelPath = args[0];
-  // Second arg is taxonomy path
-  NSString* taxonomyPath = args[1];
-  // Third arg is threshold
-  NSString* thresholdArg = args[2];
+  // First arg is the options dict
+  NSDictionary* options = args[0];
+  // Destructure version out of options
+  NSString* version = options[@"version"];
+  // Destructure model path out of options
+  NSString* modelPath = options[@"modelPath"];
+  // Destructure taxonomy path out of options
+  NSString* taxonomyPath = options[@"taxonomyPath"];
+  // Destructure threshold out of options
+  NSString* confidenceThreshold = options[@"confidenceThreshold"];
+
   CMSampleBufferRef buffer = frame.buffer;
   UIImageOrientation orientation = frame.orientation;
 
@@ -38,8 +43,8 @@ static inline id inatVision(Frame* frame, NSArray* args) {
 
   // Setup threshold
   float threshold = 0.70;
-  if (thresholdArg) {
-    threshold = [thresholdArg floatValue];
+  if (confidenceThreshold) {
+    threshold = [confidenceThreshold floatValue];
   }
 
   // Setup vision

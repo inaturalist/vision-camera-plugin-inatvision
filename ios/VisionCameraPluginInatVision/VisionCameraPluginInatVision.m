@@ -76,6 +76,9 @@
 
 
 static inline id inatVision(Frame* frame, NSArray* args) {
+  // Start timestamp
+  NSDate *startDate = [NSDate date];
+
   // Log args
   NSLog(@"inatVision args: %@", args);
   // First arg is the options dict
@@ -177,6 +180,10 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       }
       [bestRecentBranchAsDict addObject:[prediction asDict]];
   }
+
+  // End timestamp
+  NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+  NSLog(@"inatVision took %f seconds", timeElapsed);
   return bestRecentBranchAsDict;
 }
 

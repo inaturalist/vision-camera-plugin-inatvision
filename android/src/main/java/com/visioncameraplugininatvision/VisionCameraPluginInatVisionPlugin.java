@@ -72,17 +72,22 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       throw new RuntimeException("Taxonomy path is null");
     };
 
-    // Destructure optional parameters
-    String confidenceThreshold = options.getString("confidenceThreshold");
-    if (confidenceThreshold == null) {
-      confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
+    // Destructure optional parameters and set values
+    if (options.hasKey("confidenceThreshold")) {
+      String confidenceThreshold = options.getString("confidenceThreshold");
+      if (confidenceThreshold == null) {
+        confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
+      }
+      setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
     }
-    String filterByTaxonId = options.getString("filterByTaxonId");
-    Boolean negativeFilter = options.getBoolean("negativeFilter");
-    // Set values
-    setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
-    setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
-    setNegativeFilter(negativeFilter != null ? negativeFilter : false);
+    if (options.hasKey("filterByTaxonId")) {
+      String filterByTaxonId = options.getString("filterByTaxonId");
+      setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
+    }
+    if (options.hasKey("negativeFilter")) {
+      Boolean negativeFilter = options.getBoolean("negativeFilter");
+      setNegativeFilter(negativeFilter != null ? negativeFilter : false);
+    }
 
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {

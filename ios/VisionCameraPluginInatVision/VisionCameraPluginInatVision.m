@@ -115,7 +115,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];
   NSLog(@" made objectRec");
 
-  NSMutableArray *recentTopBranches = [NSMutableArray array];
+  NSMutableArray *topBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
     MLFeatureValue *firstFV = firstResult.featureValue;
@@ -124,10 +124,10 @@ static inline id inatVision(Frame* frame, NSArray* args) {
     // evaluate the best branch
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
     // add this to the end of the recent top branches array
-    [recentTopBranches addObject:bestBranch];
+    [topBranches addObject:bestBranch];
     // trim stuff from the beginning
-    while (recentTopBranches.count > NUM_RECENT_PREDICTIONS) {
-        [recentTopBranches removeObjectAtIndex:0];
+    while (topBranches.count > NUM_RECENT_PREDICTIONS) {
+        [topBranches removeObjectAtIndex:0];
     }
   };
 
@@ -150,16 +150,16 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   }
 
   NSArray *bestRecentBranch = nil;
-  if (recentTopBranches.count == 0) {
+  if (topBranches.count == 0) {
       return nil;
-  } else if (recentTopBranches.count == 1) {
-      bestRecentBranch = recentTopBranches.firstObject;
+  } else if (topBranches.count == 1) {
+      bestRecentBranch = topBranches.firstObject;
   } else {
       // return the recent best branch with the best, most specific score
-      bestRecentBranch = [recentTopBranches lastObject];
+      bestRecentBranch = [topBranches lastObject];
       // most specific score is last in each branch
       float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-      for (NSArray *candidateRecentBranch in [recentTopBranches reverseObjectEnumerator]) {
+      for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
           float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
           if (candidateRecentBranchScore > bestRecentBranchScore) {
               bestRecentBranch = candidateRecentBranch;

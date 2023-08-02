@@ -89,6 +89,12 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // Destructure threshold out of options
   NSString* confidenceThreshold = options[@"confidenceThreshold"];
 
+  // Setup threshold
+  float threshold = 0.70;
+  if (confidenceThreshold) {
+    threshold = [confidenceThreshold floatValue];
+  }
+
   CMSampleBufferRef buffer = frame.buffer;
   UIImageOrientation orientation = frame.orientation;
 
@@ -103,12 +109,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
 
-  // Setup threshold
-  float threshold = 0.70;
-  if (confidenceThreshold) {
-    threshold = [confidenceThreshold floatValue];
-  }
-
+  // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
   VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];

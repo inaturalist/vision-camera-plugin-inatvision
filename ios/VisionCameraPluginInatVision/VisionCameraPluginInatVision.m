@@ -115,9 +115,6 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
-  VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];
-  NSLog(@" made objectRec");
-
   NSMutableArray *topBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
@@ -184,6 +181,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // End timestamp
   NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
   NSLog(@"inatVision took %f seconds", timeElapsed);
+
   return bestRecentBranchAsDict;
 }
 

@@ -11,6 +11,7 @@
 @interface VisionCameraPluginInatVisionPlugin : NSObject
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
++ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
 
 @end
 
@@ -23,6 +24,56 @@
   }
   return taxonomy;
 }
+
++ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath {
+  static VNCoreMLModel* visionModel = nil;
+  if (visionModel == nil) {
+    // Setup vision
+    NSURL *modelUrl = [NSURL fileURLWithPath:modelPath];
+    if (!modelUrl) {
+      // TODO: handle this error
+      // [self.delegate classifierError:@"no file for optimized model"];
+      NSLog(@"no file for optimized model");
+      return nil;
+    }
+
+    NSError *loadError = nil;
+    MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
+                                                error:&loadError];
+    if (loadError) {
+      NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
+                                loadError.localizedDescription];
+      NSLog(@"%@", errString);
+      // TODO: handle this error
+      // [self.delegate classifierError:errString];
+      return nil;
+    }
+    if (!model) {
+      // TODO: handle this error
+      // [self.delegate classifierError:@"unable to make model"];
+      NSLog(@"unable to make model");
+      return nil;
+    }
+
+    NSError *modelError = nil;
+    visionModel = [VNCoreMLModel modelForMLModel:model
+                                              error:&modelError];
+    if (modelError) {
+        NSString *errString = [NSString stringWithFormat:@"error making vision model: %@",
+                                modelError.localizedDescription];
+        // [self.delegate classifierError:errString];
+        NSLog(@"%@", errString);
+        return nil;
+    }
+    if (!visionModel) {
+        // [self.delegate classifierError:@"unable to make vision model"];
+        NSLog(@"unable to make vision model");
+        return nil;
+    }
+  }
+  return visionModel;
+}
+
 
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Log args
@@ -58,48 +109,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
     threshold = [confidenceThreshold floatValue];
   }
 
-  // Setup vision
-  NSURL *modelUrl = [NSURL fileURLWithPath:modelPath];
-  if (!modelUrl) {
-    // TODO: handle this error
-    // [self.delegate classifierError:@"no file for optimized model"];
-    NSLog(@"no file for optimized model");
-    return nil;
-  }
-
-  NSError *loadError = nil;
-  MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
-                                              error:&loadError];
-  if (loadError) {
-    NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
-                              loadError.localizedDescription];
-    NSLog(@"%@", errString);
-    // TODO: handle this error
-    // [self.delegate classifierError:errString];
-    return nil;
-  }
-  if (!model) {
-    // TODO: handle this error
-    // [self.delegate classifierError:@"unable to make model"];
-    NSLog(@"unable to make model");
-    return nil;
-  }
-
-  NSError *modelError = nil;
-  VNCoreMLModel *visionModel = [VNCoreMLModel modelForMLModel:model
-                                                        error:&modelError];
-  if (modelError) {
-      NSString *errString = [NSString stringWithFormat:@"error making vision model: %@",
-                              modelError.localizedDescription];
-      // [self.delegate classifierError:errString];
-      NSLog(@"%@", errString);
-      return nil;
-  }
-  if (!visionModel) {
-      // [self.delegate classifierError:@"unable to make vision model"];
-      NSLog(@"unable to make vision model");
-      return nil;
-  }
+  VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
   VNCoreMLRequest *objectRec = [[VNCoreMLRequest alloc] initWithModel:visionModel];
   NSLog(@" made objectRec");

@@ -9,9 +9,20 @@
 #import "VCPPrediction.h"
 
 @interface VisionCameraPluginInatVisionPlugin : NSObject
+
++ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
+
 @end
 
 @implementation VisionCameraPluginInatVisionPlugin
+
++ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath {
+  static VCPTaxonomy* taxonomy = nil;
+  if (taxonomy == nil) {
+    taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+  }
+  return taxonomy;
+}
 
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Log args
@@ -39,7 +50,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   int NUM_RECENT_PREDICTIONS = 5;
 
   // Setup taxonomy
-  VCPTaxonomy *taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+  VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
 
   // Setup threshold
   float threshold = 0.70;

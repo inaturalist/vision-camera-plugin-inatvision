@@ -27,7 +27,7 @@ public class Node {
     }
 
     // Initialize the node from a CSV line
-    // Seek model 2.3:
+    // Seek model 2.3, 2.4:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,iconic_class_id,spatial_class_id,name
     // Seek model 1.0:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,name
@@ -38,7 +38,7 @@ public class Node {
         this.key = parts[1];
         this.rank = Float.parseFloat(parts[2]);
         this.leafId = parts[3];
-        if (version.equals("2.3")) {
+        if (version.equals("2.3") || version.equals("2.4")) {
             this.iconicId = parts[4];
             this.spatialId = parts[5];
             this.name = parts[6];

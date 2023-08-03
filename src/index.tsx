@@ -20,6 +20,7 @@ export interface Prediction {
 enum SupportedVersions {
   V1_0 = '1.0',
   V2_3 = '2.3',
+  V2_4 = '2.4',
 }
 
 interface Options {

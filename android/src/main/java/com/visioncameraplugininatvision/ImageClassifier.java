@@ -152,7 +152,7 @@ public class ImageClassifier {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
                 int pixel = bitmap.getPixel(x, y);
                 // TODO: rephrase to check for 1.0 version and have 2 as else
-                if (mModelVersion.equals("2.3")) {
+                if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
                   input[0][x][y][0] = Color.red(pixel);
                   input[0][x][y][1] = Color.green(pixel);
                   input[0][x][y][2] = Color.blue(pixel);

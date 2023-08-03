@@ -67,7 +67,9 @@ public class Taxonomy {
     private boolean mNegativeFilter = false;
 
     public void setFilterByTaxonId(Integer taxonId) {
-        Timber.tag(TAG).d("setFilterByTaxonId: " + taxonId);
+        if (mFilterByTaxonId != taxonId) {
+            Timber.tag(TAG).d("setFilterByTaxonId: changing taxonID filter from " + mFilterByTaxonId + " to " + taxonId);
+        }
         mFilterByTaxonId = taxonId;
     }
 
@@ -76,7 +78,9 @@ public class Taxonomy {
     }
 
     public void setNegativeFilter(boolean negative) {
-        Timber.tag(TAG).d("setNegativeFilter: " + negative);
+        if (mNegativeFilter != negative) {
+            Timber.tag(TAG).d("setNegativeFilter: changing negative filter from " + mNegativeFilter + " to " + negative);
+        }
         mNegativeFilter = negative;
     }
 

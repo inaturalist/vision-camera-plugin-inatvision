@@ -67,9 +67,10 @@ dependencies {
   implementation "androidx.camera:camera-core:1.1.0-alpha08"
   // Requirements for our custom image labeling and processing
   implementation 'androidx.exifinterface:exifinterface:1.2.0'
-  implementation 'org.tensorflow:tensorflow-lite:1.15.0'
+  // CV model 1.0 works with TF Lite 1.15.0
+  // CV model 2.3 works with TF Lite 2.?
+  implementation "org.tensorflow:tensorflow-lite:${getExtOrDefault("tensorflowVersion")}"
   implementation 'com.jakewharton.timber:timber:4.7.0'
-
 }
 
 if (isNewArchitectureEnabled()) {

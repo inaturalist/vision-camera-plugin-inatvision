@@ -14,7 +14,7 @@
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
-
++ (NSMutableArray*) topBranches;
 @end
 
 @implementation VisionCameraPluginInatVisionPlugin
@@ -76,6 +76,13 @@
   return visionModel;
 }
 
++ (NSMutableArray*) topBranches {
+  static NSMutableArray* topBranches = nil;
+  if (topBranches == nil) {
+    topBranches = [NSMutableArray array];
+  }
+  return topBranches;
+}
 
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Start timestamp
@@ -115,7 +122,6 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
-  NSMutableArray *topBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
     MLFeatureValue *firstFV = firstResult.featureValue;
@@ -130,6 +136,8 @@ static inline id inatVision(Frame* frame, NSArray* args) {
         [topBranches removeObjectAtIndex:0];
     }
   };
+  // Setup top branches
+  NSMutableArray *topBranches = [VisionCameraPluginInatVisionPlugin topBranches];
 
   VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
                                                             completionHandler:recognitionHandler];

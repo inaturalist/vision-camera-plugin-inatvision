@@ -15,6 +15,9 @@
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
 + (NSMutableArray*) topBranches;
++ (VNCoreMLRequest*) objectRecognitionRequestWithTopBranches:(NSMutableArray*)topBranches
+                                                         taxonomy:(VCPTaxonomy*)taxonomy
+                                                         visionModel:(VNCoreMLModel*)visionModel;
 @end
 
 @implementation VisionCameraPluginInatVisionPlugin
@@ -84,6 +87,33 @@
   return topBranches;
 }
 
++ (VNCoreMLRequest*) objectRecognitionRequestWithTopBranches:(NSMutableArray*)topBranches
+                                                         taxonomy:(VCPTaxonomy*)taxonomy
+                                                         visionModel:(VNCoreMLModel*)visionModel {
+  static VNCoreMLRequest* objectRecognition = nil;
+  if (objectRecognition == nil) {
+    VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
+      VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
+      MLFeatureValue *firstFV = firstResult.featureValue;
+      MLMultiArray *mm = firstFV.multiArrayValue;
+
+      // evaluate the best branch
+      NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
+      // add this to the end of the recent top branches array
+      [topBranches addObject:bestBranch];
+      // trim stuff from the beginning
+      while (topBranches.count > NUM_RECENT_PREDICTIONS) {
+          [topBranches removeObjectAtIndex:0];
+      }
+    };
+
+    objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
+                                                              completionHandler:recognitionHandler];
+    objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
+  }
+  return objectRecognition;
+}
+
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Start timestamp
   NSDate *startDate = [NSDate date];
@@ -122,28 +152,14 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
-  VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-    MLFeatureValue *firstFV = firstResult.featureValue;
-    MLMultiArray *mm = firstFV.multiArrayValue;
-
-    // evaluate the best branch
-    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
-    // add this to the end of the recent top branches array
-    [topBranches addObject:bestBranch];
-    // trim stuff from the beginning
-    while (topBranches.count > NUM_RECENT_PREDICTIONS) {
-        [topBranches removeObjectAtIndex:0];
-    }
-  };
   // Setup top branches
   NSMutableArray *topBranches = [VisionCameraPluginInatVisionPlugin topBranches];
 
-  VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
-                                                            completionHandler:recognitionHandler];
-  objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
+  // Setup object recognition request
+  VNCoreMLRequest *objectRecognition = [VisionCameraPluginInatVisionPlugin objectRecognitionRequestWithTopBranches:topBranches taxonomy:taxonomy visionModel:visionModel];
   NSArray *requests = @[objectRecognition];
 
+  // Run the request
   VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixelBuffer
                                                                             orientation:orientation
                                                                                 options:@{}];
@@ -157,6 +173,7 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       return nil;
   }
 
+  // Get the best recent branch
   NSArray *bestRecentBranch = nil;
   if (topBranches.count == 0) {
       return nil;

@@ -5,6 +5,8 @@
 @import Vision;
 @import CoreML;
 
+#define NUM_RECENT_PREDICTIONS 5
+
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
 
@@ -106,8 +108,6 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       NSLog(@"unable to get pixel buffer");
       return nil;
   }
-
-  int NUM_RECENT_PREDICTIONS = 5;
 
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];

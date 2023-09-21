@@ -1,31 +1,30 @@
 package com.visioncameraplugininatvision;
 
-import androidx.annotation.NonNull;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessor.FrameProcessorPluginRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 public class VisionCameraPluginInatVisionPackage implements ReactPackage {
-  @NonNull
+  @Nonnull
   @Override
-  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
+  public List<NativeModule> createNativeModules(@Nonnull ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
     VisionCameraPluginInatVisionModule module = new VisionCameraPluginInatVisionModule(reactContext);
     modules.add(module);
-    FrameProcessorPlugin.register(new VisionCameraPluginInatVisionPlugin());
+    FrameProcessorPluginRegistry.addFrameProcessorPlugin("inatVision", options -> new VisionCameraPluginInatVisionPlugin());
     return modules;
   }
 
-  @NonNull
+  @Nonnull
   @Override
-  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
+  public List<ViewManager> createViewManagers(@Nonnull ReactApplicationContext reactContext) {
     return Collections.emptyList();
   }
 }

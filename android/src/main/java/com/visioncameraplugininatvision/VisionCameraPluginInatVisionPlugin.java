@@ -45,47 +45,48 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   }
 
   @Override
-  public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
-    Log.d(TAG, "2: " + frame.getWidth() + " x " + frame.getHeight() + " frame with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:" + params.length);
-    for (Object param : params) {
-      Log.d(TAG, "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
+  public Object callback(Frame frame, Map<String, Object> arguments) {
+    Image image = frame.getImage();
+    Log.d(TAG, "1: " + image.getWidth() + " x " + image.getHeight() + " Image with format #" + image.getFormat() + ". Logging " + arguments.size());
+
+    for (String key : arguments.keySet()) {
+        Object value = arguments.get(key);
+        Log.d(TAG, "2: " + "  -> " + (value == null ? "(null)" : value + " (" + value.getClass().getName() + ")"));
     }
 
-    // The first parameter is the options object
-    ReadableNativeMap options = (ReadableNativeMap)params[0];
-    if (options == null) {
+    if (arguments == null) {
       throw new RuntimeException("Options object is null");
     };
-    // Destructure the version from the options map
-    String version = options.getString("version");
+    // Destructure the version from the arguments map
+    String version = (String)arguments.get("version");
     if (version == null) {
       throw new RuntimeException("Version is null");
     };
-    // Destructure the model path from the options map
-    String modelPath = options.getString("modelPath");
+    // Destructure the model path from the arguments map
+    String modelPath = (String)arguments.get("modelPath");
     if (modelPath == null) {
       throw new RuntimeException("Model path is null");
     };
-    // Destructure the taxonomy path from the options map
-    String taxonomyPath = options.getString("taxonomyPath");
+    // Destructure the taxonomy path from the arguments map
+    String taxonomyPath = (String)arguments.get("taxonomyPath");
     if (taxonomyPath == null) {
       throw new RuntimeException("Taxonomy path is null");
     };
 
     // Destructure optional parameters and set values
-    if (options.hasKey("confidenceThreshold")) {
-      String confidenceThreshold = options.getString("confidenceThreshold");
-      if (confidenceThreshold == null) {
-        confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
-      }
-      setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+    String confidenceThreshold = (String)arguments.get("confidenceThreshold");
+    if (confidenceThreshold == null) {
+      confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
     }
-    if (options.hasKey("filterByTaxonId")) {
-      String filterByTaxonId = options.getString("filterByTaxonId");
+    setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+
+    String filterByTaxonId = (String)arguments.get("filterByTaxonId");
+    if (filterByTaxonId != null) {
       setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
     }
-    if (options.hasKey("negativeFilter")) {
-      Boolean negativeFilter = options.getBoolean("negativeFilter");
+
+    Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
+    if (negativeFilter != null) {
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
     }
 
@@ -149,9 +150,5 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     }
 
     return results;
-  }
-
-  public VisionCameraPluginInatVisionPlugin() {
-    super("inatVision");
   }
 }

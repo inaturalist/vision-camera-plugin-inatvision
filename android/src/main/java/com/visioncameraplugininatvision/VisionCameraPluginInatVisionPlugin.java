@@ -1,6 +1,8 @@
 package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.util.Log;
 
 import androidx.camera.core.ImageProxy;
@@ -8,12 +10,13 @@ import androidx.camera.core.ImageProxy;
 import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
 
 import timber.log.Timber;
 

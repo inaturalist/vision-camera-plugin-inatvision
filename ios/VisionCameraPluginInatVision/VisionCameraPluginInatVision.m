@@ -1,4 +1,6 @@
+#import <Foundation/Foundation.h>
 #import <VisionCamera/FrameProcessorPlugin.h>
+#import <VisionCamera/FrameProcessorPluginRegistry.h>
 #import <VisionCamera/Frame.h>
 
 @import UIKit;
@@ -8,7 +10,7 @@
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
 
-@interface VisionCameraPluginInatVisionPlugin : NSObject
+@interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
@@ -74,23 +76,25 @@
   return visionModel;
 }
 
+- (instancetype) initWithOptions:(NSDictionary*)options; {
+  self = [super init];
+  return self;
+}
 
-static inline id inatVision(Frame* frame, NSArray* args) {
+- (id)callback:(Frame*)frame withArguments:(NSDictionary*)arguments {
   // Start timestamp
   NSDate *startDate = [NSDate date];
 
-  // Log args
-  NSLog(@"inatVision args: %@", args);
-  // First arg is the options dict
-  NSDictionary* options = args[0];
+  // Log arguments
+  NSLog(@"inatVision arguments: %@", arguments);
   // Destructure version out of options
-  NSString* version = options[@"version"];
+  NSString* version = arguments[@"version"];
   // Destructure model path out of options
-  NSString* modelPath = options[@"modelPath"];
+  NSString* modelPath = arguments[@"modelPath"];
   // Destructure taxonomy path out of options
-  NSString* taxonomyPath = options[@"taxonomyPath"];
+  NSString* taxonomyPath = arguments[@"taxonomyPath"];
   // Destructure threshold out of options
-  NSString* confidenceThreshold = options[@"confidenceThreshold"];
+  NSString* confidenceThreshold = arguments[@"confidenceThreshold"];
 
   // Setup threshold
   float threshold = 0.70;
@@ -185,6 +189,11 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   return bestRecentBranchAsDict;
 }
 
-VISION_EXPORT_FRAME_PROCESSOR(inatVision)
++ (void) load {
+  [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"inatVision"
+                                        withInitializer:^FrameProcessorPlugin*(NSDictionary* options) {
+    return [[VisionCameraPluginInatVisionPlugin alloc] initWithOptions:options];
+  }];
+}
 
 @end

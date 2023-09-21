@@ -6,14 +6,13 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import { runOnJS } from 'react-native-reanimated';
 import {
   Camera,
   useCameraDevices,
   useFrameProcessor,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
-
+import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
@@ -25,7 +24,9 @@ const modelVersion = '1.0';
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
   const [results, setResult] = useState<any[]>([]);
-  const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
+  const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
+    undefined
+  );
   const [negativeFilter, setNegativeFilter] = useState(false);
 
   const devices = useCameraDevices();
@@ -41,14 +42,14 @@ export default function App() {
     if (!filterByTaxonId) {
       setFilterByTaxonId('47126');
     } else {
-      setFilterByTaxonId(null);
+      setFilterByTaxonId(undefined);
     }
   };
 
   useEffect(() => {
     (async () => {
       const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'authorized');
+      setHasPermission(status === 'granted');
     })();
   }, []);
 
@@ -102,6 +103,10 @@ export default function App() {
     }
   }, []);
 
+  const handleResults = Worklets.createRunInJsFn((predictions: any[]) => {
+    setResult(predictions);
+  });
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
@@ -113,38 +118,42 @@ export default function App() {
         Platform.OS === 'ios'
           ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
           : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
-
       try {
-        const cvResults = InatVision.inatVision(frame, {
-          version: modelVersion,
-          modelPath,
-          taxonomyPath,
-          confidenceThreshold,
-          filterByTaxonId,
-          negativeFilter,
-        });
+        const cvResults: InatVision.Prediction[] | undefined =
+          InatVision.inatVision(frame, {
+            version: modelVersion,
+            modelPath,
+            taxonomyPath,
+            confidenceThreshold,
+            filterByTaxonId,
+            negativeFilter,
+          });
         console.log('cvResults :>> ', cvResults);
+        if (!cvResults) {
+          return;
+        }
         let predictions = [];
         if (Platform.OS === 'ios') {
           predictions = cvResults;
         } else {
-          predictions = cvResults.map((result: InatVision.Prediction) => {
+          predictions = cvResults.map((result) => {
             const rank = Object.keys(result)[0];
             if (!rank || !result[rank]) {
               return result;
             }
-            const prediction: any = result[rank][0];
+            const rankPredictions: any = result[rank];
+            const prediction = rankPredictions[0];
             prediction.rank = rank;
             return prediction;
           });
         }
-        runOnJS(setResult)(predictions);
+        handleResults(predictions);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);
       }
     },
-    [confidenceThreshold, filterByTaxonId, negativeFilter]
+    [confidenceThreshold, filterByTaxonId, negativeFilter, handleResults]
   );
 
   return (
@@ -156,7 +165,7 @@ export default function App() {
             device={device}
             isActive={true}
             frameProcessor={frameProcessor}
-            frameProcessorFps={1}
+            enableZoomGesture
           />
           <Text style={styles.text} onPress={toggleNegativeFilter}>
             {negativeFilter ? 'Negative Filter' : 'Positive Filter'}
@@ -164,7 +173,7 @@ export default function App() {
           <Text style={styles.text} onPress={changeFilterByTaxonId}>
             {filterByTaxonId ? 'Plant filter' : 'No filter'}
           </Text>
-          {results.map((result: InatVision.Prediction) => {
+          {results.map((result) => {
             return (
               <View key={result.rank} style={styles.labels}>
                 <Text style={styles.text}>{result.name}</Text>

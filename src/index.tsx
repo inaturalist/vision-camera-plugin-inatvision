@@ -1,9 +1,10 @@
-/* globals __inatVision */
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
-import type { Frame } from 'react-native-vision-camera';
+import { VisionCameraProxy, Frame } from 'react-native-vision-camera';
 
-interface PredictionDetails {
+const plugin = VisionCameraProxy.getFrameProcessorPlugin('inatVision');
+
+export interface PredictionDetails {
   ancestor_ids: number[];
   name: string;
   rank: number;
@@ -17,33 +18,29 @@ export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
-enum SupportedVersions {
-  V1_0 = '1.0',
-  V2_3 = '2.3',
-  V2_4 = '2.4',
-}
-
-interface Options {
+interface Options extends Record<string, string | boolean | undefined> {
   // Required
-  version: SupportedVersions;
+  version: string;
   modelPath: string;
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: string;
-  filterByTaxonId?: null | string;
-  negativeFilter?: null | boolean;
+  filterByTaxonId?: string;
+  negativeFilter?: boolean;
 }
 
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision(frame: Frame, options: Options): Prediction[] {
+export function inatVision(frame: Frame, args: Options): any {
   'worklet';
-  if (!Object.values(SupportedVersions).includes(options.version)) {
+  if (!['1.0', '2.3', '2.4'].includes(args.version)) {
     throw new Error('This model version is not supported.');
   }
-  // @ts-expect-error Frame Processors are not typed.
-  return __inatVision(frame, options);
+  if (plugin === undefined) {
+    throw new Error("Couldn't find the 'inatVision' plugin.");
+  }
+  return plugin.call(frame, args);
 }
 
 const LINKING_ERROR =

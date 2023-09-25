@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import {
   Camera,
-  useCameraDevices,
+  useCameraDevice,
   useFrameProcessor,
+  useCameraPermission,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
 import { Worklets } from 'react-native-worklets-core';
@@ -22,15 +23,15 @@ const taxonomyFilenameIOS = 'small_export_tax.json';
 const modelVersion = '1.0';
 
 export default function App() {
-  const [hasPermission, setHasPermission] = useState(false);
+  const { hasPermission, requestPermission } = useCameraPermission();
+
   const [results, setResult] = useState<any[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
   );
   const [negativeFilter, setNegativeFilter] = useState(false);
 
-  const devices = useCameraDevices();
-  const device = devices.back;
+  const device = useCameraDevice('back');
 
   const confidenceThreshold = '0.7';
 
@@ -48,10 +49,9 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'granted');
+      requestPermission();
     })();
-  }, []);
+  }, [requestPermission]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {

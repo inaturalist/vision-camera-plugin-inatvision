@@ -3896,14 +3896,14 @@ react-native-gradle-plugin@^0.71.19:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.19.tgz#3379e28341fcd189bc1f4691cefc84c1a4d7d232"
   integrity sha512-1dVk9NwhoyKHCSxcrM6vY6cxmojeATsBobDicX0ZKr7DgUF2cBQRTKsimQFvzH8XhOVXyH8p4HyDSZNIFI8OlQ==
 
-react-native-vision-camera@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.0.0.tgz#0e8412e9e936dd30d4229a5fa91a2f3f2b02a388"
-  integrity sha512-pRevZMgusmj8ZcZ6RQRoPLsBoGAKyl+o6bGD248YGvdRmeTEJmW5miNv7+Fby/mcALOEM+O4kK1ZhWMAdOJfrg==
+react-native-vision-camera@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.1.0.tgz#c98d1c87580fa17f6dab9e03de1394bc9ba9e473"
+  integrity sha512-Aq7xmqZxw7JXxB49bthhSVuy9SxwOMxageOmFfw6cbF5aSAAFuDx7FwuI5eqeOelz+5VYnge2ehVu4Al9Pjc6A==
   dependencies:
     string-hash-64 "^1.0.3"
 
-react-native-worklets-core@^0.0.2:
+react-native-worklets-core@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/react-native-worklets-core/-/react-native-worklets-core-0.2.0.tgz#6dae14c40fdaf709d5d54851cc24d5deaecfd4a1"
   integrity sha512-gxpfl3KnoRmDtBBVs08K7Ru3xaOrBTGXKQtcjwDzgIcaiNhPfKiJdUz1AIa3SX+M2I/f/7fgWK2W9OFYae/AzA==

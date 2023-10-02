@@ -70,16 +70,34 @@ public class BitmapUtils {
   @RequiresApi(VERSION_CODES.LOLLIPOP)
   @Nullable
   @ExperimentalGetImage
-  public static Bitmap getBitmap(ImageProxy image) {
+  public static Bitmap getBitmap(Image image, String orientation) {
+    // Get rotation degree from orientation string ('portrait' | 'portrait-upside-down' | 'landscape-left' | 'landscape-right')
+    int rotationDegrees;
+    switch (orientation) {
+      case "portrait":
+        rotationDegrees = 90;
+        break;
+      case "portrait-upside-down":
+        rotationDegrees = 270;
+        break;
+      case "landscape-left":
+        rotationDegrees = 180;
+        break;
+      case "landscape-right":
+        rotationDegrees = 0;
+        break;
+      default:
+        rotationDegrees = 0;
+    }
     FrameMetadata frameMetadata =
         new FrameMetadata.Builder()
             .setWidth(image.getWidth())
             .setHeight(image.getHeight())
-            .setRotation(image.getImageInfo().getRotationDegrees())
+            .setRotation(rotationDegrees)
             .build();
 
     ByteBuffer nv21Buffer =
-        yuv420ThreePlanesToNV21(image.getImage().getPlanes(), image.getWidth(), image.getHeight());
+        yuv420ThreePlanesToNV21(image.getPlanes(), image.getWidth(), image.getHeight());
     return getBitmap(nv21Buffer, frameMetadata);
   }
 

@@ -166,6 +166,7 @@ export default function App() {
             isActive={true}
             frameProcessor={frameProcessor}
             enableZoomGesture
+            pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
           />
           <Text style={styles.text} onPress={toggleNegativeFilter}>
             {negativeFilter ? 'Negative Filter' : 'Positive Filter'}

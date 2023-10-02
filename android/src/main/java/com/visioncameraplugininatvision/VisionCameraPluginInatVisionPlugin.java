@@ -50,6 +50,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   @Override
   public Object callback(Frame frame, Map<String, Object> arguments) {
     Image image = frame.getImage();
+    String orientation = frame.getOrientation();
     Log.d(TAG, "1: " + image.getWidth() + " x " + image.getHeight() + " Image with format #" + image.getFormat() + ". Logging " + arguments.size());
 
     for (String key : arguments.keySet()) {
@@ -118,7 +119,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     WritableNativeArray results = new WritableNativeArray();
 
     if (mImageClassifier != null) {
-      Bitmap bmp = BitmapUtils.getBitmap(frame);
+      Bitmap bmp = BitmapUtils.getBitmap(image, orientation);
       // Crop the center square of the frame
       int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
       int cropX = (bmp.getWidth() - minDim) / 2;

@@ -7819,10 +7819,10 @@ react-native-builder-bob@^0.20.4:
   optionalDependencies:
     jetifier "^2.0.0"
 
-react-native-vision-camera@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.1.0.tgz#c98d1c87580fa17f6dab9e03de1394bc9ba9e473"
-  integrity sha512-Aq7xmqZxw7JXxB49bthhSVuy9SxwOMxageOmFfw6cbF5aSAAFuDx7FwuI5eqeOelz+5VYnge2ehVu4Al9Pjc6A==
+react-native-vision-camera@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.2.2.tgz#ef28b108fab2bf34d90ea4d7f18cdb5323a77b49"
+  integrity sha512-zGxW7RnOwWHB1jWkOqzfE1t5wrZfamUgyT0W+c7n8eEdF9d2CvXDonjKalblZMYv2NhxJwg9AYdpA7pxfvBlvQ==
   dependencies:
     string-hash-64 "^1.0.3"
 

@@ -15,6 +15,7 @@ import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -116,7 +117,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeArray results = new WritableNativeArray();
+    List<Map> results = new ArrayList<>();
 
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(image, orientation);
@@ -146,9 +147,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
           continue;
         }
         if (prediction.probability > mConfidenceThreshold) {
-          WritableNativeMap map = Taxonomy.predictionToMap(prediction);
+          Map map = Taxonomy.predictionToMap(prediction);
           if (map == null) continue;
-          results.pushMap(map);
+          results.add(map);
         }
       }
     }

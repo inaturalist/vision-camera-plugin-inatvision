@@ -1,8 +1,5 @@
 package com.visioncameraplugininatvision;
 
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -252,23 +249,23 @@ public class Taxonomy {
     }
 
     /** Converts the predictions array into "clean" map of results (separated by rank), sent back to React Native */
-    public static WritableNativeMap predictionToMap(Prediction prediction) {
-        WritableNativeMap event = new WritableNativeMap();
+    public static Map predictionToMap(Prediction prediction) {
+        Map<String, Object> event = new HashMap();
 
-        Map<Float, WritableNativeArray> ranks = new HashMap<>();
+        Map<Float, ArrayList> ranks = new HashMap<>();
 
-        WritableNativeMap result = nodeToMap(prediction);
+        Map result = nodeToMap(prediction);
 
         if (!ranks.containsKey(prediction.node.rank)) {
-            ranks.put(prediction.node.rank, new WritableNativeArray());
+            ranks.put(prediction.node.rank, new ArrayList());
         }
 
-        ranks.get(prediction.node.rank).pushMap(result);
+        ranks.get(prediction.node.rank).add(result);
 
         // Convert from rank level to rank name
         for (Float rank : RANK_LEVEL_TO_NAME.keySet()) {
             if (ranks.containsKey(rank)) {
-                event.putArray(RANK_LEVEL_TO_NAME.get(rank), ranks.get(rank));
+                event.put(RANK_LEVEL_TO_NAME.get(rank), ranks.get(rank));
             }
         }
 
@@ -276,22 +273,22 @@ public class Taxonomy {
     }
 
     /** Converts a prediction result to a map */
-    public static WritableNativeMap nodeToMap(Prediction prediction) {
-        WritableNativeMap result = new WritableNativeMap();
+    public static Map nodeToMap(Prediction prediction) {
+        Map result = new HashMap();
 
         if (prediction.node == null) return null;
 
         try {
-            result.putInt("taxon_id", Integer.valueOf(prediction.node.key));
-            result.putString("name", prediction.node.name);
-            result.putDouble("score", prediction.probability);
-            result.putDouble("rank", prediction.node.rank);
+            result.put("taxon_id", Integer.valueOf(prediction.node.key));
+            result.put("name", prediction.node.name);
+            result.put("score", prediction.probability);
+            result.put("rank", (double) prediction.node.rank);
             if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
               if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
-                result.putInt("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
+                result.put("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
               }
               if ((prediction.node.spatialId != null) && (prediction.node.spatialId.length() > 0)) {
-                result.putInt("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
+                result.put("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
               }
             }
         } catch (NumberFormatException exc) {
@@ -310,12 +307,12 @@ public class Taxonomy {
             currentNode = currentNode.parent;
         }
         Collections.reverse(ancestorsList);
-        WritableNativeArray ancestors = new WritableNativeArray();
+        ArrayList ancestors = new ArrayList();
         for (Integer id : ancestorsList) {
-            ancestors.pushInt(id);
+            ancestors.add(id);
         }
 
-        result.putArray("ancestor_ids", ancestors);
+        result.put("ancestor_ids", ancestors);
 
         return result;
     }

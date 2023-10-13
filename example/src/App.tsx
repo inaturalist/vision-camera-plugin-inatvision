@@ -127,6 +127,7 @@ export default function App() {
             confidenceThreshold,
             filterByTaxonId,
             negativeFilter,
+            patchedOrientationAndroid: 'portrait',
           });
         console.log('cvResults :>> ', cvResults);
         if (!cvResults) {

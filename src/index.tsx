@@ -27,6 +27,8 @@ interface Options extends Record<string, string | boolean | undefined> {
   confidenceThreshold?: string;
   filterByTaxonId?: string;
   negativeFilter?: boolean;
+  // Patches
+  patchedOrientationAndroid?: string;
 }
 
 /**

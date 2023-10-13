@@ -51,7 +51,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   @Override
   public Object callback(Frame frame, Map<String, Object> arguments) {
     Image image = frame.getImage();
-    String orientation = frame.getOrientation();
+    // This should give the orientation of the passed in frame, as of vision-camera v3.2.2 this is not working though
+    // instead we use a string passed in via the arguments to signify the device orientation
+    // String orientation = frame.getOrientation();
     Log.d(TAG, "1: " + image.getWidth() + " x " + image.getHeight() + " Image with format #" + image.getFormat() + ". Logging " + arguments.size());
 
     for (String key : arguments.keySet()) {
@@ -77,6 +79,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     if (taxonomyPath == null) {
       throw new RuntimeException("Taxonomy path is null");
     };
+
+    String patchedOrientationAndroid = (String)arguments.get("patchedOrientationAndroid");
+    if (patchedOrientationAndroid == null) {
+      throw new RuntimeException("patchedOrientationAndroid must be a string passing in the current device orientation");
+    }
 
     // Destructure optional parameters and set values
     String confidenceThreshold = (String)arguments.get("confidenceThreshold");
@@ -120,7 +127,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     List<Map> results = new ArrayList<>();
 
     if (mImageClassifier != null) {
-      Bitmap bmp = BitmapUtils.getBitmap(image, orientation);
+      Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       // Crop the center square of the frame
       int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
       int cropX = (bmp.getWidth() - minDim) / 2;

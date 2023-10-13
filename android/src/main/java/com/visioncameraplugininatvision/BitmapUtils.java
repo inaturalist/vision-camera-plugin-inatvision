@@ -81,10 +81,10 @@ public class BitmapUtils {
         rotationDegrees = 270;
         break;
       case "landscape-left":
-        rotationDegrees = 180;
+        rotationDegrees = 0;
         break;
       case "landscape-right":
-        rotationDegrees = 0;
+        rotationDegrees = 180;
         break;
       default:
         rotationDegrees = 0;

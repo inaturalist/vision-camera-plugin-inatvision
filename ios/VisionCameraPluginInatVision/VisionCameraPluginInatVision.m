@@ -76,8 +76,8 @@
   return visionModel;
 }
 
-- (instancetype) initWithOptions:(NSDictionary*)options; {
-  self = [super init];
+- (instancetype) initWithOptions:(NSDictionary* _Nullable)options; {
+  self = [super initWithOptions:options];
   return self;
 }
 
@@ -189,11 +189,6 @@
   return bestRecentBranchAsDict;
 }
 
-+ (void) load {
-  [FrameProcessorPluginRegistry addFrameProcessorPlugin:@"inatVision"
-                                        withInitializer:^FrameProcessorPlugin*(NSDictionary* options) {
-    return [[VisionCameraPluginInatVisionPlugin alloc] initWithOptions:options];
-  }];
-}
+VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
 
 @end

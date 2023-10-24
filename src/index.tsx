@@ -2,7 +2,7 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import { VisionCameraProxy, Frame } from 'react-native-vision-camera';
 
-const plugin = VisionCameraProxy.getFrameProcessorPlugin('inatVision');
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
 export interface PredictionDetails {
   ancestor_ids: number[];

@@ -7819,10 +7819,10 @@ react-native-builder-bob@^0.20.4:
   optionalDependencies:
     jetifier "^2.0.0"
 
-react-native-vision-camera@3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.5.1.tgz#64e8328ee712eb7f473ca58031427ddf3f10769c"
-  integrity sha512-F5MBqYooyHJwY9NDSznMKlU6HvMYbKzF0J68SdZz2Jw1TOXRMnN4RlRZ2QvC+NZXWwwvCYTuJy+fBMvW3ZHybg==
+react-native-vision-camera@3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.6.3.tgz#c8b53016cacefedd1c98b3111feccb87a3d938bd"
+  integrity sha512-GTX9LPnYek+jh55w9EoVc0dmHq0ZCDHOGVLlR2hOWrzKFZRUKGxazyS9Q/Z+SSi1NRbxzFF5l2K0fSyChKR0og==
 
 react-native-worklets-core@0.2.2:
   version "0.2.2"

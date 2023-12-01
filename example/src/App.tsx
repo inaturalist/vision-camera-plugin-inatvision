@@ -23,6 +23,15 @@ const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
 const modelVersion = '1.0';
 
+const modelPath =
+  Platform.OS === 'ios'
+    ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+const taxonomyPath =
+  Platform.OS === 'ios'
+    ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
+
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
   const [results, setResult] = useState<any[]>([]);
@@ -106,14 +115,6 @@ export default function App() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      const modelPath =
-        Platform.OS === 'ios'
-          ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
-          : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
-      const taxonomyPath =
-        Platform.OS === 'ios'
-          ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
-          : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
       try {
         const cvResults = InatVision.inatVision(frame, {
@@ -163,10 +164,27 @@ export default function App() {
           const asset = response.assets[0];
           const uri = Platform.OS === 'ios' ? null : asset.originalPath;
           console.log('Image URI: ', uri);
+          predict(uri);
         }
       }
     );
   }
+
+  function predict(uri: string) {
+    InatVision.getPredictionsForImage({
+      uri,
+      version: modelVersion,
+      modelPath,
+      taxonomyPath,
+    })
+      .then((result) => {
+        console.log('Result', JSON.stringify(result));
+      })
+      .catch((err) => {
+        console.log('Error', err);
+      });
+  }
+
   return (
     <View style={styles.container}>
       {device != null && hasPermission ? (

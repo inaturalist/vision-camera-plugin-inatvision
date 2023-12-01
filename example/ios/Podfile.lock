@@ -443,7 +443,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.6.0)
-  - VisionCamera (2.15.4):
+  - VisionCamera (2.15.6):
     - React
     - React-callinvoker
     - React-Core
@@ -664,11 +664,11 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  VisionCamera: c6356b309f7b8e185b7be2e703ec67bb35acf345
+  VisionCamera: 523b49054bee9dace64189ab6631cb41e8b83fe0
   VisionCameraPluginInatVision: 79bb258db75218889c74d0897ecba676492c4def
   Yoga: f7decafdc5e8c125e6fa0da38a687e35238420fa
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 1d03432450b57ff1583e4131b9ab51c7ff49a69c
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

@@ -40,17 +40,17 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
     @ReactMethod
     public void addListener(String eventName) {
-      if (mListenerCount == 0) {
-        Timber.plant(new LogEventTree(mContext, eventName));
-      }
-      mListenerCount += 1;
+        if (mListenerCount == 0) {
+            Timber.plant(new LogEventTree(mContext, eventName));
+        }
+        mListenerCount += 1;
     }
 
     @ReactMethod
     public void removeListeners(Integer count) {
-      mListenerCount -= count;
-      if (mListenerCount == 0) {
-        Timber.uprootAll();
-      }
+        mListenerCount -= count;
+        if (mListenerCount == 0) {
+            Timber.uprootAll();
+        }
     }
 }

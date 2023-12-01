@@ -13,6 +13,7 @@ import {
   useFrameProcessor,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
@@ -150,6 +151,25 @@ export default function App() {
     [confidenceThreshold, filterByTaxonId, negativeFilter]
   );
 
+  function selectImage() {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else {
+          const asset = response.assets[0];
+          const uri = Platform.OS === 'ios' ? null : asset.originalPath;
+          console.log('Image URI: ', uri);
+        }
+      }
+    );
+  }
   return (
     <View style={styles.container}>
       {device != null && hasPermission ? (
@@ -166,6 +186,9 @@ export default function App() {
           </Text>
           <Text style={styles.text} onPress={changeFilterByTaxonId}>
             {filterByTaxonId ? 'Plant filter' : 'No filter'}
+          </Text>
+          <Text style={styles.text} onPress={selectImage}>
+            {'Select image'}
           </Text>
           {results.map((result: InatVision.Prediction) => {
             return (

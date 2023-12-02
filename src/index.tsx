@@ -106,7 +106,5 @@ interface getPredictionsForImageOptions {
  * Function to call the computer vision model with a image from disk
  */
 export function getPredictionsForImage(options: getPredictionsForImageOptions) {
-  return NativeModules.VisionCameraPluginInatVision.getPredictionsForImage(
-    options
-  );
+  return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

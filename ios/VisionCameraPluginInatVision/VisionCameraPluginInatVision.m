@@ -8,14 +8,14 @@
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
 
-@interface VisionCameraPluginInatVisionPlugin : NSObject
+@interface VisionCameraPluginInatVision : NSObject
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
 
 @end
 
-@implementation VisionCameraPluginInatVisionPlugin
+@implementation VisionCameraPluginInatVision
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath {
   static VCPTaxonomy* taxonomy = nil;
@@ -110,10 +110,10 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   int NUM_RECENT_PREDICTIONS = 5;
 
   // Setup taxonomy
-  VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
+  VCPTaxonomy *taxonomy = [VisionCameraPluginInatVision taxonomyWithTaxonomyFile:taxonomyPath];
 
   // Setup vision model
-  VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
+  VNCoreMLModel *visionModel = [VisionCameraPluginInatVision visionModelWithModelFile:modelPath];
 
   NSMutableArray *topBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {

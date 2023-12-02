@@ -161,11 +161,9 @@ export default function App() {
       (response) => {
         if (response.didCancel) {
           console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else {
+        } else if (response.assets && response.assets.length > 0) {
           const asset = response.assets[0];
-          const uri = Platform.OS === 'ios' ? null : asset.originalPath;
+          const uri = Platform.OS === 'ios' ? asset.uri : asset.originalPath;
           console.log('Image URI: ', uri);
           predict(uri);
         }

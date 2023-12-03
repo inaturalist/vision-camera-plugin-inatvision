@@ -8,6 +8,8 @@
 #import <React/RCTBridgeModule.h>
 
 @interface AwesomeModule : NSObject <RCTBridgeModule>
++ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
++ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
 @end
 
 @implementation AwesomeModule

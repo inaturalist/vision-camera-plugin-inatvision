@@ -1,11 +1,20 @@
-#import "VisionCameraPluginInatVisionModule.h"
-
 @import UIKit;
 @import Vision;
 @import CoreML;
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
+
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNAwesomeModuleSpec.h"
+
+@interface AwesomeModule : NSObject <NativeAwesomeModuleSpec>
+#else
+#import <React/RCTBridgeModule.h>
+
+@interface AwesomeModule : NSObject <RCTBridgeModule>
+#endif
+@end
 
 @implementation AwesomeModule
 RCT_EXPORT_MODULE(VisionCameraPluginInatVision)

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */; };
+		8F2D62CB2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D62CA2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m */; };
 		8F3C41822A4AFF5B008FBC67 /* VCPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417A2A4AFF5B008FBC67 /* VCPNode.m */; };
 		8F3C41832A4AFF5B008FBC67 /* VCPClassifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */; };
 		8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */; };
@@ -29,6 +30,7 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libVisionCameraPluginInatVision.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVisionCameraPluginInatVision.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VisionCameraPluginInatVision.m; path = VisionCameraPluginInatVision/VisionCameraPluginInatVision.m; sourceTree = "<group>"; };
+		8F2D62CA2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = VisionCameraPluginInatVisionModule.m; path = VisionCameraPluginInatVision/VisionCameraPluginInatVisionModule.m; sourceTree = "<group>"; };
 		8F3C417A2A4AFF5B008FBC67 /* VCPNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPNode.m; sourceTree = "<group>"; };
 		8F3C417B2A4AFF5B008FBC67 /* VCPPrediction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPPrediction.h; sourceTree = "<group>"; };
 		8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPClassifier.m; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				64E6C8759A20E2F5F0255F04 /* VisionCameraPluginInatVision.m */,
+				8F2D62CA2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m */,
 			);
 			name = VisionCameraPluginInatVision;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */,
 				8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */,
 				8F3C41822A4AFF5B008FBC67 /* VCPNode.m in Sources */,
+				8F2D62CB2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

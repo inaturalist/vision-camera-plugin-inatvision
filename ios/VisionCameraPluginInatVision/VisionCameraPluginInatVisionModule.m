@@ -171,7 +171,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
-    NSLog(@"inatVision took %f seconds", timeElapsed);
+    NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
     resolve(bestRecentBranchAsDict);
 }

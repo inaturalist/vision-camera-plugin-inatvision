@@ -10,6 +10,7 @@
     "pods": "pod-install --quiet"
   },
   "dependencies": {
+    "@react-native-camera-roll/camera-roll": "^7.2.0",
     "react": "18.2.0",
     "react-native": "0.71.11",
     "react-native-fs": "^2.20.0",

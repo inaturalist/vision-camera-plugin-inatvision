@@ -1,4 +1,5 @@
 @import UIKit;
+@import Photos;
 @import Vision;
 @import CoreML;
 
@@ -127,53 +128,124 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
     NSArray *requests = @[objectRecognition];
 
-    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:[NSURL URLWithString:uri]
-                                                                              options:@{}];
+    // If uri starts with ph://, it's a photo library asset
+    if ([uri hasPrefix:@"ph://"]) {
 
-    NSError *requestError = nil;
-    [handler performRequests:requests
-                        error:&requestError];
-    if (requestError) {
-        NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                                requestError.localizedDescription];
-        NSLog(@"%@", errString);
-        reject(@"request_error", errString, nil);
-    }
+      // Convert ph:// path to local identifier
+      NSString *localIdentifier = [uri stringByReplacingOccurrencesOfString:@"ph://" withString:@""];
 
-    NSArray *bestRecentBranch = nil;
-    if (topBranches.count == 0) {
-        resolve(@[]);
-    } else if (topBranches.count == 1) {
-        bestRecentBranch = topBranches.firstObject;
+      // Fetch the asset
+      PHFetchResult<PHAsset *> *assetResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[localIdentifier] options:nil];
+      PHAsset *asset = [assetResult firstObject];
+      if (!asset) {
+          reject(@"error", @"Asset not found", nil);
+          return;
+      }
+
+
+
+      // Fetch image data
+      [[PHImageManager defaultManager] requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
+          if (!imageData) {
+              reject(@"error", @"Image data not found", nil);
+              return;
+          }
+
+          VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithData:imageData options:@{}];
+
+          NSError *requestError = nil;
+          [handler performRequests:requests
+                              error:&requestError];
+          if (requestError) {
+              NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
+                                      requestError.localizedDescription];
+              NSLog(@"%@", errString);
+              reject(@"request_error", errString, nil);
+          }
+
+          NSArray *bestRecentBranch = nil;
+          if (topBranches.count == 0) {
+              //resolve(@[]);
+          } else if (topBranches.count == 1) {
+              bestRecentBranch = topBranches.firstObject;
+          } else {
+              // return the recent best branch with the best, most specific score
+              bestRecentBranch = [topBranches lastObject];
+              // most specific score is last in each branch
+              float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
+              for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
+                  float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
+                  if (candidateRecentBranchScore > bestRecentBranchScore) {
+                      bestRecentBranch = candidateRecentBranch;
+                      bestRecentBranchScore = candidateRecentBranchScore;
+                  }
+              }
+          }
+
+          // convert the VCPPredictions in the bestRecentBranch into dicts
+          NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
+          for (VCPPrediction *prediction in bestRecentBranch) {
+              // only add predictions that are above the threshold
+              if (prediction.score < threshold) {
+                  continue;
+              }
+              [bestRecentBranchAsDict addObject:[prediction asDict]];
+          }
+
+          // End timestamp
+          NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+          NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
+
+          resolve(bestRecentBranchAsDict);
+      }];
     } else {
-        // return the recent best branch with the best, most specific score
-        bestRecentBranch = [topBranches lastObject];
-        // most specific score is last in each branch
-        float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-        for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-            float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-            if (candidateRecentBranchScore > bestRecentBranchScore) {
-                bestRecentBranch = candidateRecentBranch;
-                bestRecentBranchScore = candidateRecentBranchScore;
+        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:[NSURL URLWithString:uri]
+                                                                                  options:@{}];
+        NSError *requestError = nil;
+        [handler performRequests:requests
+                            error:&requestError];
+        if (requestError) {
+            NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
+                                    requestError.localizedDescription];
+            NSLog(@"%@", errString);
+            reject(@"request_error", errString, nil);
+        }
+
+        NSArray *bestRecentBranch = nil;
+        if (topBranches.count == 0) {
+            //resolve(@[]);
+        } else if (topBranches.count == 1) {
+            bestRecentBranch = topBranches.firstObject;
+        } else {
+            // return the recent best branch with the best, most specific score
+            bestRecentBranch = [topBranches lastObject];
+            // most specific score is last in each branch
+            float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
+            for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
+                float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
+                if (candidateRecentBranchScore > bestRecentBranchScore) {
+                    bestRecentBranch = candidateRecentBranch;
+                    bestRecentBranchScore = candidateRecentBranchScore;
+                }
             }
         }
-    }
 
-    // convert the VCPPredictions in the bestRecentBranch into dicts
-    NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
-    for (VCPPrediction *prediction in bestRecentBranch) {
-        // only add predictions that are above the threshold
-        if (prediction.score < threshold) {
-            continue;
+        // convert the VCPPredictions in the bestRecentBranch into dicts
+        NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
+        for (VCPPrediction *prediction in bestRecentBranch) {
+            // only add predictions that are above the threshold
+            if (prediction.score < threshold) {
+                continue;
+            }
+            [bestRecentBranchAsDict addObject:[prediction asDict]];
         }
-        [bestRecentBranchAsDict addObject:[prediction asDict]];
+
+        // End timestamp
+        NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+        NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
+
+        resolve(bestRecentBranchAsDict);
     }
-
-    // End timestamp
-    NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
-    NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
-
-    resolve(bestRecentBranchAsDict);
 }
 
 @end

@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import com.facebook.react.bridge.ReadableMap;
 import java.util.List;
 import com.facebook.react.bridge.WritableArray;
+import android.net.Uri;
 
 @ReactModule(name = VisionCameraPluginInatVisionModule.NAME)
 public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModule {
@@ -74,7 +75,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             return;
         }
 
-        String uri = options.getString(OPTION_URI);
+        Uri uri = Uri.parse(options.getString(OPTION_URI));
         String modelFilename = options.getString(OPTION_MODEL_PATH);
         String taxonomyFilename = options.getString(OPTION_TAXONOMY_PATH);
         String version = options.getString(OPTION_VERSION);
@@ -104,7 +105,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         try {
             // Read bitmap file
-            bitmap = BitmapFactory.decodeFile(uri);
+            bitmap = BitmapFactory.decodeFile(uri.getPath());
+            if (bitmap == null) {
+                String msg = String.format("Couldn't read image '%s'", uri.toString());
+                Timber.tag(TAG).w(msg);
+                promise.reject("E_IO_EXCEPTION", msg);
+            }
 
             // Crop the center square of the image
             int minDim = Math.min(bitmap.getWidth(), bitmap.getHeight());
@@ -122,16 +128,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             bitmap = rescaledBitmap;
         } catch (Exception e) {
             e.printStackTrace();
-            promise.reject("E_IO_EXCEPTION", "Couldn't read input file: " + uri + "; Exception: " + e);
+            promise.reject("E_IO_EXCEPTION", "Couldn't read input file: " + uri.toString() + "; Exception: " + e);
             return;
         }
 
         List<Prediction> predictions = classifier.classifyFrame(bitmap);
         bitmap.recycle();
-
-        // Return both photo URI and predictions
-
-        WritableMap result = Arguments.createMap();
 
         WritableArray results = Arguments.createArray();
 
@@ -142,8 +144,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             results.pushMap(map);
         }
 
-        result.putArray("predictions", results);
-
-        promise.resolve(result);
+        promise.resolve(results);
     }
 }

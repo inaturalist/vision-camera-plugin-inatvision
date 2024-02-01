@@ -76,8 +76,9 @@
   return visionModel;
 }
 
-- (instancetype) initWithOptions:(NSDictionary* _Nullable)options; {
-  self = [super initWithOptions:options];
+- (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
+                  withOptions:(NSDictionary* _Nullable)options {
+  self = [super initWithProxy:proxy withOptions:options];
   return self;
 }
 

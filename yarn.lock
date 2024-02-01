@@ -7819,15 +7819,15 @@ react-native-builder-bob@^0.20.4:
   optionalDependencies:
     jetifier "^2.0.0"
 
-react-native-vision-camera@3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.6.3.tgz#c8b53016cacefedd1c98b3111feccb87a3d938bd"
-  integrity sha512-GTX9LPnYek+jh55w9EoVc0dmHq0ZCDHOGVLlR2hOWrzKFZRUKGxazyS9Q/Z+SSi1NRbxzFF5l2K0fSyChKR0og==
+react-native-vision-camera@3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.8.2.tgz#f4f75f84c6a19e1c3474ddc0f7f785b5a526739b"
+  integrity sha512-MY39l2e3hNRPUefn2JPShOFExcw0PblbAcUGvJrIfS9pMzdIyceo0umRAx8lOGXzDUAdb+xy/tFWb8zGxKimCQ==
 
-react-native-worklets-core@0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-worklets-core/-/react-native-worklets-core-0.2.2.tgz#48aaa7472ed76cf77d111f60d84eb55e126c1dd1"
-  integrity sha512-VPAIWMvGHL6mTI9mR4x5wN/EybtnzyNT1zhYIimJQvLABvC8TUyCXcHQVu9Eo95BSYXx3E+ImF8VA+np1tCAQg==
+react-native-worklets-core@0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/react-native-worklets-core/-/react-native-worklets-core-0.2.4.tgz#a4a79c04f2c6769ff03e96b7529c8638c88fa560"
+  integrity sha512-NKqxLRDOYfO7RJRZHHDA/1yztdiSadSTTILgHw2VwSrcQcmnWAZGXWr9EYpzKblpbk/vXfJa6QpWIKHjNrbe4w==
   dependencies:
     string-hash-64 "^1.0.3"
 

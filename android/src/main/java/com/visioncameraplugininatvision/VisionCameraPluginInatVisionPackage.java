@@ -15,7 +15,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 public class VisionCameraPluginInatVisionPackage implements ReactPackage {
   static {
-    FrameProcessorPluginRegistry.addFrameProcessorPlugin("inatVision", options -> new VisionCameraPluginInatVisionPlugin(options));
+    FrameProcessorPluginRegistry.addFrameProcessorPlugin("inatVision", VisionCameraPluginInatVisionPlugin::new);
   }
 
   @NonNull

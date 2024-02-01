@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
-  VisionCameraPluginInatVisionPlugin(@Nullable Map<String, Object> options) {
-    super(options);
+  VisionCameraPluginInatVisionPlugin(VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
+    super();
     Log.d("VisionCameraPluginInatVisionPlugin", "initialized with options: " + options);
   }
 

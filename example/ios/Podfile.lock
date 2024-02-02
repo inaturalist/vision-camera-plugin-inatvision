@@ -424,6 +424,10 @@ PODS:
   - RNFS (2.20.0):
     - React-Core
   - SocketRocket (0.6.0)
+  - vision-camera-resize-plugin (2.0.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+    - VisionCamera
   - VisionCamera (3.9.0):
     - React
     - React-callinvoker
@@ -498,6 +502,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - vision-camera-resize-plugin (from `../node_modules/vision-camera-resize-plugin`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - VisionCameraPluginInatVision (from `../..`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -595,6 +600,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  vision-camera-resize-plugin:
+    :path: "../node_modules/vision-camera-resize-plugin"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
   VisionCameraPluginInatVision:
@@ -654,6 +661,7 @@ SPEC CHECKSUMS:
   ReactCommon: 08723d2ed328c5cbcb0de168f231bc7bae7f8aa1
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  vision-camera-resize-plugin: dfc75652acbb5073330cfc2bd5b4a08117bdf850
   VisionCamera: 72ec2908dff5de402074d0cfd41932cd33c1fe65
   VisionCameraPluginInatVision: cee8182ce3b30d4a7b84e6f9ab318b252cc16272
   Yoga: f7decafdc5e8c125e6fa0da38a687e35238420fa

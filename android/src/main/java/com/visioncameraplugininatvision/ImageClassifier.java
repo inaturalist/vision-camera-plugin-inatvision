@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.mrousavy.camera.frameprocessor.SharedArray;
+
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -86,6 +88,36 @@ public class ImageClassifier {
         mModelSize = mTaxonomy.getModelSize();
     }
 
+    public List<Prediction> classifySharedArray(SharedArray sharedArray) {
+        if (mTFlite == null) {
+            Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");
+            return null;
+        }
+        if (sharedArray == null) {
+            Timber.tag(TAG).e("Null input sharedArray");
+            return null;
+        }
+
+        Map<Integer, Object> expectedOutputs = new HashMap<>();
+        for (int i = 0; i < 1; i++) {
+            expectedOutputs.put(i, new float[1][mModelSize]);
+        }
+
+        ByteBuffer inputBuffer = sharedArray.getByteBuffer();
+        Object[] input = { inputBuffer };
+        List<Prediction> predictions = null;
+        try {
+            mTFlite.runForMultipleInputsOutputs(input, expectedOutputs);
+            predictions = mTaxonomy.predict(expectedOutputs);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            return new ArrayList<Prediction>();
+        } catch (OutOfMemoryError exc) {
+            exc.printStackTrace();
+            return new ArrayList<Prediction>();
+        }
+        return predictions;
+    }
     /** Classifies a frame from the preview stream. */
     public List<Prediction> classifyFrame(Bitmap bitmap) {
         if (mTFlite == null) {

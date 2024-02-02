@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.mrousavy.camera.core.FrameInvalidError;
 import com.mrousavy.camera.frameprocessors.Frame;
 import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessors.SharedArray;
 import com.mrousavy.camera.frameprocessors.VisionCameraProxy;
 
 import java.io.IOException;
@@ -104,6 +105,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       setCropRatio(cropRatio);
     }
 
+    SharedArray resizedFrameData = (SharedArray)arguments.get("resizedBuffer");
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
@@ -148,6 +150,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
       bmp.recycle();
+      List<Prediction> predictions = mImageClassifier.classifySharedArray(resizedFrameData);
       Log.d(TAG, "Predictions: " + predictions.size());
 
       for (Prediction prediction : predictions) {

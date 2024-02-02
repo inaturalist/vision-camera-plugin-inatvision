@@ -1,6 +1,9 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import { VisionCameraProxy, Frame } from 'react-native-vision-camera';
+import { createResizePlugin } from 'vision-camera-resize-plugin';
+
+const { resize } = createResizePlugin();
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
@@ -18,7 +21,7 @@ export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
-interface Options extends Record<string, string | boolean | undefined> {
+interface Options {
   // Required
   version: string;
   modelPath: string;
@@ -31,6 +34,10 @@ interface Options extends Record<string, string | boolean | undefined> {
   patchedOrientationAndroid?: string;
 }
 
+interface OptionsWithResizedFrame extends Options {
+  resizedFrame?: Uint8Array | Float32Array | undefined;
+}
+
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
@@ -39,10 +46,28 @@ export function inatVision(frame: Frame, args: Options): any {
   if (!['1.0', '2.3', '2.4'].includes(args.version)) {
     throw new Error('This model version is not supported.');
   }
+  if (resize === undefined) {
+    throw new Error("Couldn't find the 'vision-camera-resize-plugin' plugin.");
+  }
+  let resizedFrame;
+  // Use a the resize plugin to resize the frame to the expected input size on Android
+  // On iOS, the frame is center-cropped and resized to 299x299 in the native code using the CoreML API
+  if (Platform.OS === 'android') {
+    resizedFrame = resize(frame, {
+      scale: {
+        width: 299,
+        height: 299,
+      },
+      pixelFormat: 'rgb',
+      dataType: args.version === '1.0' ? 'float32' : 'uint8',
+    });
+  }
+
   if (plugin === undefined) {
     throw new Error("Couldn't find the 'inatVision' plugin.");
   }
-  return plugin.call(frame, args);
+  const options: OptionsWithResizedFrame = { ...args, resizedFrame };
+  return plugin.call(frame, options);
 }
 
 const LINKING_ERROR =

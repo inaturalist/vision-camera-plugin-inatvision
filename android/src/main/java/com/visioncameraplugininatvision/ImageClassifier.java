@@ -88,6 +88,7 @@ public class ImageClassifier {
         mModelSize = mTaxonomy.getModelSize();
     }
 
+    /** Classifies a SharedArray, like e.g. from vision-camera-resize-plugin. */
     public List<Prediction> classifySharedArray(SharedArray sharedArray) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");

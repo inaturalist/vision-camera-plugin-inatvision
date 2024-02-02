@@ -74,7 +74,8 @@
     "react-native-vision-camera": "3.9.0",
     "react-native-worklets-core": "0.2.4",
     "release-it": "^15.0.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.2",
+    "vision-camera-resize-plugin": "2.0.1"
   },
   "resolutions": {
     "@types/react": "17.0.21"
@@ -82,10 +83,12 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-vision-camera": ">=3.6.3"
+    "react-native-vision-camera": ">=3.8.2",
+    "react-native-worklets-core": ">=0.2.4",
+    "vision-camera-resize-plugin": ">=2.0.1"
   },
   "engines": {
-    "node": ">= 16.0.0"
+    "node": ">= 18.0.0"
   },
   "jest": {
     "preset": "react-native",

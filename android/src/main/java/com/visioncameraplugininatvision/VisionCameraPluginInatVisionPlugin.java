@@ -130,26 +130,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     List<Map> cleanedPredictions = new ArrayList<>();
     if (mImageClassifier != null) {
-      Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
-      Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
-      // Crop the center square of the frame
-      int minDim = (int) Math.round(Math.min(bmp.getWidth(), bmp.getHeight()) * mCropRatio);
-      int cropX = (bmp.getWidth() - minDim) / 2;
-      int cropY = (bmp.getHeight() - minDim) / 2;
-      Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
-      Bitmap croppedBitmap = Bitmap.createBitmap(bmp, cropX, cropY, minDim, minDim);
-
-      // Resize to expected classifier input size
-      Bitmap rescaledBitmap = Bitmap.createScaledBitmap(
-        croppedBitmap,
-        ImageClassifier.DIM_IMG_SIZE_X,
-        ImageClassifier.DIM_IMG_SIZE_Y,
-        true);
-      bmp.recycle();
-      bmp = rescaledBitmap;
-      Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
-      List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
-      bmp.recycle();
       List<Prediction> predictions = mImageClassifier.classifySharedArray(resizedFrameData);
       Log.d(TAG, "Predictions: " + predictions.size());
 

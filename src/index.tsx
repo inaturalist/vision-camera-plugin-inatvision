@@ -49,11 +49,11 @@ export function inatVision(frame: Frame, args: Options): any {
   if (resize === undefined) {
     throw new Error("Couldn't find the 'vision-camera-resize-plugin' plugin.");
   }
-  let resizedFrame;
+  let resized;
   // Use a the resize plugin to resize the frame to the expected input size on Android
   // On iOS, the frame is center-cropped and resized to 299x299 in the native code using the CoreML API
   if (Platform.OS === 'android') {
-    resizedFrame = resize(frame, {
+    resized = resize(frame, {
       scale: {
         width: 299,
         height: 299,
@@ -66,7 +66,10 @@ export function inatVision(frame: Frame, args: Options): any {
   if (plugin === undefined) {
     throw new Error("Couldn't find the 'inatVision' plugin.");
   }
-  const options: OptionsWithResizedFrame = { ...args, resizedFrame };
+  const options: OptionsWithResizedFrame = {
+    ...args,
+    resizedBuffer: resized?.buffer,
+  };
   return plugin.call(frame, options);
 }
 

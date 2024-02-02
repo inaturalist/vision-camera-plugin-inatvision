@@ -27,6 +27,7 @@ export default function App() {
   const [results, setResult] = useState<any[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
+  const [timesTaken, setTimesTaken] = useState<number[]>([]);
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -115,6 +116,7 @@ export default function App() {
           : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
       try {
+        const timeNow = new Date().getTime();
         const cvResults = InatVision.inatVision(frame, {
           version: modelVersion,
           modelPath,
@@ -123,6 +125,10 @@ export default function App() {
           filterByTaxonId,
           negativeFilter,
         });
+        const timeAfter = new Date().getTime();
+        const newTimesTaken = [...timesTaken, timeAfter - timeNow];
+        console.log('time taken ms: ', timeAfter - timeNow);
+        runOnJS(setTimesTaken)(newTimesTaken);
         console.log('cvResults :>> ', cvResults);
         let predictions = [];
         if (Platform.OS === 'ios') {
@@ -144,7 +150,12 @@ export default function App() {
         console.log(`Error: ${classifierError}`);
       }
     },
-    [confidenceThreshold, filterByTaxonId, negativeFilter]
+    [confidenceThreshold, filterByTaxonId, negativeFilter, timesTaken]
+  );
+
+  console.log(
+    'average time taken ms: ',
+    timesTaken.reduce((a, b) => a + b, 0) / timesTaken.length
   );
 
   return (

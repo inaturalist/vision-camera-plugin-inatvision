@@ -35,7 +35,7 @@ interface Options {
 }
 
 interface OptionsWithResizedFrame extends Options {
-  resizedFrame?: Uint8Array | Float32Array | undefined;
+  resizedBuffer?: ArrayBuffer;
 }
 
 /**

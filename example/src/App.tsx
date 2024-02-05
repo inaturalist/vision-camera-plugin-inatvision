@@ -143,8 +143,8 @@ export default function App() {
             patchedOrientationAndroid: 'portrait',
           });
         const timeAfter = new Date().getTime();
-        console.log('time taken ms: ', timeAfter - timeNow);
-        console.log('cvResults :>> ', cvResults);
+        console.log('time after ms: ', timeAfter - timeNow);
+        // console.log('cvResults :>> ', cvResults);
         if (!cvResults) {
           return;
         }

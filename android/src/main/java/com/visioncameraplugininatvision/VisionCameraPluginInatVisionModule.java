@@ -135,6 +135,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         List<Prediction> predictions = classifier.classifyFrame(bitmap);
         bitmap.recycle();
 
+        WritableMap result = Arguments.createMap();
         WritableArray results = Arguments.createArray();
 
         for (Prediction prediction : predictions) {
@@ -144,6 +145,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             results.pushMap(map);
         }
 
-        promise.resolve(results);
+        result.putArray("predictions", results);
+        promise.resolve(result);
     }
 }

@@ -126,7 +126,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
         croppedBitmap,
         ImageClassifier.DIM_IMG_SIZE_X,
         ImageClassifier.DIM_IMG_SIZE_Y,
-        false);
+        true);
       bmp.recycle();
       bmp = rescaledBitmap;
       Log.d(TAG, "getBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());

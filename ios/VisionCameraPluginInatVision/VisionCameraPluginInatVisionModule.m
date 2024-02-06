@@ -8,6 +8,9 @@
 
 #import <React/RCTBridgeModule.h>
 
+// When using the name VisionCameraPluginInatVisionModule here the plugin did not work,
+// maybe there is some kind of name conflict somewhere. So I changed the name to AwesomeModule
+// because it doesn't matter what the name is and it is quite awesome.
 @interface AwesomeModule : NSObject <RCTBridgeModule>
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;

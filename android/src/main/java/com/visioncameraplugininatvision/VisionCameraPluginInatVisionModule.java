@@ -133,10 +133,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         WritableArray results = Arguments.createArray();
 
         for (Prediction prediction : predictions) {
-            WritableMap map = Taxonomy.nodeToMap(prediction);
+            Map map = Taxonomy.nodeToMap(prediction);
             if (map == null) continue;
+            // Transform the Map to a ReadableMap
+            ReadableMap readableMap = Arguments.makeNativeMap(map);
 
-            results.pushMap(map);
+            results.pushMap(readableMap);
         }
 
         result.putArray("predictions", results);

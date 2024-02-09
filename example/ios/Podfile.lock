@@ -336,6 +336,7 @@ PODS:
   - react-native-worklets-core (0.2.4):
     - React
     - React-callinvoker
+    - React-Core
   - React-perflogger (0.71.11)
   - React-RCTActionSheet (0.71.11):
     - React-Core/RCTActionSheetHeaders (= 0.71.11)

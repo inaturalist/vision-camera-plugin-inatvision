@@ -1166,6 +1166,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@react-native-camera-roll/camera-roll@7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-7.2.0.tgz#e1de34175619048019f766858d3563608c2b3ef8"
+  integrity sha512-7y1lW+b9lpXsqUDCi4Ow0XozVe8OLqN/Pfq6lJpAxbgZ0TEVpVKniQj2ZeLMWsA28eae7JMqGqqj4e9uVp8eOw==
+
 "@react-native-community/cli-clean@^10.1.1":
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-clean/-/cli-clean-10.1.1.tgz#4c73ce93a63a24d70c0089d4025daac8184ff504"
@@ -3895,6 +3900,11 @@ react-native-gradle-plugin@^0.71.19:
   version "0.71.19"
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.19.tgz#3379e28341fcd189bc1f4691cefc84c1a4d7d232"
   integrity sha512-1dVk9NwhoyKHCSxcrM6vY6cxmojeATsBobDicX0ZKr7DgUF2cBQRTKsimQFvzH8XhOVXyH8p4HyDSZNIFI8OlQ==
+
+react-native-image-picker@7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.0.3.tgz#3d0ab6965a6150e724e3c66cac8fe397097e26e7"
+  integrity sha512-mFbu8AzZ8tysO7xHsQ+TmxYYJYaBCL66s4AujjgCBEAyTufm2nhjhVOw2uq1zvMDVtGoyekzCJfH3JqVmXK/3w==
 
 react-native-vision-camera@3.9.0-beta.3:
   version "3.9.0-beta.3"

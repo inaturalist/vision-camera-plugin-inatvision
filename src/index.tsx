@@ -96,7 +96,7 @@ export function removeLogListener(): void {
 
 interface OptionsForImage {
   uri: string;
-  version: SupportedVersions;
+  version: string;
   modelPath: string;
   taxonomyPath: string;
 }

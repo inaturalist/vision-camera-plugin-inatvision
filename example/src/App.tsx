@@ -13,6 +13,8 @@ import {
   useFrameProcessor,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
@@ -22,14 +24,32 @@ const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
 const modelVersion = '1.0';
 
+const modelPath =
+  Platform.OS === 'ios'
+    ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+const taxonomyPath =
+  Platform.OS === 'ios'
+    ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
+
 export default function App() {
   const [hasPermission, setHasPermission] = useState(false);
   const [results, setResult] = useState<any[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
 
+  enum VIEW_STATUS {
+    NONE,
+    CAMERA,
+    GALLERY,
+  }
+  const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
+
   const devices = useCameraDevices();
   const device = devices.back;
+
+  const [photos, getPhotos] = useCameraRoll();
 
   const confidenceThreshold = '0.7';
 
@@ -105,14 +125,6 @@ export default function App() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      const modelPath =
-        Platform.OS === 'ios'
-          ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
-          : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
-      const taxonomyPath =
-        Platform.OS === 'ios'
-          ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
-          : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
       try {
         const timeNow = new Date().getTime();
@@ -150,40 +162,130 @@ export default function App() {
     [confidenceThreshold, filterByTaxonId, negativeFilter]
   );
 
+  function selectImage() {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          const uri = Platform.OS === 'ios' ? asset.uri : asset.originalPath;
+          console.log('Image URI: ', uri);
+          predict(uri);
+        }
+      }
+    );
+  }
+
+  function predict(uri: string) {
+    InatVision.getPredictionsForImage({
+      uri,
+      version: modelVersion,
+      modelPath,
+      taxonomyPath,
+    })
+      .then((result) => {
+        console.log('Result', JSON.stringify(result));
+        setResult(Platform.OS === 'android' ? result.predictions : result);
+      })
+      .catch((err) => {
+        console.log('Error', err);
+      });
+  }
+
+  const contentSwitch = () => {
+    if (viewStatus === VIEW_STATUS.NONE) {
+      return (
+        <>
+          <Text
+            style={styles.text}
+            onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
+          >
+            {'Show camera'}
+          </Text>
+          <Text
+            style={styles.text}
+            onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
+          >
+            {'Show gallery'}
+          </Text>
+        </>
+      );
+    } else if (viewStatus === VIEW_STATUS.CAMERA) {
+      return renderCameraView();
+    } else {
+      return renderGalleryView();
+    }
+  };
+
+  const renderGalleryView = () => {
+    return (
+      <>
+        <Text style={styles.text} onPress={selectImage}>
+          {'Select image'}
+        </Text>
+        <Text style={styles.text} onPress={async () => await getPhotos()}>
+          {'Get Photos'}
+        </Text>
+        {photos &&
+          photos.edges &&
+          photos.edges.length > 0 &&
+          photos.edges.map((photo, index) => (
+            <Text
+              key={index}
+              style={styles.text}
+              onPress={() => predict(photo.node.image.uri)}
+            >
+              {index}
+            </Text>
+          ))}
+      </>
+    );
+  };
+
+  const renderCameraView = () => {
+    return device != null && hasPermission ? (
+      <>
+        <Camera
+          style={styles.camera}
+          device={device}
+          isActive={true}
+          frameProcessor={frameProcessor}
+          frameProcessorFps={1}
+        />
+        <Text style={styles.text} onPress={toggleNegativeFilter}>
+          {negativeFilter ? 'Negative Filter' : 'Positive Filter'}
+        </Text>
+        <Text style={styles.text} onPress={changeFilterByTaxonId}>
+          {filterByTaxonId ? 'Plant filter' : 'No filter'}
+        </Text>
+      </>
+    ) : (
+      <ActivityIndicator size="large" color="white" />
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {device != null && hasPermission ? (
-        <>
-          <Camera
-            style={styles.camera}
-            device={device}
-            isActive={true}
-            frameProcessor={frameProcessor}
-            frameProcessorFps={1}
-          />
-          <Text style={styles.text} onPress={toggleNegativeFilter}>
-            {negativeFilter ? 'Negative Filter' : 'Positive Filter'}
-          </Text>
-          <Text style={styles.text} onPress={changeFilterByTaxonId}>
-            {filterByTaxonId ? 'Plant filter' : 'No filter'}
-          </Text>
-          {results.map((result: InatVision.Prediction) => {
-            return (
-              <View key={result.rank} style={styles.labels}>
-                <Text style={styles.text}>{result.name}</Text>
-                <Text style={styles.smallLabel}>
-                  spatial_class_id {result.spatial_class_id}
-                </Text>
-                <Text style={styles.smallLabel}>
-                  iconic_class_id {result.iconic_class_id}
-                </Text>
-              </View>
-            );
-          })}
-        </>
-      ) : (
-        <ActivityIndicator size="large" color="white" />
-      )}
+      {contentSwitch()}
+      {results &&
+        results.map((result: InatVision.Prediction) => {
+          return (
+            <View key={result.rank} style={styles.labels}>
+              <Text style={styles.text}>{result.name}</Text>
+              <Text style={styles.smallLabel}>
+                spatial_class_id {result.spatial_class_id}
+              </Text>
+              <Text style={styles.smallLabel}>
+                iconic_class_id {result.iconic_class_id}
+              </Text>
+            </View>
+          );
+        })}
     </View>
   );
 }

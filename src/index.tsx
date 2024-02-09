@@ -94,3 +94,17 @@ export function removeLogListener(): void {
   }
   state.eventListener.remove();
 }
+
+interface OptionsForImage {
+  uri: string;
+  version: SupportedVersions;
+  modelPath: string;
+  taxonomyPath: string;
+}
+
+/**
+ * Function to call the computer vision model with a image from disk
+ */
+export function getPredictionsForImage(options: OptionsForImage) {
+  return VisionCameraPluginInatVision.getPredictionsForImage(options);
+}

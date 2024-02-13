@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  View,
   ActivityIndicator,
-  Text,
+  Alert,
+  Button,
+  Image,
   Platform,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import { runOnJS } from 'react-native-reanimated';
 import {
@@ -45,13 +51,12 @@ export default function App() {
     GALLERY,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
+  const [confidenceThreshold, setConfidenceThreshold] = useState( 0.7 );
 
   const devices = useCameraDevices();
   const device = devices.back;
 
   const [photos, getPhotos] = useCameraRoll();
-
-  const confidenceThreshold = '0.7';
 
   const toggleNegativeFilter = () => {
     setNegativeFilter(!negativeFilter);
@@ -187,6 +192,7 @@ export default function App() {
       version: modelVersion,
       modelPath,
       taxonomyPath,
+      confidenceThreshold
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));
@@ -200,20 +206,31 @@ export default function App() {
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
-        <>
-          <Text
+        <View style={{alignItems: "center"}}>
+          <Button
+            title="Show camera"
             style={styles.text}
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
-          >
-            {'Show camera'}
-          </Text>
-          <Text
+          />
+          <Button
+            title="Show gallery"
             style={styles.text}
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
-          >
-            {'Show gallery'}
-          </Text>
-        </>
+          />
+          <Text style={styles.text}>Confidence threshold:</Text>
+          <TextInput
+            value={confidenceThreshold?.toString( ) || ""}
+            onChangeText={value => {
+              if ( value < 0 || value > 1 ) {
+                Alert.alert('Nope', 'Confidence threshold must be between 0 and 1');
+                setConfidenceThreshold(confidenceThreshold)
+                return;
+              }
+              setConfidenceThreshold(value)
+            }}
+            style={{color: "white", padding: 10, backgroundColor: "grey", textAlign: "center", width: 100}}
+          />
+        </View>
       );
     } else if (viewStatus === VIEW_STATUS.CAMERA) {
       return renderCameraView();
@@ -222,34 +239,46 @@ export default function App() {
     }
   };
 
-  const renderGalleryView = () => {
-    return (
-      <>
-        <Text style={styles.text} onPress={selectImage}>
-          {'Select image'}
-        </Text>
-        <Text style={styles.text} onPress={async () => await getPhotos()}>
-          {'Get Photos'}
-        </Text>
+  const renderGalleryView = () => (
+    <>
+      <Button style={styles.text} onPress={selectImage} title="Select image" />
+      <Button style={styles.text} onPress={async () => await getPhotos()} title="Get photos" />
+      <Button
+        style={styles.text}
+        onPress={() => setViewStatus(VIEW_STATUS.NONE)}
+        title="Close"
+      />
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "center"
+        }}
+      >
         {photos &&
           photos.edges &&
           photos.edges.length > 0 &&
           photos.edges.map((photo, index) => (
-            <Text
+            <Pressable
               key={index}
-              style={styles.text}
+              style={{
+                width: 74,
+                height: 74,
+                margin: 2
+              }}
               onPress={() => predict(photo.node.image.uri)}
+              title={index.toString()}
             >
-              {index}
-            </Text>
+              <Image source={{uri: photo.node.image.uri}} style={{flex: 1}} />
+            </Pressable>
           ))}
-      </>
-    );
-  };
+      </View>
+    </>
+  );
 
   const renderCameraView = () => {
     return device != null && hasPermission ? (
-      <>
+      <View style={{ flex: 1, width: "100%", height: "100%" }}>
         <Camera
           style={styles.camera}
           device={device}
@@ -257,36 +286,53 @@ export default function App() {
           frameProcessor={frameProcessor}
           frameProcessorFps={1}
         />
-        <Text style={styles.text} onPress={toggleNegativeFilter}>
-          {negativeFilter ? 'Negative Filter' : 'Positive Filter'}
-        </Text>
-        <Text style={styles.text} onPress={changeFilterByTaxonId}>
-          {filterByTaxonId ? 'Plant filter' : 'No filter'}
-        </Text>
-      </>
+        <View style={{flexDirection: "row", justifyContent: "center"}}>
+          <Button
+            style={styles.text}
+            onPress={toggleNegativeFilter}
+            title={negativeFilter ? 'Negative Filter' : 'Positive Filter'}
+          />
+          <Button
+            style={styles.text}
+            onPress={changeFilterByTaxonId}
+            title={filterByTaxonId ? 'Plant filter' : 'No plant filter'}
+          />
+          <Button
+            style={styles.text}
+            onPress={() => setViewStatus(VIEW_STATUS.NONE)}
+            title="Close"
+          />
+        </View>
+      </View>
     ) : (
       <ActivityIndicator size="large" color="white" />
     );
   };
 
   return (
-    <View style={styles.container}>
-      {contentSwitch()}
-      {results &&
-        results.map((result: InatVision.Prediction) => {
-          return (
-            <View key={result.rank} style={styles.labels}>
-              <Text style={styles.text}>{result.name}</Text>
-              <Text style={styles.smallLabel}>
-                spatial_class_id {result.spatial_class_id}
-              </Text>
-              <Text style={styles.smallLabel}>
-                iconic_class_id {result.iconic_class_id}
-              </Text>
-            </View>
-          );
-        })}
-    </View>
+    <SafeAreaView style={{flex: 1, backgroundColor: "black"}}>
+      <View style={styles.container}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            width: "100%"
+          }}>
+          {contentSwitch()}
+        </View>
+        {results && results.map((result: InatVision.Prediction) => (
+          <View key={result.rank} style={styles.labels}>
+            <Text style={styles.text}>{result.name}</Text>
+            <Text style={styles.smallLabel}>
+              spatial_class_id {result.spatial_class_id}
+            </Text>
+            <Text style={styles.smallLabel}>
+              iconic_class_id {result.iconic_class_id}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -295,11 +341,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'black'
   },
   camera: {
-    flex: 1,
-    width: '100%',
+    flex: 1
   },
   labels: {
     position: 'absolute',

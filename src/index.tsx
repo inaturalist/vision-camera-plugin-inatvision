@@ -65,6 +65,11 @@ interface State {
   eventListener: null | EmitterSubscription;
 }
 
+class INatVisionError extends Error {}
+Object.defineProperty( INatVisionError.prototype, "name", {
+  value: "INatVisionError"
+} );
+
 const state: State = {
   eventListener: null,
 };
@@ -100,11 +105,21 @@ interface OptionsForImage {
   version: SupportedVersions;
   modelPath: string;
   taxonomyPath: string;
+  confidenceThreshold: number
 }
 
 /**
  * Function to call the computer vision model with a image from disk
  */
 export function getPredictionsForImage(options: OptionsForImage) {
+  if (
+    options.confidenceThreshold
+    && (
+      options.confidenceThreshold < 0
+      || options.confidenceThreshold > 1
+    )
+  ) {
+    throw new INatVisionError("getPredictionsForImage option confidenceThreshold must be between 0 and 1");
+  }
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

@@ -51,7 +51,7 @@ export default function App() {
     GALLERY,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
-  const [confidenceThreshold, setConfidenceThreshold] = useState( 0.7 );
+  const [confidenceThreshold, setConfidenceThreshold] = useState<string>('0.7');
 
   const devices = useCameraDevices();
   const device = devices.back;
@@ -192,7 +192,7 @@ export default function App() {
       version: modelVersion,
       modelPath,
       taxonomyPath,
-      confidenceThreshold
+      confidenceThreshold,
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));
@@ -206,7 +206,7 @@ export default function App() {
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
-        <View style={{alignItems: "center"}}>
+        <View style={{ alignItems: 'center' }}>
           <Button
             title="Show camera"
             style={styles.text}
@@ -217,18 +217,28 @@ export default function App() {
             style={styles.text}
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
-          <Text style={styles.text}>Confidence threshold:</Text>
+          <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
           <TextInput
-            value={confidenceThreshold?.toString( ) || ""}
-            onChangeText={value => {
-              if ( value < 0 || value > 1 ) {
-                Alert.alert('Nope', 'Confidence threshold must be between 0 and 1');
-                setConfidenceThreshold(confidenceThreshold)
+            value={confidenceThreshold?.toString() || ''}
+            onChangeText={(value) => {
+              const valueAsNumber = parseFloat(value);
+              if (valueAsNumber < 0 || valueAsNumber > 1) {
+                Alert.alert(
+                  'Nope',
+                  'Confidence threshold must be between 0 and 1'
+                );
+                setConfidenceThreshold(confidenceThreshold);
                 return;
               }
-              setConfidenceThreshold(value)
+              setConfidenceThreshold(value);
             }}
-            style={{color: "white", padding: 10, backgroundColor: "grey", textAlign: "center", width: 100}}
+            style={{
+              color: 'white',
+              padding: 10,
+              backgroundColor: 'grey',
+              textAlign: 'center',
+              width: 100,
+            }}
           />
         </View>
       );
@@ -242,7 +252,11 @@ export default function App() {
   const renderGalleryView = () => (
     <>
       <Button style={styles.text} onPress={selectImage} title="Select image" />
-      <Button style={styles.text} onPress={async () => await getPhotos()} title="Get photos" />
+      <Button
+        style={styles.text}
+        onPress={async () => await getPhotos()}
+        title="Get photos"
+      />
       <Button
         style={styles.text}
         onPress={() => setViewStatus(VIEW_STATUS.NONE)}
@@ -250,9 +264,9 @@ export default function App() {
       />
       <View
         style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center"
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
         }}
       >
         {photos &&
@@ -264,12 +278,15 @@ export default function App() {
               style={{
                 width: 74,
                 height: 74,
-                margin: 2
+                margin: 2,
               }}
               onPress={() => predict(photo.node.image.uri)}
               title={index.toString()}
             >
-              <Image source={{uri: photo.node.image.uri}} style={{flex: 1}} />
+              <Image
+                source={{ uri: photo.node.image.uri }}
+                style={{ flex: 1 }}
+              />
             </Pressable>
           ))}
       </View>
@@ -278,7 +295,7 @@ export default function App() {
 
   const renderCameraView = () => {
     return device != null && hasPermission ? (
-      <View style={{ flex: 1, width: "100%", height: "100%" }}>
+      <View style={{ flex: 1, width: '100%', height: '100%' }}>
         <Camera
           style={styles.camera}
           device={device}
@@ -286,7 +303,7 @@ export default function App() {
           frameProcessor={frameProcessor}
           frameProcessorFps={1}
         />
-        <View style={{flexDirection: "row", justifyContent: "center"}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <Button
             style={styles.text}
             onPress={toggleNegativeFilter}
@@ -310,27 +327,29 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: "black"}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
         <View
           style={{
             flex: 1,
-            justifyContent: "center",
-            width: "100%"
-          }}>
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
           {contentSwitch()}
         </View>
-        {results && results.map((result: InatVision.Prediction) => (
-          <View key={result.rank} style={styles.labels}>
-            <Text style={styles.text}>{result.name}</Text>
-            <Text style={styles.smallLabel}>
-              spatial_class_id {result.spatial_class_id}
-            </Text>
-            <Text style={styles.smallLabel}>
-              iconic_class_id {result.iconic_class_id}
-            </Text>
-          </View>
-        ))}
+        {results &&
+          results.map((result: InatVision.Prediction) => (
+            <View key={result.rank} style={styles.labels}>
+              <Text style={styles.text}>{result.name}</Text>
+              <Text style={styles.smallLabel}>
+                spatial_class_id {result.spatial_class_id}
+              </Text>
+              <Text style={styles.smallLabel}>
+                iconic_class_id {result.iconic_class_id}
+              </Text>
+            </View>
+          ))}
       </View>
     </SafeAreaView>
   );
@@ -341,10 +360,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black'
+    backgroundColor: 'black',
   },
   camera: {
-    flex: 1
+    flex: 1,
   },
   labels: {
     position: 'absolute',

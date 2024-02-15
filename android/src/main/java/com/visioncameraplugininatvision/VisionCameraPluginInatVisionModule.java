@@ -67,9 +67,18 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_VERSION = "version";
     public static final String OPTION_MODEL_PATH = "modelPath";
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
+    public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
+
+    public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
+    private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
+    public void setConfidenceThreshold(float confidence) {
+        mConfidenceThreshold = confidence;
+    }
+
     @ReactMethod
     public void getPredictionsForImage(ReadableMap options, Promise promise) {
         Log.d(TAG, "getPredictionsForImage: options:" + options);
+        // Required options
         if (!options.hasKey(OPTION_URI) || !options.hasKey(OPTION_MODEL_PATH) || !options.hasKey(OPTION_TAXONOMY_PATH)|| !options.hasKey(OPTION_VERSION)) {
             promise.reject("E_MISSING_ARGS", String.format("Missing one or more arguments: %s, %s, %s, %s", OPTION_URI, OPTION_MODEL_PATH, OPTION_TAXONOMY_PATH, OPTION_VERSION));
             return;
@@ -79,6 +88,14 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String modelFilename = options.getString(OPTION_MODEL_PATH);
         String taxonomyFilename = options.getString(OPTION_TAXONOMY_PATH);
         String version = options.getString(OPTION_VERSION);
+        // Destructure optional parameters and set values
+        if (options.hasKey(OPTION_CONFIDENCE_THRESHOLD)) {
+          String confidenceThreshold = options.getString(OPTION_CONFIDENCE_THRESHOLD);
+          if (confidenceThreshold == null) {
+            confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
+          }
+          setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+        }
 
         ImageClassifier classifier = null;
 
@@ -139,10 +156,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         WritableArray results = Arguments.createArray();
 
         for (Prediction prediction : predictions) {
-            WritableMap map = Taxonomy.nodeToMap(prediction);
-            if (map == null) continue;
+            if (prediction.probability > mConfidenceThreshold) {
+                WritableMap map = Taxonomy.nodeToMap(prediction);
+                if (map == null) continue;
+                results.pushMap(map);
+            }
 
-            results.pushMap(map);
         }
 
         result.putArray("predictions", results);

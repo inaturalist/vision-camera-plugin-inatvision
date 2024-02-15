@@ -65,6 +65,11 @@ interface State {
   eventListener: null | EmitterSubscription;
 }
 
+class INatVisionError extends Error {}
+Object.defineProperty(INatVisionError.prototype, 'name', {
+  value: 'INatVisionError',
+});
+
 const state: State = {
   eventListener: null,
 };
@@ -96,15 +101,35 @@ export function removeLogListener(): void {
 }
 
 interface OptionsForImage {
+  // Required
   uri: string;
   version: SupportedVersions;
   modelPath: string;
   taxonomyPath: string;
+  // Optional
+  confidenceThreshold?: string;
+}
+
+function optionsForImageAreValid(options: OptionsForImage) {
+  if (options.confidenceThreshold) {
+    const confidenceThreshold = parseFloat(options.confidenceThreshold);
+    if (
+      isNaN(confidenceThreshold) ||
+      confidenceThreshold < 0 ||
+      confidenceThreshold > 1
+    ) {
+      throw new INatVisionError(
+        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      );
+    }
+  }
+  return true;
 }
 
 /**
  * Function to call the computer vision model with a image from disk
  */
 export function getPredictionsForImage(options: OptionsForImage) {
+  optionsForImageAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

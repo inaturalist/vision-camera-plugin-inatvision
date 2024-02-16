@@ -268,6 +268,10 @@ export default function App() {
           enableZoomGesture
           pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
           resizeMode="contain"
+          // As of vision-camera@3.9.0.beta.4, this seems to be necessary to avoid stuttering on Pixel
+          // On Samsung this might cause some crashes though, so in production we might have to
+          // selectively enable this based on the device model
+          enableGpuBuffers={true}
         />
         <Text style={styles.text} onPress={toggleNegativeFilter}>
           {negativeFilter ? 'Negative Filter' : 'Positive Filter'}

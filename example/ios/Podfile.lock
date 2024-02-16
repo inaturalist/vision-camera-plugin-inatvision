@@ -424,7 +424,7 @@ PODS:
   - RNFS (2.20.0):
     - React-Core
   - SocketRocket (0.6.0)
-  - VisionCamera (3.9.0-beta.6):
+  - VisionCamera (3.9.0):
     - React
     - React-callinvoker
     - React-Core
@@ -654,7 +654,7 @@ SPEC CHECKSUMS:
   ReactCommon: 08723d2ed328c5cbcb0de168f231bc7bae7f8aa1
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  VisionCamera: 33c90675adf75528199f840f81dfbe74a2fe6c3f
+  VisionCamera: 72ec2908dff5de402074d0cfd41932cd33c1fe65
   VisionCameraPluginInatVision: 79bb258db75218889c74d0897ecba676492c4def
   Yoga: f7decafdc5e8c125e6fa0da38a687e35238420fa
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

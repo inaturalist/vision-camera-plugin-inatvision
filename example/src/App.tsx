@@ -272,6 +272,7 @@ export default function App() {
           // On Samsung this might cause some crashes though, so in production we might have to
           // selectively enable this based on the device model
           enableGpuBuffers={true}
+          enableFpsGraph={true}
         />
         <Text style={styles.text} onPress={toggleNegativeFilter}>
           {negativeFilter ? 'Negative Filter' : 'Positive Filter'}

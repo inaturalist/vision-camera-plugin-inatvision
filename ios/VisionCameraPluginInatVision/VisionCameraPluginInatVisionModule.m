@@ -83,8 +83,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
-    int NUM_RECENT_PREDICTIONS = 5;
-
     // Log args
     NSLog(@"getPredictionsForImage options: %@", options);
     // Destructure image uri out of options
@@ -120,10 +118,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
       NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
       // add this to the end of the recent top branches array
       [topBranches addObject:bestBranch];
-      // trim stuff from the beginning
-      while (topBranches.count > NUM_RECENT_PREDICTIONS) {
-          [topBranches removeObjectAtIndex:0];
-      }
     };
 
     VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
@@ -171,18 +165,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               //resolve(@[]);
           } else if (topBranches.count == 1) {
               bestRecentBranch = topBranches.firstObject;
-          } else {
-              // return the recent best branch with the best, most specific score
-              bestRecentBranch = [topBranches lastObject];
-              // most specific score is last in each branch
-              float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-              for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-                  float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-                  if (candidateRecentBranchScore > bestRecentBranchScore) {
-                      bestRecentBranch = candidateRecentBranch;
-                      bestRecentBranchScore = candidateRecentBranchScore;
-                  }
-              }
           }
 
           // convert the VCPPredictions in the bestRecentBranch into dicts
@@ -219,18 +201,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             //resolve(@[]);
         } else if (topBranches.count == 1) {
             bestRecentBranch = topBranches.firstObject;
-        } else {
-            // return the recent best branch with the best, most specific score
-            bestRecentBranch = [topBranches lastObject];
-            // most specific score is last in each branch
-            float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-            for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-                float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-                if (candidateRecentBranchScore > bestRecentBranchScore) {
-                    bestRecentBranch = candidateRecentBranch;
-                    bestRecentBranchScore = candidateRecentBranchScore;
-                }
-            }
         }
 
         // convert the VCPPredictions in the bestRecentBranch into dicts

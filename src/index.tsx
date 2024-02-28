@@ -126,7 +126,9 @@ interface OptionsForImage {
 /**
  * Function to call the computer vision model with a image from disk
  */
-export function getPredictionsForImage(options: OptionsForImage) {
+export function getPredictionsForImage(
+  options: OptionsForImage
+): Promise<Prediction[]> {
   optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

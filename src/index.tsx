@@ -19,7 +19,7 @@ export interface Prediction {
 
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
-function optionsForImageAreValid(options: OptionsForImage) {
+function optionsAreValid(options: OptionsForImage) {
   if (options.confidenceThreshold) {
     const confidenceThreshold = parseFloat(options.confidenceThreshold);
     if (
@@ -126,6 +126,6 @@ interface OptionsForImage {
  * Function to call the computer vision model with a image from disk
  */
 export function getPredictionsForImage(options: OptionsForImage) {
-  optionsForImageAreValid(options);
+  optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

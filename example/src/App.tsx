@@ -269,7 +269,7 @@ export default function App() {
             >
               <Image
                 source={{ uri: photo.node.image.uri }}
-                style={{ flex: 1 }}
+                style={styles.photo}
               />
             </Pressable>
           ))}

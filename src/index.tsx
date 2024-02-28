@@ -19,6 +19,22 @@ export interface Prediction {
 
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
+function optionsForImageAreValid(options: OptionsForImage) {
+  if (options.confidenceThreshold) {
+    const confidenceThreshold = parseFloat(options.confidenceThreshold);
+    if (
+      isNaN(confidenceThreshold) ||
+      confidenceThreshold < 0 ||
+      confidenceThreshold > 1
+    ) {
+      throw new INatVisionError(
+        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      );
+    }
+  }
+  return true;
+}
+
 interface Options {
   // Required
   version: string;
@@ -104,22 +120,6 @@ interface OptionsForImage {
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: string;
-}
-
-function optionsForImageAreValid(options: OptionsForImage) {
-  if (options.confidenceThreshold) {
-    const confidenceThreshold = parseFloat(options.confidenceThreshold);
-    if (
-      isNaN(confidenceThreshold) ||
-      confidenceThreshold < 0 ||
-      confidenceThreshold > 1
-    ) {
-      throw new INatVisionError(
-        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
-      );
-    }
-  }
-  return true;
 }
 
 /**

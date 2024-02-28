@@ -40,8 +40,15 @@ const taxonomyPath =
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App() {
+  interface Result {
+    name: string;
+    score: number;
+    taxon_id: number;
+    spatial_class_id?: number;
+    iconic_class_id?: number;
+  }
   const [hasPermission, setHasPermission] = useState(false);
-  const [results, setResult] = useState<any[]>([]);
+  const [results, setResult] = useState<Result[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
 
@@ -325,9 +332,11 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>{contentSwitch()}</View>
       {results &&
-        results.map((result: InatVision.Prediction) => (
-          <View key={result.rank} style={styles.labels}>
+        results.map((result) => (
+          <View key={result.name} style={styles.labels}>
             <Text style={styles.text}>{result.name}</Text>
+            <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
+            <Text style={styles.smallLabel}>score {result.score}</Text>
             <Text style={styles.smallLabel}>
               spatial_class_id {result.spatial_class_id}
             </Text>

@@ -15,6 +15,7 @@ jest.mock('react-native', () => ({
 describe('getPredictionsForImage', () => {
   it('should not throw an error when options are valid', () => {
     const options = {
+      version: '1.0',
       confidenceThreshold: '0.5',
     };
 
@@ -25,6 +26,7 @@ describe('getPredictionsForImage', () => {
 
   it('should throw an error when confidenceThreshold is not a number', () => {
     const options = {
+      version: '1.0',
       confidenceThreshold: 'invalid',
     };
 
@@ -35,6 +37,7 @@ describe('getPredictionsForImage', () => {
 
   it('should throw an error when confidenceThreshold is less than 0', () => {
     const options = {
+      version: '1.0',
       confidenceThreshold: '-0.5',
     };
 
@@ -45,6 +48,7 @@ describe('getPredictionsForImage', () => {
 
   it('should throw an error when confidenceThreshold is greater than 1', () => {
     const options = {
+      version: '1.0',
       confidenceThreshold: '1.5',
     };
 

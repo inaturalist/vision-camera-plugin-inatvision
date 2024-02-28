@@ -20,6 +20,7 @@ export interface Prediction {
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
 function optionsAreValid(options: Options | OptionsForImage) {
+  'worklet';
   if (!supportedVersions.includes(options.version)) {
     throw new Error('This model version is not supported.');
   }

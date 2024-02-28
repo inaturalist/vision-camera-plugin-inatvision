@@ -331,8 +331,6 @@ export default function App() {
     );
   };
 
-  console.log('results :>> ', results);
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>{contentSwitch()}</View>

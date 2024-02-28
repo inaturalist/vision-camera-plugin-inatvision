@@ -152,19 +152,23 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         List<Prediction> predictions = classifier.classifyFrame(bitmap);
         bitmap.recycle();
 
-        WritableMap result = Arguments.createMap();
-        WritableArray results = Arguments.createArray();
 
+        WritableArray cleanedPredictions = Arguments.createArray();
         for (Prediction prediction : predictions) {
+            // only KPCOFGS ranks qualify as "top" predictions
+            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+            if (prediction.rank % 10 != 0) {
+              continue;
+            }
             if (prediction.probability > mConfidenceThreshold) {
                 WritableMap map = Taxonomy.nodeToMap(prediction);
                 if (map == null) continue;
-                results.pushMap(map);
+                cleanedPredictions.pushMap(map);
             }
-
         }
 
-        result.putArray("predictions", results);
-        promise.resolve(result);
+        WritableMap resultMap = Arguments.createMap();
+        resultMap.putArray("predictions", cleanedPredictions);
+        promise.resolve(resultMap);
     }
 }

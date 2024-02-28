@@ -112,7 +112,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     }
 
     WritableNativeArray cleanedPredictions = new WritableNativeArray();
-
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
       // Crop the center square of the frame

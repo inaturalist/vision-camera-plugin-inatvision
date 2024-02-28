@@ -111,7 +111,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeArray results = new WritableNativeArray();
+    WritableNativeArray cleanedPredictions = new WritableNativeArray();
 
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
@@ -144,11 +144,14 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
           WritableNativeMap map = Taxonomy.predictionToMap(prediction);
           if (map == null) continue;
           results.pushMap(map);
+          cleanedPredictions.pushMap(map);
         }
       }
     }
 
-    return results;
+    WritableNativeMap resultMap = new WritableNativeMap();
+    resultMap.putArray("predictions", cleanedPredictions);
+    return resultMap;
   }
 
   public VisionCameraPluginInatVisionPlugin() {

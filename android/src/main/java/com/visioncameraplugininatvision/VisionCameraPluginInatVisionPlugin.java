@@ -141,7 +141,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
           continue;
         }
         if (prediction.probability > mConfidenceThreshold) {
-          WritableNativeMap map = Taxonomy.predictionToMap(prediction);
+          WritableNativeMap map = Taxonomy.nodeToMap(prediction);
           if (map == null) continue;
           cleanedPredictions.pushMap(map);
         }

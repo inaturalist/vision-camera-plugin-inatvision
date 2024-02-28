@@ -3,7 +3,7 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import type { Frame } from 'react-native-vision-camera';
 
-interface PredictionDetails {
+interface Prediction {
   ancestor_ids: number[];
   name: string;
   rank: number;
@@ -13,8 +13,9 @@ interface PredictionDetails {
   spatial_class_id?: number;
 }
 
-export interface Prediction {
-  [rank: string]: PredictionDetails[];
+export interface Return {
+  predictions: Prediction[];
+  uri?: string;
 }
 
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
@@ -53,7 +54,7 @@ interface Options {
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision(frame: Frame, options: Options): Prediction[] {
+export function inatVision(frame: Frame, options: Options): Return {
   'worklet';
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
@@ -129,7 +130,7 @@ interface OptionsForImage {
  */
 export function getPredictionsForImage(
   options: OptionsForImage
-): Promise<Prediction[]> {
+): Promise<Return> {
   optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

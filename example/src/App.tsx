@@ -164,7 +164,7 @@ export default function App() {
             }
             // TODO: this needs to be fixed when unifying Android and iOS return types
             // @ts-ignore
-            const prediction: InatVision.PredictionDetails = result[rank][0];
+            const prediction: InatVision.Prediction = result[rank][0];
             return prediction;
           });
         }

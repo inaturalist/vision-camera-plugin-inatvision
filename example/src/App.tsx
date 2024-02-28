@@ -155,18 +155,21 @@ export default function App() {
         if (Platform.OS === 'ios') {
           predictions = cvResults;
         } else {
-          predictions = cvResults.map((result: InatVision.Prediction) => {
+          predictions = cvResults.map((result) => {
             const rank = Object.keys(result)[0];
+            // TODO: this needs to be fixed when unifying Android and iOS return types
+            // @ts-ignore
             if (!rank || !result[rank]) {
               return result;
             }
             // TODO: this needs to be fixed when unifying Android and iOS return types
             // @ts-ignore
-            const prediction: any = result[rank][0];
-            prediction.rank = rank;
+            const prediction: InatVision.PredictionDetails = result[rank][0];
             return prediction;
           });
         }
+        // TODO: this needs to be fixed when unifying Android and iOS return types
+        // @ts-ignore
         runOnJS(setResult)(predictions);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
@@ -327,6 +330,8 @@ export default function App() {
       <ActivityIndicator size="large" color="white" />
     );
   };
+
+  console.log('results :>> ', results);
 
   return (
     <SafeAreaView style={styles.container}>

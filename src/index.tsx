@@ -3,12 +3,35 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import type { Frame } from 'react-native-vision-camera';
 
+enum RANK {
+  'stateofmatter' = 'stateofmatter',
+  'kingdom' = 'kingdom',
+  'phylum' = 'phylum',
+  'class' = 'class',
+  'order' = 'order',
+  'family' = 'family',
+  'genus' = 'genus',
+  'species' = 'species',
+}
+
+enum RANK_LEVEL {
+  'stateofmatter' = 100,
+  'kingdom' = 70,
+  'phylum' = 60,
+  'class' = 50,
+  'order' = 40,
+  'family' = 30,
+  'genus' = 20,
+  'species' = 10,
+}
+
 interface Prediction {
-  ancestor_ids: number[];
-  name: string;
-  rank: number;
-  score: number;
-  taxon_id: number;
+  ancestor_ids: number[]; // Android has
+  name: string; // Android has
+  rank: RANK; // Android has
+  rank_level: RANK_LEVEL; // Android has
+  score: number; // Android has
+  taxon_id: number; // Android has
   iconic_class_id?: number;
   spatial_class_id?: number;
 }

@@ -26,12 +26,12 @@ enum RANK_LEVEL {
 }
 
 interface Prediction {
-  ancestor_ids: number[]; // Android has
-  name: string; // Android has
-  rank: RANK; // Android has
+  name: string;
   rank_level: RANK_LEVEL; // Android has
-  score: number; // Android has
-  taxon_id: number; // Android has
+  score: number;
+  taxon_id: number;
+  ancestor_ids?: number[]; // TODO: this is Android only atm
+  rank?: RANK; // TODO: this is Android only atm
   iconic_class_id?: number;
   spatial_class_id?: number;
 }

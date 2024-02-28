@@ -206,15 +206,15 @@ export default function App() {
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
-        <View style={{ alignItems: 'center' }}>
+        <View style={styles.center}>
           <Button
             title="Show camera"
-            style={styles.text}
+            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
           />
           <Button
             title="Show gallery"
-            style={styles.text}
+            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
           <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
@@ -232,13 +232,7 @@ export default function App() {
               }
               setConfidenceThreshold(value);
             }}
-            style={{
-              color: 'white',
-              padding: 10,
-              backgroundColor: 'grey',
-              textAlign: 'center',
-              width: 100,
-            }}
+            style={styles.textInput}
           />
         </View>
       );
@@ -251,35 +245,25 @@ export default function App() {
 
   const renderGalleryView = () => (
     <>
-      <Button style={styles.text} onPress={selectImage} title="Select image" />
+      <Button color={'white'} onPress={selectImage} title="Select image" />
       <Button
-        style={styles.text}
+        color={'white'}
         onPress={async () => await getPhotos()}
         title="Get photos"
       />
       <Button
-        style={styles.text}
+        color={'white'}
         onPress={() => setViewStatus(VIEW_STATUS.NONE)}
         title="Close"
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-        }}
-      >
+      <View style={styles.row}>
         {photos &&
           photos.edges &&
           photos.edges.length > 0 &&
           photos.edges.map((photo, index) => (
             <Pressable
               key={index}
-              style={{
-                width: 74,
-                height: 74,
-                margin: 2,
-              }}
+              style={styles.photo}
               onPress={() => predict(photo.node.image.uri)}
               title={index.toString()}
             >
@@ -295,7 +279,7 @@ export default function App() {
 
   const renderCameraView = () => {
     return device != null && hasPermission ? (
-      <View style={{ flex: 1, width: '100%', height: '100%' }}>
+      <View style={styles.cameraContainer}>
         <Camera
           style={styles.camera}
           device={device}
@@ -303,19 +287,19 @@ export default function App() {
           frameProcessor={frameProcessor}
           frameProcessorFps={1}
         />
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={styles.row}>
           <Button
-            style={styles.text}
+            color={'white'}
             onPress={toggleNegativeFilter}
             title={negativeFilter ? 'Negative Filter' : 'Positive Filter'}
           />
           <Button
-            style={styles.text}
+            color={'white'}
             onPress={changeFilterByTaxonId}
             title={filterByTaxonId ? 'Plant filter' : 'No plant filter'}
           />
           <Button
-            style={styles.text}
+            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />
@@ -327,30 +311,20 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
-      <View style={styles.container}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
-          {contentSwitch()}
-        </View>
-        {results &&
-          results.map((result: InatVision.Prediction) => (
-            <View key={result.rank} style={styles.labels}>
-              <Text style={styles.text}>{result.name}</Text>
-              <Text style={styles.smallLabel}>
-                spatial_class_id {result.spatial_class_id}
-              </Text>
-              <Text style={styles.smallLabel}>
-                iconic_class_id {result.iconic_class_id}
-              </Text>
-            </View>
-          ))}
-      </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentContainer}>{contentSwitch()}</View>
+      {results &&
+        results.map((result: InatVision.Prediction) => (
+          <View key={result.rank} style={styles.labels}>
+            <Text style={styles.text}>{result.name}</Text>
+            <Text style={styles.smallLabel}>
+              spatial_class_id {result.spatial_class_id}
+            </Text>
+            <Text style={styles.smallLabel}>
+              iconic_class_id {result.iconic_class_id}
+            </Text>
+          </View>
+        ))}
     </SafeAreaView>
   );
 }
@@ -361,6 +335,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'black',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  cameraContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   camera: {
     flex: 1,
@@ -384,5 +368,25 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: 'white',
     textAlign: 'center',
+  },
+  center: {
+    alignItems: 'center',
+  },
+  textInput: {
+    color: 'white',
+    padding: 10,
+    backgroundColor: 'grey',
+    textAlign: 'center',
+    width: 100,
+  },
+  row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  photo: {
+    width: 74,
+    height: 74,
+    margin: 2,
   },
 });

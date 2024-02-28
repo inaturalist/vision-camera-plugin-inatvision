@@ -153,6 +153,8 @@ export default function App() {
             if (!rank || !result[rank]) {
               return result;
             }
+            // TODO: this needs to be fixed when unifying Android and iOS return types
+            // @ts-ignore
             const prediction: any = result[rank][0];
             prediction.rank = rank;
             return prediction;
@@ -204,6 +206,8 @@ export default function App() {
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));
+        // TODO: this needs to be fixed when unifying Android and iOS return types
+        // @ts-ignore
         setResult(Platform.OS === 'android' ? result.predictions : result);
       })
       .catch((err) => {

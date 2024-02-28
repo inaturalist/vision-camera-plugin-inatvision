@@ -20,6 +20,9 @@ export interface Prediction {
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
 function optionsAreValid(options: OptionsForImage) {
+  if (!supportedVersions.includes(options.version)) {
+    throw new Error('This model version is not supported.');
+  }
   if (options.confidenceThreshold) {
     const confidenceThreshold = parseFloat(options.confidenceThreshold);
     if (
@@ -51,9 +54,7 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Prediction[] {
   'worklet';
-  if (!supportedVersions.includes(options.version)) {
-    throw new Error('This model version is not supported.');
-  }
+  optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
   return __inatVision(frame, options);
 }

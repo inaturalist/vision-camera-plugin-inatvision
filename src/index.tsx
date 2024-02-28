@@ -17,15 +17,11 @@ export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
-enum SupportedVersions {
-  V1_0 = '1.0',
-  V2_3 = '2.3',
-  V2_4 = '2.4',
-}
+const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
 interface Options {
   // Required
-  version: SupportedVersions;
+  version: string;
   modelPath: string;
   taxonomyPath: string;
   // Optional
@@ -39,7 +35,7 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Prediction[] {
   'worklet';
-  if (!Object.values(SupportedVersions).includes(options.version)) {
+  if (!supportedVersions.includes(options.version)) {
     throw new Error('This model version is not supported.');
   }
   // @ts-expect-error Frame Processors are not typed.

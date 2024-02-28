@@ -17,15 +17,31 @@ export interface Prediction {
   [rank: string]: PredictionDetails[];
 }
 
-enum SupportedVersions {
-  V1_0 = '1.0',
-  V2_3 = '2.3',
-  V2_4 = '2.4',
+const supportedVersions = ['1.0', '2.3', '2.4' as const];
+
+function optionsAreValid(options: Options | OptionsForImage) {
+  'worklet';
+  if (!supportedVersions.includes(options.version)) {
+    throw new Error('This model version is not supported.');
+  }
+  if (options.confidenceThreshold) {
+    const confidenceThreshold = parseFloat(options.confidenceThreshold);
+    if (
+      isNaN(confidenceThreshold) ||
+      confidenceThreshold < 0 ||
+      confidenceThreshold > 1
+    ) {
+      throw new INatVisionError(
+        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      );
+    }
+  }
+  return true;
 }
 
 interface Options {
   // Required
-  version: SupportedVersions;
+  version: string;
   modelPath: string;
   taxonomyPath: string;
   // Optional
@@ -39,9 +55,7 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Prediction[] {
   'worklet';
-  if (!Object.values(SupportedVersions).includes(options.version)) {
-    throw new Error('This model version is not supported.');
-  }
+  optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
   return __inatVision(frame, options);
 }
@@ -103,33 +117,19 @@ export function removeLogListener(): void {
 interface OptionsForImage {
   // Required
   uri: string;
-  version: SupportedVersions;
+  version: string;
   modelPath: string;
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: string;
 }
 
-function optionsForImageAreValid(options: OptionsForImage) {
-  if (options.confidenceThreshold) {
-    const confidenceThreshold = parseFloat(options.confidenceThreshold);
-    if (
-      isNaN(confidenceThreshold) ||
-      confidenceThreshold < 0 ||
-      confidenceThreshold > 1
-    ) {
-      throw new INatVisionError(
-        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
-      );
-    }
-  }
-  return true;
-}
-
 /**
  * Function to call the computer vision model with a image from disk
  */
-export function getPredictionsForImage(options: OptionsForImage) {
-  optionsForImageAreValid(options);
+export function getPredictionsForImage(
+  options: OptionsForImage
+): Promise<Prediction[]> {
+  optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

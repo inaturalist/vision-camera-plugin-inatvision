@@ -231,12 +231,10 @@ export default function App() {
         <View style={styles.center}>
           <Button
             title="Show camera"
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
           />
           <Button
             title="Show gallery"
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
           <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
@@ -267,17 +265,9 @@ export default function App() {
 
   const renderGalleryView = () => (
     <>
-      <Button color={'white'} onPress={selectImage} title="Select image" />
-      <Button
-        color={'white'}
-        onPress={async () => await getPhotos()}
-        title="Get photos"
-      />
-      <Button
-        color={'white'}
-        onPress={() => setViewStatus(VIEW_STATUS.NONE)}
-        title="Close"
-      />
+      <Button onPress={selectImage} title="Select image" />
+      <Button onPress={async () => await getPhotos()} title="Get photos" />
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       <View style={styles.row}>
         {photos &&
           photos.edges &&
@@ -310,17 +300,14 @@ export default function App() {
         />
         <View style={styles.row}>
           <Button
-            color={'white'}
             onPress={toggleNegativeFilter}
             title={negativeFilter ? 'Negative Filter' : 'Positive Filter'}
           />
           <Button
-            color={'white'}
             onPress={changeFilterByTaxonId}
             title={filterByTaxonId ? 'Plant filter' : 'No plant filter'}
           />
           <Button
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />

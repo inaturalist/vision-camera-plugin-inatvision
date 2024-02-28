@@ -188,11 +188,15 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       [bestRecentBranchAsDict addObject:[prediction asDict]];
   }
 
+  // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+  NSDictionary *response = [NSDictionary dictionary];
+  response = @{@"predictions": bestRecentBranchAsDict};
+
   // End timestamp
   NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
   NSLog(@"inatVision took %f seconds", timeElapsed);
 
-  return bestRecentBranchAsDict;
+  return response;
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(inatVision)

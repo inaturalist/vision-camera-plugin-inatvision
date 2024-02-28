@@ -169,6 +169,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);
+        resultMap.putString("uri", uri.toString());
         promise.resolve(resultMap);
     }
 }

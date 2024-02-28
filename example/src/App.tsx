@@ -178,9 +178,17 @@ export default function App() {
           console.log('User cancelled image picker');
         } else if (response.assets && response.assets.length > 0) {
           const asset = response.assets[0];
-          const uri = Platform.OS === 'ios' ? asset.uri : asset.originalPath;
+          const uri = asset
+            ? Platform.OS === 'ios'
+              ? asset.uri
+              : asset.originalPath
+            : '';
           console.log('Image URI: ', uri);
-          predict(uri);
+          if (uri) {
+            predict(uri);
+          } else {
+            Alert.alert('No image URI');
+          }
         }
       }
     );

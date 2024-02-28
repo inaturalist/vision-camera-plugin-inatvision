@@ -265,7 +265,6 @@ export default function App() {
               key={index}
               style={styles.photo}
               onPress={() => predict(photo.node.image.uri)}
-              title={index.toString()}
             >
               <Image
                 source={{ uri: photo.node.image.uri }}

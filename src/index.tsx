@@ -208,11 +208,11 @@ function handleResult(result: any, options: Options): Result {
   }
 
   // Select the best result from the stored results
-  let current = state.storedResults[state.storedResults.length - 1];
+  let current = state.storedResults[state.storedResults.length - 1] || result;
   let currentScore = current.predictions[current.predictions.length - 1].score;
 
   for (let i = state.storedResults.length - 1; i >= 0; i--) {
-    const candidateResult = state.storedResults[i];
+    const candidateResult = state.storedResults[i] || result;
     const candidateScore =
       candidateResult.predictions[candidateResult.predictions.length - 1].score;
 

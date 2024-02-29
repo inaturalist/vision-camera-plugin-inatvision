@@ -151,26 +151,7 @@ export default function App() {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeNow);
         console.log('cvResults :>> ', cvResults);
-        let predictions = [];
-        if (Platform.OS === 'ios') {
-          predictions = cvResults;
-        } else {
-          predictions = cvResults.map((result) => {
-            const rank = Object.keys(result)[0];
-            // TODO: this needs to be fixed when unifying Android and iOS return types
-            // @ts-ignore
-            if (!rank || !result[rank]) {
-              return result;
-            }
-            // TODO: this needs to be fixed when unifying Android and iOS return types
-            // @ts-ignore
-            const prediction: InatVision.Prediction = result[rank][0];
-            return prediction;
-          });
-        }
-        // TODO: this needs to be fixed when unifying Android and iOS return types
-        // @ts-ignore
-        runOnJS(setResult)(predictions);
+        runOnJS(setResult)(cvResults.predictions);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);
@@ -216,9 +197,7 @@ export default function App() {
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));
-        // TODO: this needs to be fixed when unifying Android and iOS return types
-        // @ts-ignore
-        setResult(Platform.OS === 'android' ? result.predictions : result);
+        setResult(result.predictions);
       })
       .catch((err) => {
         console.log('Error', err);

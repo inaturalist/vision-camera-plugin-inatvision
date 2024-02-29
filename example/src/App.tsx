@@ -140,18 +140,19 @@ export default function App() {
 
       try {
         const timeNow = new Date().getTime();
-        const cvResults = InatVision.inatVision(frame, {
+        const cvResult = InatVision.inatVision(frame, {
           version: modelVersion,
           modelPath,
           taxonomyPath,
           confidenceThreshold,
           filterByTaxonId,
           negativeFilter,
+          numStoredResults: 4,
         });
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeNow);
         console.log('cvResults :>> ', cvResults);
-        runOnJS(setResult)(cvResults.predictions);
+        runOnJS(setResult)(cvResult.predictions);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);

@@ -25,10 +25,12 @@ Object.defineProperty(INatVisionError.prototype, 'name', {
 
 interface State {
   eventListener: null | EmitterSubscription;
+  storedResults: Result[];
 }
 
 const state: State = {
   eventListener: null,
+  storedResults: [],
 };
 
 /**
@@ -192,18 +194,42 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
   return true;
 }
 
-function handleResult(result: any): Result {
+function handleResult(result: any, options: Options): Result {
   'worklet';
-  const predictions = result.predictions.map((prediction: Prediction) => ({
+
+  // Store the result
+  state.storedResults.push(result);
+  if (state.storedResults.length > (options.numStoredResults || 5)) {
+    state.storedResults.shift();
+  }
+
+  // Select the best result from the stored results
+  let current = state.storedResults[state.storedResults.length - 1];
+  let currentScore = current.predictions[current.predictions.length - 1].score;
+
+  for (let i = state.storedResults.length - 1; i >= 0; i--) {
+    const candidateResult = state.storedResults[i];
+    const candidateScore =
+      candidateResult.predictions[candidateResult.predictions.length - 1].score;
+
+    if (candidateScore > currentScore) {
+      current = candidateResult;
+      currentScore = candidateScore;
+    }
+  }
+
+  // Add the rank to the predictions if not present
+  const predictions = current.predictions.map((prediction: Prediction) => ({
     ...prediction,
     rank: prediction.rank
       ? prediction.rank
       : mapLevelToRank[prediction.rank_level],
   }));
-  return {
-    ...result,
+  const handledResult = {
+    ...current,
     predictions,
   };
+  return handledResult;
 }
 
 interface Options {
@@ -215,6 +241,7 @@ interface Options {
   confidenceThreshold?: string;
   filterByTaxonId?: null | string;
   negativeFilter?: null | boolean;
+  numStoredResults?: number;
 }
 
 /**
@@ -225,7 +252,7 @@ export function inatVision(frame: Frame, options: Options): Result {
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
   const result = __inatVision(frame, options);
-  const handledResult = handleResult(result);
+  const handledResult = handleResult(result, options);
   return handledResult;
 }
 

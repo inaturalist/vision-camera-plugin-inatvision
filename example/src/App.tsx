@@ -49,6 +49,7 @@ export default function App() {
   }
   const [hasPermission, setHasPermission] = useState(false);
   const [results, setResult] = useState<Result[]>([]);
+  const [elapsed, setElapsed] = useState<number>(0);
   const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
 
@@ -139,7 +140,7 @@ export default function App() {
       'worklet';
 
       try {
-        const timeNow = new Date().getTime();
+        const timeBefore = new Date().getTime();
         const cvResult = InatVision.inatVision(frame, {
           version: modelVersion,
           modelPath,
@@ -150,9 +151,11 @@ export default function App() {
           numStoredResults: 4,
         });
         const timeAfter = new Date().getTime();
-        console.log('time taken ms: ', timeAfter - timeNow);
-        console.log('cvResults :>> ', cvResults);
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        console.log('age of result: ', timeAfter - cvResult.timestamp);
+
         runOnJS(setResult)(cvResult.predictions);
+        runOnJS(setElapsed)(timeAfter - cvResult.timestamp);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);
@@ -315,6 +318,13 @@ export default function App() {
             </Text>
           </View>
         ))}
+      {!!elapsed && (
+        <View style={styles.info}>
+          <Text style={styles.smallLabel}>
+            Time since result: {Math.round(elapsed / 1000)}s
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -342,6 +352,14 @@ const styles = StyleSheet.create({
   labels: {
     position: 'absolute',
     top: 30,
+    padding: 4,
+    marginHorizontal: 20,
+    backgroundColor: '#000000',
+  },
+  info: {
+    position: 'absolute',
+    bottom: 30,
+    left: 4,
     padding: 4,
     marginHorizontal: 20,
     backgroundColor: '#000000',

@@ -168,6 +168,7 @@ interface Prediction {
 }
 
 export interface Result {
+  timestamp: number;
   predictions: Prediction[];
   uri?: string;
 }
@@ -196,6 +197,9 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
 
 function handleResult(result: any, options: Options): Result {
   'worklet';
+
+  // Add timestamp to the result
+  result.timestamp = new Date().getTime();
 
   // Store the result
   state.storedResults.push(result);

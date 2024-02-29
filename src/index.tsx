@@ -105,12 +105,13 @@ interface Prediction {
   score: number;
   taxon_id: number;
   ancestor_ids?: number[]; // TODO: this is Android only atm
-  rank?: RANK; // TODO: this is Android only atm
+  // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
+  rank?: RANK;
   iconic_class_id?: number;
   spatial_class_id?: number;
 }
 
-export interface Return {
+export interface Result {
   predictions: Prediction[];
   uri?: string;
 }
@@ -151,7 +152,7 @@ interface Options {
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision(frame: Frame, options: Options): Return {
+export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
@@ -227,7 +228,7 @@ interface OptionsForImage {
  */
 export function getPredictionsForImage(
   options: OptionsForImage
-): Promise<Return> {
+): Promise<Result> {
   optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

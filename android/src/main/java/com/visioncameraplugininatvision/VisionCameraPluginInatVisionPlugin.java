@@ -111,8 +111,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeArray results = new WritableNativeArray();
-
+    WritableNativeArray cleanedPredictions = new WritableNativeArray();
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
       // Crop the center square of the frame
@@ -141,14 +140,16 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
           continue;
         }
         if (prediction.probability > mConfidenceThreshold) {
-          WritableNativeMap map = Taxonomy.predictionToMap(prediction);
+          WritableNativeMap map = Taxonomy.nodeToMap(prediction);
           if (map == null) continue;
-          results.pushMap(map);
+          cleanedPredictions.pushMap(map);
         }
       }
     }
 
-    return results;
+    WritableNativeMap resultMap = new WritableNativeMap();
+    resultMap.putArray("predictions", cleanedPredictions);
+    return resultMap;
   }
 
   public VisionCameraPluginInatVisionPlugin() {

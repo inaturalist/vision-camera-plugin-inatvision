@@ -65,7 +65,7 @@
 - (NSDictionary *)asDict {
     NSDictionary *dict = @{
                             @"taxon_id": self.taxonId,
-                            @"rank": self.rank,
+                            @"rank_level": self.rank,
                             };
 
     NSMutableDictionary *mutableDict = [dict mutableCopy];

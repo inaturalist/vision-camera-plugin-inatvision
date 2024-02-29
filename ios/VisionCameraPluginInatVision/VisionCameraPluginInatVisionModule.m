@@ -177,11 +177,16 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               [bestRecentBranchAsDict addObject:[prediction asDict]];
           }
 
+          // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+          // and the original image URI under the key "uri"
+          NSDictionary *response = [NSDictionary dictionary];
+          response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
           NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-          resolve(bestRecentBranchAsDict);
+          resolve(response);
       }];
     } else {
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:[NSURL URLWithString:uri]
@@ -213,11 +218,15 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             [bestRecentBranchAsDict addObject:[prediction asDict]];
         }
 
+        // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+        NSDictionary *response = [NSDictionary dictionary];
+        response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-        resolve(bestRecentBranchAsDict);
+        resolve(response);
     }
 }
 

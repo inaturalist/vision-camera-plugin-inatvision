@@ -151,26 +151,7 @@ export default function App() {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeNow);
         console.log('cvResults :>> ', cvResults);
-        let predictions = [];
-        if (Platform.OS === 'ios') {
-          predictions = cvResults;
-        } else {
-          predictions = cvResults.map((result) => {
-            const rank = Object.keys(result)[0];
-            // TODO: this needs to be fixed when unifying Android and iOS return types
-            // @ts-ignore
-            if (!rank || !result[rank]) {
-              return result;
-            }
-            // TODO: this needs to be fixed when unifying Android and iOS return types
-            // @ts-ignore
-            const prediction: InatVision.PredictionDetails = result[rank][0];
-            return prediction;
-          });
-        }
-        // TODO: this needs to be fixed when unifying Android and iOS return types
-        // @ts-ignore
-        runOnJS(setResult)(predictions);
+        runOnJS(setResult)(cvResults.predictions);
       } catch (classifierError) {
         // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);
@@ -216,9 +197,7 @@ export default function App() {
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));
-        // TODO: this needs to be fixed when unifying Android and iOS return types
-        // @ts-ignore
-        setResult(Platform.OS === 'android' ? result.predictions : result);
+        setResult(result.predictions);
       })
       .catch((err) => {
         console.log('Error', err);
@@ -231,12 +210,10 @@ export default function App() {
         <View style={styles.center}>
           <Button
             title="Show camera"
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
           />
           <Button
             title="Show gallery"
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
           <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
@@ -267,17 +244,9 @@ export default function App() {
 
   const renderGalleryView = () => (
     <>
-      <Button color={'white'} onPress={selectImage} title="Select image" />
-      <Button
-        color={'white'}
-        onPress={async () => await getPhotos()}
-        title="Get photos"
-      />
-      <Button
-        color={'white'}
-        onPress={() => setViewStatus(VIEW_STATUS.NONE)}
-        title="Close"
-      />
+      <Button onPress={selectImage} title="Select image" />
+      <Button onPress={async () => await getPhotos()} title="Get photos" />
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       <View style={styles.row}>
         {photos &&
           photos.edges &&
@@ -310,17 +279,14 @@ export default function App() {
         />
         <View style={styles.row}>
           <Button
-            color={'white'}
             onPress={toggleNegativeFilter}
             title={negativeFilter ? 'Negative Filter' : 'Positive Filter'}
           />
           <Button
-            color={'white'}
             onPress={changeFilterByTaxonId}
             title={filterByTaxonId ? 'Plant filter' : 'No plant filter'}
           />
           <Button
-            color={'white'}
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />

@@ -251,30 +251,6 @@ public class Taxonomy {
         return bestBranch;
     }
 
-    /** Converts the predictions array into "clean" map of results (separated by rank), sent back to React Native */
-    public static WritableNativeMap predictionToMap(Prediction prediction) {
-        WritableNativeMap event = new WritableNativeMap();
-
-        Map<Float, WritableNativeArray> ranks = new HashMap<>();
-
-        WritableNativeMap result = nodeToMap(prediction);
-
-        if (!ranks.containsKey(prediction.node.rank)) {
-            ranks.put(prediction.node.rank, new WritableNativeArray());
-        }
-
-        ranks.get(prediction.node.rank).pushMap(result);
-
-        // Convert from rank level to rank name
-        for (Float rank : RANK_LEVEL_TO_NAME.keySet()) {
-            if (ranks.containsKey(rank)) {
-                event.putArray(RANK_LEVEL_TO_NAME.get(rank), ranks.get(rank));
-            }
-        }
-
-        return event;
-    }
-
     /** Converts a prediction result to a map */
     public static WritableNativeMap nodeToMap(Prediction prediction) {
         WritableNativeMap result = new WritableNativeMap();
@@ -285,7 +261,8 @@ public class Taxonomy {
             result.putInt("taxon_id", Integer.valueOf(prediction.node.key));
             result.putString("name", prediction.node.name);
             result.putDouble("score", prediction.probability);
-            result.putDouble("rank", prediction.node.rank);
+            result.putDouble("rank_level", prediction.node.rank);
+            result.putString("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
               if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
                 result.putInt("iconic_class_id", Integer.valueOf(prediction.node.iconicId));

@@ -3,23 +3,47 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import type { Frame } from 'react-native-vision-camera';
 
-interface PredictionDetails {
-  ancestor_ids: number[];
+enum RANK {
+  'stateofmatter' = 'stateofmatter',
+  'kingdom' = 'kingdom',
+  'phylum' = 'phylum',
+  'class' = 'class',
+  'order' = 'order',
+  'family' = 'family',
+  'genus' = 'genus',
+  'species' = 'species',
+}
+
+enum RANK_LEVEL {
+  'stateofmatter' = 100,
+  'kingdom' = 70,
+  'phylum' = 60,
+  'class' = 50,
+  'order' = 40,
+  'family' = 30,
+  'genus' = 20,
+  'species' = 10,
+}
+
+interface Prediction {
   name: string;
-  rank: number;
+  rank_level: RANK_LEVEL; // Android has
   score: number;
   taxon_id: number;
+  ancestor_ids?: number[]; // TODO: this is Android only atm
+  rank?: RANK; // TODO: this is Android only atm
   iconic_class_id?: number;
   spatial_class_id?: number;
 }
 
-export interface Prediction {
-  [rank: string]: PredictionDetails[];
+export interface Return {
+  predictions: Prediction[];
+  uri?: string;
 }
 
 const supportedVersions = ['1.0', '2.3', '2.4' as const];
 
-function optionsAreValid(options: Options | OptionsForImage) {
+function optionsAreValid(options: Options | OptionsForImage): boolean {
   'worklet';
   if (!supportedVersions.includes(options.version)) {
     throw new Error('This model version is not supported.');
@@ -53,7 +77,7 @@ interface Options {
 /**
  * Returns an array of matching `ImageLabel`s for the given frame. *
  */
-export function inatVision(frame: Frame, options: Options): Prediction[] {
+export function inatVision(frame: Frame, options: Options): Return {
   'worklet';
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
@@ -129,7 +153,7 @@ interface OptionsForImage {
  */
 export function getPredictionsForImage(
   options: OptionsForImage
-): Promise<Prediction[]> {
+): Promise<Return> {
   optionsAreValid(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

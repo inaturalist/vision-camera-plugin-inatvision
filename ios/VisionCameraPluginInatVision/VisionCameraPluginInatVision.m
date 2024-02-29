@@ -12,7 +12,6 @@
 
 + (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
-+ (NSMutableArray*) topBranches;
 
 @end
 
@@ -75,14 +74,6 @@
   return visionModel;
 }
 
-+ (NSMutableArray*) topBranches {
-  static NSMutableArray* topBranches = nil;
-  if (topBranches == nil) {
-    topBranches = [NSMutableArray array];
-  }
-  return topBranches;
-}
-
 static inline id inatVision(Frame* frame, NSArray* args) {
   // Start timestamp
   NSDate *startDate = [NSDate date];
@@ -124,21 +115,15 @@ static inline id inatVision(Frame* frame, NSArray* args) {
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
 
   // Setup top branches
-  NSMutableArray *topBranches = [VisionCameraPluginInatVisionPlugin topBranches];
-
+  NSMutableArray *topBranches = [NSMutableArray array];
   VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
     VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
     MLFeatureValue *firstFV = firstResult.featureValue;
     MLMultiArray *mm = firstFV.multiArrayValue;
 
-    // evaluate the best branch
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
     // add this to the end of the recent top branches array
     [topBranches addObject:bestBranch];
-    // trim stuff from the beginning
-    while (topBranches.count > NUM_RECENT_PREDICTIONS) {
-        [topBranches removeObjectAtIndex:0];
-    }
   };
 
   VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
@@ -159,38 +144,19 @@ static inline id inatVision(Frame* frame, NSArray* args) {
       return nil;
   }
 
-  NSArray *bestRecentBranch = nil;
-  if (topBranches.count == 0) {
-      return nil;
-  } else if (topBranches.count == 1) {
-      bestRecentBranch = topBranches.firstObject;
-  } else {
-      // return the recent best branch with the best, most specific score
-      bestRecentBranch = [topBranches lastObject];
-      // most specific score is last in each branch
-      float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-      for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-          float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-          if (candidateRecentBranchScore > bestRecentBranchScore) {
-              bestRecentBranch = candidateRecentBranch;
-              bestRecentBranchScore = candidateRecentBranchScore;
-          }
-      }
-  }
-
   // convert the VCPPredictions in the bestRecentBranch into dicts
-  NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
-  for (VCPPrediction *prediction in bestRecentBranch) {
+  NSMutableArray *bestBranchAsDict = [NSMutableArray array];
+  for (VCPPrediction *prediction in topBranches.firstObject) {
       // only add predictions that are above the threshold
       if (prediction.score < threshold) {
           continue;
       }
-      [bestRecentBranchAsDict addObject:[prediction asDict]];
+      [bestBranchAsDict addObject:[prediction asDict]];
   }
 
-  // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+  // Create a new dictionary with the bestBranchAsDict under the key "predictions"
   NSDictionary *response = [NSDictionary dictionary];
-  response = @{@"predictions": bestRecentBranchAsDict};
+  response = @{@"predictions": bestBranchAsDict};
 
   // End timestamp
   NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];

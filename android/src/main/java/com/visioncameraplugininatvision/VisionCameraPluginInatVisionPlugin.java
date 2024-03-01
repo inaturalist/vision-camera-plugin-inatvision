@@ -44,6 +44,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  private double mCropRatio = 1.0;
+  public void setCropRatio(double cropRatio) {
+      mCropRatio = cropRatio;
+  }
+
   @Override
   public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
     Log.d(TAG, "2: " + frame.getWidth() + " x " + frame.getHeight() + " frame with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:" + params.length);
@@ -88,6 +93,10 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Boolean negativeFilter = options.getBoolean("negativeFilter");
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
     }
+    if (options.hasKey("cropRatio")) {
+      double cropRatio = options.getDouble("cropRatio");
+      setCropRatio(cropRatio);
+    }
 
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
@@ -114,10 +123,12 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     WritableNativeArray cleanedPredictions = new WritableNativeArray();
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(frame);
-      // Crop the center square of the frame
-      int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
+      Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
+      // Crop the center square of the frame with the given crop ratio
+      int minDim = (int) Math.round(Math.min(bmp.getWidth(), bmp.getHeight()) * mCropRatio);
       int cropX = (bmp.getWidth() - minDim) / 2;
       int cropY = (bmp.getHeight() - minDim) / 2;
+      Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
       Bitmap croppedBitmap = Bitmap.createBitmap(bmp, cropX, cropY, minDim, minDim);
 
       // Resize to expected classifier input size
@@ -128,7 +139,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
         true);
       bmp.recycle();
       bmp = rescaledBitmap;
-      Log.d(TAG, "getBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
+      Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
       bmp.recycle();
       Log.d(TAG, "Predictions: " + predictions.size());

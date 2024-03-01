@@ -127,7 +127,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
     // If uri starts with ph://, it's a photo library asset
     if ([uri hasPrefix:@"ph://"]) {
-
       // Convert ph:// path to local identifier
       NSString *localIdentifier = [uri stringByReplacingOccurrencesOfString:@"ph://" withString:@""];
 
@@ -138,8 +137,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           reject(@"error", @"Asset not found", nil);
           return;
       }
-
-
 
       // Fetch image data
       [[PHImageManager defaultManager] requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {

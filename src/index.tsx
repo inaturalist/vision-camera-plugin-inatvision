@@ -192,6 +192,17 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       );
     }
   }
+  if (options.cropRatio) {
+    if (
+      isNaN(options.cropRatio) ||
+      options.cropRatio < 0 ||
+      options.cropRatio > 1
+    ) {
+      throw new INatVisionError(
+        'option cropRatio must be a number between 0 and 1.'
+      );
+    }
+  }
   return true;
 }
 
@@ -236,20 +247,58 @@ function handleResult(result: any, options: Options): Result {
   return handledResult;
 }
 
+/**
+ * Represents the options for a call to use the plugin to predict on a frame.
+ */
 interface Options {
   // Required
+  /**
+   * The version of the model to use.
+   */
   version: string;
+  /**
+   * The path to the model file.
+   */
   modelPath: string;
+  /**
+   * The path to the taxonomy file.
+   */
   taxonomyPath: string;
   // Optional
+  /**
+   * The confidence threshold for the predictions.
+   */
   confidenceThreshold?: string;
+  /**
+   * The iconic taxon id to filter by.
+   */
   filterByTaxonId?: null | string;
+  /**
+   * The spatial taxon id to filter by.
+   */
   negativeFilter?: null | boolean;
+  /**
+   * The number of results to keep stored internally.
+   *
+   * Specifies the integer number of results to store internally that the plugin serves the best out of.
+   * E.g. if the plugin is called with this number set to 5, the plugin will serve the best result out of the 5 stored previous results.
+   * Setting this number to 0 or 1 will always return the current result (i.e. none or only one frame result will be stored at a time).
+   */
   numStoredResults?: number;
+  /**
+   * *Android only.*
+   *
+   * Ratio to crop the center square.
+   *
+   * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
+   */
+  cropRatio?: number;
 }
 
 /**
- * Returns an array of matching `ImageLabel`s for the given frame. *
+ * Function to call the computer vision model with a frame from the camera
+ * @param frame The frame to predict on.
+ * @param options The options for the prediction.
  */
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
@@ -268,6 +317,7 @@ interface OptionsForImage {
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: string;
+  cropRatio?: number;
 }
 
 /**

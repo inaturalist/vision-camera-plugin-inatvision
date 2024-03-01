@@ -68,12 +68,14 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_MODEL_PATH = "modelPath";
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
     public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
+    public static final String OPTION_CROP_RATIO = "cropRatio";
 
     public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
     private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
     public void setConfidenceThreshold(float confidence) {
         mConfidenceThreshold = confidence;
     }
+    public static final double DEFAULT_CROP_RATIO = 1.0;
 
     @ReactMethod
     public void getPredictionsForImage(ReadableMap options, Promise promise) {
@@ -96,6 +98,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
           }
           setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
         }
+        double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 
         ImageClassifier classifier = null;
 
@@ -128,11 +131,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                 Timber.tag(TAG).w(msg);
                 promise.reject("E_IO_EXCEPTION", msg);
             }
-
-            // Crop the center square of the image
-            int minDim = Math.min(bitmap.getWidth(), bitmap.getHeight());
+            Log.d(TAG, "originalBitmap: " + bitmap + ": " + bitmap.getWidth() + " x " + bitmap.getHeight());
+            // Crop the center square of the frame with the given crop ratio
+            int minDim = (int) Math.round(Math.min(bitmap.getWidth(), bitmap.getHeight()) * cropRatio);
             int cropX = (bitmap.getWidth() - minDim) / 2;
             int cropY = (bitmap.getHeight() - minDim) / 2;
+            Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
             Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, cropX, cropY, minDim, minDim);
 
             // Resize to expected classifier input size
@@ -143,6 +147,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                     true);
             bitmap.recycle();
             bitmap = rescaledBitmap;
+            Log.d(TAG, "rescaledBitmap: " + bitmap + ": " + bitmap.getWidth() + " x " + bitmap.getHeight());
         } catch (Exception e) {
             e.printStackTrace();
             promise.reject("E_IO_EXCEPTION", "Couldn't read input file: " + uri.toString() + "; Exception: " + e);

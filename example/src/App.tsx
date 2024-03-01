@@ -149,6 +149,7 @@ export default function App() {
           filterByTaxonId,
           negativeFilter,
           numStoredResults: 4,
+          cropRatio: 0.9,
         });
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);

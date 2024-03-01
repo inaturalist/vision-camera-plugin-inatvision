@@ -286,6 +286,8 @@ interface Options {
    */
   numStoredResults?: number;
   /**
+   * *Android only.*
+   *
    * Ratio to crop the center square.
    *
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.

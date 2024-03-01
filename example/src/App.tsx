@@ -193,6 +193,7 @@ export default function App() {
   }
 
   function predict(uri: string) {
+    const timeBefore = new Date().getTime();
     InatVision.getPredictionsForImage({
       uri,
       version: modelVersion,
@@ -202,6 +203,8 @@ export default function App() {
       cropRatio: 0.88,
     })
       .then((result) => {
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('Result', JSON.stringify(result));
         setResult(result.predictions);
       })

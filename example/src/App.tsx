@@ -199,6 +199,7 @@ export default function App() {
       modelPath,
       taxonomyPath,
       confidenceThreshold,
+      cropRatio: 0.88,
     })
       .then((result) => {
         console.log('Result', JSON.stringify(result));

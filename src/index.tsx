@@ -192,6 +192,17 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       );
     }
   }
+  if (options.cropRatio) {
+    if (
+      isNaN(options.cropRatio) ||
+      options.cropRatio < 0 ||
+      options.cropRatio > 1
+    ) {
+      throw new INatVisionError(
+        'option cropRatio must be a number between 0 and 1.'
+      );
+    }
+  }
   return true;
 }
 
@@ -274,6 +285,12 @@ interface Options {
    * Setting this number to 0 or 1 will always return the current result (i.e. none or only one frame result will be stored at a time).
    */
   numStoredResults?: number;
+  /**
+   * Ratio to crop the center square.
+   *
+   * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
+   */
+  cropRatio?: number;
 }
 
 /**
@@ -298,6 +315,7 @@ interface OptionsForImage {
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: string;
+  cropRatio?: number;
 }
 
 /**

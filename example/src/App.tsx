@@ -47,11 +47,9 @@ export default function App() {
     spatial_class_id?: number;
     iconic_class_id?: number;
   }
+  const { hasPermission, requestPermission } = useCameraPermission();
   const [results, setResult] = useState<Result[]>([]);
   const [elapsed, setElapsed] = useState<number>(0);
-
-  const { hasPermission, requestPermission } = useCameraPermission();
-
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
   );

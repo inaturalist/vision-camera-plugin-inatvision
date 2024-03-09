@@ -248,30 +248,6 @@ public class Taxonomy {
         return bestBranch;
     }
 
-    /** Converts the predictions array into "clean" map of results (separated by rank), sent back to React Native */
-    public static Map predictionToMap(Prediction prediction) {
-        Map<String, Object> event = new HashMap();
-
-        Map<Float, ArrayList> ranks = new HashMap<>();
-
-        Map result = nodeToMap(prediction);
-
-        if (!ranks.containsKey(prediction.node.rank)) {
-            ranks.put(prediction.node.rank, new ArrayList());
-        }
-
-        ranks.get(prediction.node.rank).add(result);
-
-        // Convert from rank level to rank name
-        for (Float rank : RANK_LEVEL_TO_NAME.keySet()) {
-            if (ranks.containsKey(rank)) {
-                event.put(RANK_LEVEL_TO_NAME.get(rank), ranks.get(rank));
-            }
-        }
-
-        return event;
-    }
-
     /** Converts a prediction result to a map */
     public static Map nodeToMap(Prediction prediction) {
         Map result = new HashMap();

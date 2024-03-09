@@ -171,7 +171,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                 if (map == null) continue;
                 // Transform the Map to a ReadableMap
                 ReadableMap readableMap = Arguments.makeNativeMap(map);
-                cleanedPredictions.pushMap(map);
+                cleanedPredictions.pushMap(readableMap);
             }
 
         }

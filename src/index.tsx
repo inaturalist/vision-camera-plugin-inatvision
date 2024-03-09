@@ -308,7 +308,7 @@ interface Options {
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
   if (plugin === undefined) {
-    throw new Error("Couldn't find the 'inatVision' plugin.");
+    throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
   }
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.

@@ -40,9 +40,18 @@ const taxonomyPath =
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App() {
+  interface Result {
+    name: string;
+    score: number;
+    taxon_id: number;
+    spatial_class_id?: number;
+    iconic_class_id?: number;
+  }
+  const [results, setResult] = useState<Result[]>([]);
+  const [elapsed, setElapsed] = useState<number>(0);
+
   const { hasPermission, requestPermission } = useCameraPermission();
 
-  const [results, setResult] = useState<any[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
   );
@@ -132,45 +141,33 @@ export default function App() {
     setResult(predictions);
   });
 
+  const handleElapsed = Worklets.createRunInJsFn((newElapsed: number) => {
+    setElapsed(newElapsed);
+  });
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
       try {
-        const timeNow = new Date().getTime();
-        const cvResults: InatVision.Prediction[] | undefined =
-          InatVision.inatVision(frame, {
-            version: modelVersion,
-            modelPath,
-            taxonomyPath,
-            confidenceThreshold,
-            filterByTaxonId,
-            negativeFilter,
-            patchedOrientationAndroid: 'portrait',
-          });
+        const timeBefore = new Date().getTime();
+        const cvResult = InatVision.inatVision(frame, {
+          version: modelVersion,
+          modelPath,
+          taxonomyPath,
+          confidenceThreshold,
+          filterByTaxonId,
+          negativeFilter,
+          numStoredResults: 4,
+          cropRatio: 0.9,
+          patchedOrientationAndroid: 'portrait',
+        });
         const timeAfter = new Date().getTime();
-        console.log('time taken ms: ', timeAfter - timeNow);
-        console.log('cvResults :>> ', cvResults);
-        if (!cvResults) {
-          return;
-        }
-        let predictions = [];
-        if (Platform.OS === 'ios') {
-          predictions = cvResults;
-        } else {
-          predictions = cvResults.map((result) => {
-            const rank = Object.keys(result)[0];
-            if (!rank || !result[rank]) {
-              return result;
-            }
-            const rankPredictions: any = result[rank];
-            const prediction = rankPredictions[0];
-            prediction.rank = rank;
-            return prediction;
-          });
-        }
-        handleResults(predictions);
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        console.log('age of result: ', timeAfter - cvResult.timestamp);
+
+        handleResults(cvResult.predictions);
+        handleElapsed(timeAfter - cvResult.timestamp);
       } catch (classifierError) {
-        // TODO: needs to throw Exception in the native code for it to work here?
         console.log(`Error: ${classifierError}`);
       }
     },

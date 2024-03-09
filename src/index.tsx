@@ -1,49 +1,9 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
-import { VisionCameraProxy, Frame } from 'react-native-vision-camera';
+import { VisionCameraProxy } from 'react-native-vision-camera';
+import type { Frame } from 'react-native-vision-camera';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
-
-export interface PredictionDetails {
-  ancestor_ids: number[];
-  name: string;
-  rank: number;
-  score: number;
-  taxon_id: number;
-  iconic_class_id?: number;
-  spatial_class_id?: number;
-}
-
-export interface Prediction {
-  [rank: string]: PredictionDetails[];
-}
-
-interface Options extends Record<string, string | boolean | undefined> {
-  // Required
-  version: string;
-  modelPath: string;
-  taxonomyPath: string;
-  // Optional
-  confidenceThreshold?: string;
-  filterByTaxonId?: string;
-  negativeFilter?: boolean;
-  // Patches
-  patchedOrientationAndroid?: string;
-}
-
-/**
- * Returns an array of matching `ImageLabel`s for the given frame. *
- */
-export function inatVision(frame: Frame, args: Options): any {
-  'worklet';
-  if (!['1.0', '2.3', '2.4'].includes(args.version)) {
-    throw new Error('This model version is not supported.');
-  }
-  if (plugin === undefined) {
-    throw new Error("Couldn't find the 'inatVision' plugin.");
-  }
-  return plugin.call(frame, args);
-}
 
 const LINKING_ERROR =
   `The package 'vision-camera-plugin-inatvision' doesn't seem to be linked. Make sure: \n\n` +
@@ -292,6 +252,7 @@ function handleResult(result: any, options: Options): Result {
 /**
  * Represents the options for a call to use the plugin to predict on a frame.
  */
+// interface Options extends Record<string, string | boolean | undefined> {
 interface Options {
   // Required
   /**
@@ -335,6 +296,8 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
+    // Patches
+  patchedOrientationAndroid?: string;
 }
 
 /**
@@ -344,9 +307,12 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
+  if (plugin === undefined) {
+    throw new Error("Couldn't find the 'inatVision' plugin.");
+  }
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
-  const result = __inatVision(frame, options);
+  const result = plugin.call(frame, args);;
   const handledResult = handleResult(result, options);
   return handledResult;
 }

@@ -50,6 +50,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  private double mCropRatio = 1.0;
+  public void setCropRatio(double cropRatio) {
+      mCropRatio = cropRatio;
+  }
+
   @Nullable
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) {
@@ -104,8 +109,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     if (negativeFilter != null) {
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
     }
-    if (options.hasKey("cropRatio")) {
-      double cropRatio = options.getDouble("cropRatio");
+
+    Double cropRatio = (Double)arguments.get("cropRatio");
+    if (cropRatio != null) {
       setCropRatio(cropRatio);
     }
 

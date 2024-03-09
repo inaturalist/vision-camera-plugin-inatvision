@@ -104,6 +104,10 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     if (negativeFilter != null) {
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
     }
+    if (options.hasKey("cropRatio")) {
+      double cropRatio = options.getDouble("cropRatio");
+      setCropRatio(cropRatio);
+    }
 
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
@@ -135,6 +139,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
       int cropX = (bmp.getWidth() - minDim) / 2;
       int cropY = (bmp.getHeight() - minDim) / 2;
+      Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
       Bitmap croppedBitmap = Bitmap.createBitmap(bmp, cropX, cropY, minDim, minDim);
 
       // Resize to expected classifier input size
@@ -145,7 +150,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
         true);
       bmp.recycle();
       bmp = rescaledBitmap;
-      Log.d(TAG, "getBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
+      Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
       bmp.recycle();
       Log.d(TAG, "Predictions: " + predictions.size());
@@ -164,6 +169,8 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    return results;
+    WritableNativeMap resultMap = new WritableNativeMap();
+    resultMap.putArray("predictions", cleanedPredictions);
+    return resultMap;
   }
 }

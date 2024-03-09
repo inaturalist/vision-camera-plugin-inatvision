@@ -68,9 +68,20 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_VERSION = "version";
     public static final String OPTION_MODEL_PATH = "modelPath";
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
+    public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
+    public static final String OPTION_CROP_RATIO = "cropRatio";
+
+    public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
+    private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
+    public void setConfidenceThreshold(float confidence) {
+        mConfidenceThreshold = confidence;
+    }
+    public static final double DEFAULT_CROP_RATIO = 1.0;
+
     @ReactMethod
     public void getPredictionsForImage(ReadableMap options, Promise promise) {
         Log.d(TAG, "getPredictionsForImage: options:" + options);
+        // Required options
         if (!options.hasKey(OPTION_URI) || !options.hasKey(OPTION_MODEL_PATH) || !options.hasKey(OPTION_TAXONOMY_PATH)|| !options.hasKey(OPTION_VERSION)) {
             promise.reject("E_MISSING_ARGS", String.format("Missing one or more arguments: %s, %s, %s, %s", OPTION_URI, OPTION_MODEL_PATH, OPTION_TAXONOMY_PATH, OPTION_VERSION));
             return;
@@ -80,6 +91,15 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String modelFilename = options.getString(OPTION_MODEL_PATH);
         String taxonomyFilename = options.getString(OPTION_TAXONOMY_PATH);
         String version = options.getString(OPTION_VERSION);
+        // Destructure optional parameters and set values
+        if (options.hasKey(OPTION_CONFIDENCE_THRESHOLD)) {
+          String confidenceThreshold = options.getString(OPTION_CONFIDENCE_THRESHOLD);
+          if (confidenceThreshold == null) {
+            confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
+          }
+          setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+        }
+        double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 
         ImageClassifier classifier = null;
 
@@ -112,11 +132,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                 Timber.tag(TAG).w(msg);
                 promise.reject("E_IO_EXCEPTION", msg);
             }
-
-            // Crop the center square of the image
-            int minDim = Math.min(bitmap.getWidth(), bitmap.getHeight());
+            Log.d(TAG, "originalBitmap: " + bitmap + ": " + bitmap.getWidth() + " x " + bitmap.getHeight());
+            // Crop the center square of the frame with the given crop ratio
+            int minDim = (int) Math.round(Math.min(bitmap.getWidth(), bitmap.getHeight()) * cropRatio);
             int cropX = (bitmap.getWidth() - minDim) / 2;
             int cropY = (bitmap.getHeight() - minDim) / 2;
+            Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
             Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, cropX, cropY, minDim, minDim);
 
             // Resize to expected classifier input size
@@ -127,6 +148,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                     true);
             bitmap.recycle();
             bitmap = rescaledBitmap;
+            Log.d(TAG, "rescaledBitmap: " + bitmap + ": " + bitmap.getWidth() + " x " + bitmap.getHeight());
         } catch (Exception e) {
             e.printStackTrace();
             promise.reject("E_IO_EXCEPTION", "Couldn't read input file: " + uri.toString() + "; Exception: " + e);
@@ -136,9 +158,8 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         List<Prediction> predictions = classifier.classifyFrame(bitmap);
         bitmap.recycle();
 
-        WritableMap result = Arguments.createMap();
-        WritableArray results = Arguments.createArray();
 
+        WritableArray cleanedPredictions = Arguments.createArray();
         for (Prediction prediction : predictions) {
             Map map = Taxonomy.nodeToMap(prediction);
             if (map == null) continue;
@@ -148,7 +169,9 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             results.pushMap(readableMap);
         }
 
-        result.putArray("predictions", results);
-        promise.resolve(result);
+        WritableMap resultMap = Arguments.createMap();
+        resultMap.putArray("predictions", cleanedPredictions);
+        resultMap.putString("uri", uri.toString());
+        promise.resolve(resultMap);
     }
 }

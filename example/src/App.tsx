@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  View,
   ActivityIndicator,
-  Text,
+  Alert,
+  Button,
+  Image,
   Platform,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import {
   Camera,
@@ -48,12 +54,11 @@ export default function App() {
     GALLERY,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
+  const [confidenceThreshold, setConfidenceThreshold] = useState<string>('0.7');
 
   const device = useCameraDevice('back');
 
   const [photos, getPhotos] = useCameraRoll();
-
-  const confidenceThreshold = '0.7';
 
   const toggleNegativeFilter = () => {
     setNegativeFilter(!negativeFilter);
@@ -183,24 +188,37 @@ export default function App() {
           console.log('User cancelled image picker');
         } else if (response.assets && response.assets.length > 0) {
           const asset = response.assets[0];
-          const uri = Platform.OS === 'ios' ? asset.uri : asset.originalPath;
+          const uri = asset
+            ? Platform.OS === 'ios'
+              ? asset.uri
+              : asset.originalPath
+            : '';
           console.log('Image URI: ', uri);
-          predict(uri);
+          if (uri) {
+            predict(uri);
+          } else {
+            Alert.alert('No image URI');
+          }
         }
       }
     );
   }
 
   function predict(uri: string) {
+    const timeBefore = new Date().getTime();
     InatVision.getPredictionsForImage({
       uri,
       version: modelVersion,
       modelPath,
       taxonomyPath,
+      confidenceThreshold,
+      cropRatio: 0.88,
     })
       .then((result) => {
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('Result', JSON.stringify(result));
-        setResult(Platform.OS === 'android' ? result.predictions : result);
+        setResult(result.predictions);
       })
       .catch((err) => {
         console.log('Error', err);
@@ -210,20 +228,33 @@ export default function App() {
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
-        <>
-          <Text
-            style={styles.text}
+        <View style={styles.center}>
+          <Button
+            title="Show camera"
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
-          >
-            {'Show camera'}
-          </Text>
-          <Text
-            style={styles.text}
+          />
+          <Button
+            title="Show gallery"
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
-          >
-            {'Show gallery'}
-          </Text>
-        </>
+          />
+          <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
+          <TextInput
+            value={confidenceThreshold?.toString() || ''}
+            onChangeText={(value) => {
+              const valueAsNumber = parseFloat(value);
+              if (valueAsNumber < 0 || valueAsNumber > 1) {
+                Alert.alert(
+                  'Nope',
+                  'Confidence threshold must be between 0 and 1'
+                );
+                setConfidenceThreshold(confidenceThreshold);
+                return;
+              }
+              setConfidenceThreshold(value);
+            }}
+            style={styles.textInput}
+          />
+        </View>
       );
     } else if (viewStatus === VIEW_STATUS.CAMERA) {
       return renderCameraView();
@@ -232,34 +263,34 @@ export default function App() {
     }
   };
 
-  const renderGalleryView = () => {
-    return (
-      <>
-        <Text style={styles.text} onPress={selectImage}>
-          {'Select image'}
-        </Text>
-        <Text style={styles.text} onPress={async () => await getPhotos()}>
-          {'Get Photos'}
-        </Text>
+  const renderGalleryView = () => (
+    <>
+      <Button onPress={selectImage} title="Select image" />
+      <Button onPress={async () => await getPhotos()} title="Get photos" />
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
+      <View style={styles.row}>
         {photos &&
           photos.edges &&
           photos.edges.length > 0 &&
           photos.edges.map((photo, index) => (
-            <Text
+            <Pressable
               key={index}
-              style={styles.text}
+              style={styles.photo}
               onPress={() => predict(photo.node.image.uri)}
             >
-              {index}
-            </Text>
+              <Image
+                source={{ uri: photo.node.image.uri }}
+                style={styles.photo}
+              />
+            </Pressable>
           ))}
-      </>
-    );
-  };
+      </View>
+    </>
+  );
 
   const renderCameraView = () => {
     return device != null && hasPermission ? (
-      <>
+      <View style={styles.cameraContainer}>
         <Camera
           style={styles.camera}
           device={device}
@@ -274,36 +305,51 @@ export default function App() {
           enableGpuBuffers={true}
           enableFpsGraph={true}
         />
-        <Text style={styles.text} onPress={toggleNegativeFilter}>
-          {negativeFilter ? 'Negative Filter' : 'Positive Filter'}
-        </Text>
-        <Text style={styles.text} onPress={changeFilterByTaxonId}>
-          {filterByTaxonId ? 'Plant filter' : 'No filter'}
-        </Text>
-      </>
+        <View style={styles.row}>
+          <Button
+            onPress={toggleNegativeFilter}
+            title={negativeFilter ? 'Negative Filter' : 'Positive Filter'}
+          />
+          <Button
+            onPress={changeFilterByTaxonId}
+            title={filterByTaxonId ? 'Plant filter' : 'No plant filter'}
+          />
+          <Button
+            onPress={() => setViewStatus(VIEW_STATUS.NONE)}
+            title="Close"
+          />
+        </View>
+      </View>
     ) : (
       <ActivityIndicator size="large" color="white" />
     );
   };
 
   return (
-    <View style={styles.container}>
-      {contentSwitch()}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentContainer}>{contentSwitch()}</View>
       {results &&
-        results.map((result: InatVision.Prediction) => {
-          return (
-            <View key={result.rank} style={styles.labels}>
-              <Text style={styles.text}>{result.name}</Text>
-              <Text style={styles.smallLabel}>
-                spatial_class_id {result.spatial_class_id}
-              </Text>
-              <Text style={styles.smallLabel}>
-                iconic_class_id {result.iconic_class_id}
-              </Text>
-            </View>
-          );
-        })}
-    </View>
+        results.map((result) => (
+          <View key={result.name} style={styles.labels}>
+            <Text style={styles.text}>{result.name}</Text>
+            <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
+            <Text style={styles.smallLabel}>score {result.score}</Text>
+            <Text style={styles.smallLabel}>
+              spatial_class_id {result.spatial_class_id}
+            </Text>
+            <Text style={styles.smallLabel}>
+              iconic_class_id {result.iconic_class_id}
+            </Text>
+          </View>
+        ))}
+      {!!elapsed && (
+        <View style={styles.info}>
+          <Text style={styles.smallLabel}>
+            Time since result: {Math.round(elapsed / 1000)}s
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
 
@@ -314,13 +360,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'black',
   },
-  camera: {
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  cameraContainer: {
     flex: 1,
     width: '100%',
+    height: '100%',
+  },
+  camera: {
+    flex: 1,
   },
   labels: {
     position: 'absolute',
     top: 30,
+    padding: 4,
+    marginHorizontal: 20,
+    backgroundColor: '#000000',
+  },
+  info: {
+    position: 'absolute',
+    bottom: 30,
+    left: 4,
     padding: 4,
     marginHorizontal: 20,
     backgroundColor: '#000000',
@@ -337,5 +400,25 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: 'white',
     textAlign: 'center',
+  },
+  center: {
+    alignItems: 'center',
+  },
+  textInput: {
+    color: 'white',
+    padding: 10,
+    backgroundColor: 'grey',
+    textAlign: 'center',
+    width: 100,
+  },
+  row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  photo: {
+    width: 74,
+    height: 74,
+    margin: 2,
   },
 });

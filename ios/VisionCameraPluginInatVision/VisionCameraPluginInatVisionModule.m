@@ -83,8 +83,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
-    int NUM_RECENT_PREDICTIONS = 5;
-
     // Log args
     NSLog(@"getPredictionsForImage options: %@", options);
     // Destructure image uri out of options
@@ -120,10 +118,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
       NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
       // add this to the end of the recent top branches array
       [topBranches addObject:bestBranch];
-      // trim stuff from the beginning
-      while (topBranches.count > NUM_RECENT_PREDICTIONS) {
-          [topBranches removeObjectAtIndex:0];
-      }
     };
 
     VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
@@ -133,7 +127,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
     // If uri starts with ph://, it's a photo library asset
     if ([uri hasPrefix:@"ph://"]) {
-
       // Convert ph:// path to local identifier
       NSString *localIdentifier = [uri stringByReplacingOccurrencesOfString:@"ph://" withString:@""];
 
@@ -144,8 +137,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           reject(@"error", @"Asset not found", nil);
           return;
       }
-
-
 
       // Fetch image data
       [[PHImageManager defaultManager] requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
@@ -171,18 +162,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               //resolve(@[]);
           } else if (topBranches.count == 1) {
               bestRecentBranch = topBranches.firstObject;
-          } else {
-              // return the recent best branch with the best, most specific score
-              bestRecentBranch = [topBranches lastObject];
-              // most specific score is last in each branch
-              float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-              for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-                  float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-                  if (candidateRecentBranchScore > bestRecentBranchScore) {
-                      bestRecentBranch = candidateRecentBranch;
-                      bestRecentBranchScore = candidateRecentBranchScore;
-                  }
-              }
           }
 
           // convert the VCPPredictions in the bestRecentBranch into dicts
@@ -195,11 +174,16 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               [bestRecentBranchAsDict addObject:[prediction asDict]];
           }
 
+          // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+          // and the original image URI under the key "uri"
+          NSDictionary *response = [NSDictionary dictionary];
+          response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
           NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-          resolve(bestRecentBranchAsDict);
+          resolve(response);
       }];
     } else {
         VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:[NSURL URLWithString:uri]
@@ -219,18 +203,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             //resolve(@[]);
         } else if (topBranches.count == 1) {
             bestRecentBranch = topBranches.firstObject;
-        } else {
-            // return the recent best branch with the best, most specific score
-            bestRecentBranch = [topBranches lastObject];
-            // most specific score is last in each branch
-            float bestRecentBranchScore = [[bestRecentBranch lastObject] score];
-            for (NSArray *candidateRecentBranch in [topBranches reverseObjectEnumerator]) {
-                float candidateRecentBranchScore = [[candidateRecentBranch lastObject] score];
-                if (candidateRecentBranchScore > bestRecentBranchScore) {
-                    bestRecentBranch = candidateRecentBranch;
-                    bestRecentBranchScore = candidateRecentBranchScore;
-                }
-            }
         }
 
         // convert the VCPPredictions in the bestRecentBranch into dicts
@@ -243,11 +215,15 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             [bestRecentBranchAsDict addObject:[prediction asDict]];
         }
 
+        // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+        NSDictionary *response = [NSDictionary dictionary];
+        response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-        resolve(bestRecentBranchAsDict);
+        resolve(response);
     }
 }
 

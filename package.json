@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-plugin-inatvision",
-  "version": "2.0.0-beta.0",
+  "version": "2.2.0",
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -31,6 +31,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
+    "prepack": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install && yarn example pods",

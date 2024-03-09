@@ -333,7 +333,7 @@ PODS:
     - React-Core
   - react-native-image-picker (7.0.3):
     - React-Core
-  - react-native-worklets-core (0.2.4):
+  - react-native-worklets-core (0.3.0):
     - React
     - React-callinvoker
     - React-Core
@@ -424,7 +424,7 @@ PODS:
   - RNFS (2.20.0):
     - React-Core
   - SocketRocket (0.6.0)
-  - VisionCamera (3.9.1):
+  - VisionCamera (4.0.0-beta.5):
     - React
     - React-callinvoker
     - React-Core
@@ -638,7 +638,7 @@ SPEC CHECKSUMS:
   React-logger: 186dd536128ae5924bc38ed70932c00aa740cd5b
   react-native-cameraroll: 2a198b0eb86c7ccf3303fb57702b2465cc292c94
   react-native-image-picker: 2381c008bbb09e72395a2d043c147b11bd1523d9
-  react-native-worklets-core: b4094f51cb2bc649e297206425cb8956f4945e3e
+  react-native-worklets-core: a894d572639fcf37c6d284cc799882d25d00c93d
   React-perflogger: e706562ab7eb8eb590aa83a224d26fa13963d7f2
   React-RCTActionSheet: 57d4bd98122f557479a3359ad5dad8e109e20c5a
   React-RCTAnimation: ccf3ef00101ea74bda73a045d79a658b36728a60
@@ -654,7 +654,7 @@ SPEC CHECKSUMS:
   ReactCommon: 08723d2ed328c5cbcb0de168f231bc7bae7f8aa1
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  VisionCamera: 609b194489f336792caa5eda305a3fdd4ba5d44c
+  VisionCamera: 81972e59d3cac50c97a37fa109dafd63720a8bd0
   VisionCameraPluginInatVision: cee8182ce3b30d4a7b84e6f9ab318b252cc16272
   Yoga: f7decafdc5e8c125e6fa0da38a687e35238420fa
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

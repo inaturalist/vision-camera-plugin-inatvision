@@ -137,12 +137,13 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    List<Map> results = new ArrayList<>();
+    List<Map> cleanedPredictions = new ArrayList<>();
 
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
+      Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       // Crop the center square of the frame
-      int minDim = Math.min(bmp.getWidth(), bmp.getHeight());
+      int minDim = (int) Math.round(Math.min(bmp.getWidth(), bmp.getHeight()) * mCropRatio);
       int cropX = (bmp.getWidth() - minDim) / 2;
       int cropY = (bmp.getHeight() - minDim) / 2;
       Log.d(TAG, "croppingParams: " + minDim + "; " + cropX + "; " + cropY);
@@ -168,9 +169,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
           continue;
         }
         if (prediction.probability > mConfidenceThreshold) {
-          Map map = Taxonomy.predictionToMap(prediction);
+          Map map = Taxonomy.nodeToMap(prediction);
           if (map == null) continue;
-          results.add(map);
+          cleanedPredictions.add(map);
         }
       }
     }

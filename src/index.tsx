@@ -1,7 +1,9 @@
-/* globals __inatVision */
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
+import { VisionCameraProxy } from 'react-native-vision-camera';
 import type { Frame } from 'react-native-vision-camera';
+
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
 const LINKING_ERROR =
   `The package 'vision-camera-plugin-inatvision' doesn't seem to be linked. Make sure: \n\n` +
@@ -155,7 +157,7 @@ const mapLevelToRank = {
   5: RANK.subspecies,
 };
 
-interface Prediction {
+export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;
@@ -250,6 +252,7 @@ function handleResult(result: any, options: Options): Result {
 /**
  * Represents the options for a call to use the plugin to predict on a frame.
  */
+// interface Options extends Record<string, string | boolean | undefined> {
 interface Options {
   // Required
   /**
@@ -293,6 +296,13 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
+  // Patches
+  /**
+   * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
+   * So, we have to patch the orientation on Android. This takes in a string of the current device orientation
+   * and then rotates the frame accordingly before it is used for processing.
+   */
+  patchedOrientationAndroid?: string;
 }
 
 /**
@@ -302,9 +312,12 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
+  if (plugin === undefined) {
+    throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
+  }
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
-  const result = __inatVision(frame, options);
+  const result = plugin.call(frame, options);
   const handledResult = handleResult(result, options);
   return handledResult;
 }

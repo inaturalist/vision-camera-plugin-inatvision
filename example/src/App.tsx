@@ -316,12 +316,12 @@ export default function App() {
             <Text style={styles.text}>{result.name}</Text>
             <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
             <Text style={styles.smallLabel}>score {result.score}</Text>
-            <Text style={styles.smallLabel}>
+            {!!result.spatial_class_id && <Text style={styles.smallLabel}>
               spatial_class_id {result.spatial_class_id}
-            </Text>
-            <Text style={styles.smallLabel}>
+            </Text>}
+            {!!result.iconic_class_id && <Text style={styles.smallLabel}>
               iconic_class_id {result.iconic_class_id}
-            </Text>
+            </Text>}
           </View>
         ))}
     </SafeAreaView>

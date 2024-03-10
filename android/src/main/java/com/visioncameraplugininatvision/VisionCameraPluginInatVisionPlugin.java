@@ -13,6 +13,7 @@ import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -138,7 +139,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     }
 
     List<Map> cleanedPredictions = new ArrayList<>();
-
     if (mImageClassifier != null) {
       Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
@@ -176,8 +176,8 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeMap resultMap = new WritableNativeMap();
-    resultMap.putArray("predictions", cleanedPredictions);
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("predictions", cleanedPredictions);
     return resultMap;
   }
 }

@@ -17,6 +17,7 @@ import {
   useCameraDevice,
   useFrameProcessor,
   useCameraPermission,
+  runAsync,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -134,27 +135,29 @@ export default function App() {
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      try {
-        const timeBefore = new Date().getTime();
-        const cvResult: InatVision.Result = InatVision.inatVision(frame, {
-          version: modelVersion,
-          modelPath,
-          taxonomyPath,
-          confidenceThreshold,
-          filterByTaxonId,
-          negativeFilter,
-          numStoredResults: 4,
-          cropRatio: 0.9,
-          patchedOrientationAndroid: 'portrait',
-        });
-        const timeAfter = new Date().getTime();
-        console.log('time taken ms: ', timeAfter - timeBefore);
-        console.log('age of result: ', timeAfter - cvResult.timestamp);
-
-        handleResults(cvResult.predictions);
-      } catch (classifierError) {
-        console.log(`Error: ${classifierError}`);
-      }
+      runAsync(frame, () => {
+        'worklet';
+        try {
+          const timeBefore = new Date().getTime();
+          const cvResult: InatVision.Result = InatVision.inatVision(frame, {
+            version: modelVersion,
+            modelPath,
+            taxonomyPath,
+            confidenceThreshold,
+            filterByTaxonId,
+            negativeFilter,
+            numStoredResults: 0,
+            cropRatio: 0.9,
+            patchedOrientationAndroid: 'portrait',
+          });
+          const timeAfter = new Date().getTime();
+          console.log('time taken ms: ', timeAfter - timeBefore);
+          console.log('age of result: ', timeAfter - cvResult.timestamp);
+          handleResults(cvResult.predictions);
+        } catch (classifierError) {
+          console.log(`Error: ${classifierError}`);
+        }
+      });
     },
     [confidenceThreshold, filterByTaxonId, negativeFilter, handleResults]
   );

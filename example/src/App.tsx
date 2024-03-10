@@ -40,15 +40,8 @@ const taxonomyPath =
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App() {
-  interface Result {
-    name: string;
-    score: number;
-    taxon_id: number;
-    spatial_class_id?: number;
-    iconic_class_id?: number;
-  }
   const { hasPermission, requestPermission } = useCameraPermission();
-  const [results, setResult] = useState<Result[]>([]);
+  const [results, setResult] = useState<InatVision.Prediction[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
   );
@@ -134,7 +127,7 @@ export default function App() {
     }
   }, []);
 
-  const handleResults = Worklets.createRunInJsFn((predictions: any[]) => {
+  const handleResults = Worklets.createRunInJsFn((predictions: InatVision.Prediction[]) => {
     setResult(predictions);
   });
 
@@ -143,7 +136,7 @@ export default function App() {
       'worklet';
       try {
         const timeBefore = new Date().getTime();
-        const cvResult = InatVision.inatVision(frame, {
+        const cvResult: InatVision.Result = InatVision.inatVision(frame, {
           version: modelVersion,
           modelPath,
           taxonomyPath,

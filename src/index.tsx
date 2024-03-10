@@ -157,7 +157,7 @@ const mapLevelToRank = {
   5: RANK.subspecies,
 };
 
-interface Prediction {
+export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;

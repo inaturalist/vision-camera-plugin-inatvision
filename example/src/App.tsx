@@ -49,7 +49,6 @@ export default function App() {
   }
   const { hasPermission, requestPermission } = useCameraPermission();
   const [results, setResult] = useState<Result[]>([]);
-  const [elapsed, setElapsed] = useState<number>(0);
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
   );
@@ -139,10 +138,6 @@ export default function App() {
     setResult(predictions);
   });
 
-  const handleElapsed = Worklets.createRunInJsFn((newElapsed: number) => {
-    setElapsed(newElapsed);
-  });
-
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
@@ -164,7 +159,6 @@ export default function App() {
         console.log('age of result: ', timeAfter - cvResult.timestamp);
 
         handleResults(cvResult.predictions);
-        handleElapsed(timeAfter - cvResult.timestamp);
       } catch (classifierError) {
         console.log(`Error: ${classifierError}`);
       }
@@ -337,13 +331,6 @@ export default function App() {
             </Text>
           </View>
         ))}
-      {!!elapsed && (
-        <View style={styles.info}>
-          <Text style={styles.smallLabel}>
-            Time since result: {Math.round(elapsed / 1000)}s
-          </Text>
-        </View>
-      )}
     </SafeAreaView>
   );
 }

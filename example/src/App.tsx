@@ -128,9 +128,15 @@ export default function App() {
     }
   }, []);
 
-  const handleResults = Worklets.createRunInJsFn((predictions: InatVision.Prediction[]) => {
-    setResult(predictions);
-  });
+  const handleResults = Worklets.createRunInJsFn(
+    (p: InatVision.Prediction[]) => {
+      let predictions = p;
+      if (!Array.isArray(predictions)) {
+        predictions = Object.keys(predictions).map((key) => predictions[key]);
+      }
+      setResult(predictions);
+    }
+  );
 
   const frameProcessor = useFrameProcessor(
     (frame) => {

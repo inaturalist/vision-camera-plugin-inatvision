@@ -184,11 +184,10 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
     throw new Error('This model version is not supported.');
   }
   if (options.confidenceThreshold) {
-    const confidenceThreshold = parseFloat(options.confidenceThreshold);
     if (
-      isNaN(confidenceThreshold) ||
-      confidenceThreshold < 0 ||
-      confidenceThreshold > 1
+      isNaN(options.confidenceThreshold) ||
+      options.confidenceThreshold < 0 ||
+      options.confidenceThreshold > 1
     ) {
       throw new INatVisionError(
         'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
@@ -266,8 +265,7 @@ function handleResult(result: any, options: Options): Result {
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
     .filter((prediction) => prediction.rank_level % 10 === 0)
     .filter(
-      (prediction) =>
-        prediction.score > parseFloat(options.confidenceThreshold || '0')
+      (prediction) => prediction.score > (options.confidenceThreshold || 0)
     )
     .map((prediction: Prediction) => ({
       ...prediction,
@@ -285,7 +283,6 @@ function handleResult(result: any, options: Options): Result {
 /**
  * Represents the options for a call to use the plugin to predict on a frame.
  */
-// interface Options extends Record<string, string | boolean | undefined> {
 interface Options {
   // Required
   /**
@@ -304,7 +301,7 @@ interface Options {
   /**
    * The confidence threshold for the predictions.
    */
-  confidenceThreshold?: string;
+  confidenceThreshold?: number;
   /**
    * *Android only.*
    *
@@ -366,7 +363,7 @@ interface OptionsForImage {
   modelPath: string;
   taxonomyPath: string;
   // Optional
-  confidenceThreshold?: string;
+  confidenceThreshold?: number;
   cropRatio?: number;
 }
 

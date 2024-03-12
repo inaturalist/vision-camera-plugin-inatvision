@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import {
@@ -54,7 +53,7 @@ export default function App() {
     GALLERY,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
-  const [confidenceThreshold, setConfidenceThreshold] = useState<string>('0.7');
+  const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
 
   const device = useCameraDevice('back');
 
@@ -229,22 +228,25 @@ export default function App() {
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
           <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
-          <TextInput
-            value={confidenceThreshold?.toString() || ''}
-            onChangeText={(value) => {
-              const valueAsNumber = parseFloat(value);
-              if (valueAsNumber < 0 || valueAsNumber > 1) {
-                Alert.alert(
-                  'Nope',
-                  'Confidence threshold must be between 0 and 1'
-                );
-                setConfidenceThreshold(confidenceThreshold);
-                return;
+          <View style={styles.row}>
+            <Button
+              title="-"
+              onPress={() =>
+                setConfidenceThreshold(
+                  Math.round((confidenceThreshold - 0.1) * 10) / 10
+                )
               }
-              setConfidenceThreshold(value);
-            }}
-            style={styles.textInput}
-          />
+            />
+            <Text style={styles.text}>{confidenceThreshold}</Text>
+            <Button
+              title="+"
+              onPress={() =>
+                setConfidenceThreshold(
+                  Math.round((confidenceThreshold + 0.1) * 10) / 10
+                )
+              }
+            />
+          </View>
         </View>
       );
     } else if (viewStatus === VIEW_STATUS.CAMERA) {

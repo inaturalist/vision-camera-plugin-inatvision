@@ -273,11 +273,15 @@ interface Options {
    */
   confidenceThreshold?: string;
   /**
+   * *Android only.*
+   *
    * The iconic taxon id to filter by.
    */
   filterByTaxonId?: null | string;
   /**
-   * The spatial taxon id to filter by.
+   * *Android only.*
+   *
+   * Wether to exclude the taxon set by filterByTaxonId or to only include it (and exclude all other).
    */
   negativeFilter?: null | boolean;
   /**

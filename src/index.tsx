@@ -330,7 +330,7 @@ export function inatVision(frame: Frame, options: Options): Result {
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
   const result = plugin.call(frame, options);
-  const handledResult = handleResult(result, options);
+  const handledResult: Result = handleResult(result, options);
   return handledResult;
 }
 

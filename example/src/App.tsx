@@ -152,7 +152,7 @@ export default function App() {
             confidenceThreshold,
             filterByTaxonId,
             negativeFilter,
-            numStoredResults: 0,
+            numStoredResults: 4,
             cropRatio: 0.9,
             patchedOrientationAndroid: 'portrait',
           });

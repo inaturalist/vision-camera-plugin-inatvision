@@ -1,21 +1,5 @@
 import { inatVision } from '../index';
 
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-    select: jest.fn(),
-  },
-  NativeModules: {
-    VisionCameraPluginInatVision: {
-      getPredictionsForImage: jest.fn(),
-    },
-  },
-}));
-
-const __inatVision = () => {
-  return true;
-};
-
 const mockFrame = {
   width: 100,
   height: 100,

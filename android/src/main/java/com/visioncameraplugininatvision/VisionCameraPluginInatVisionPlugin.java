@@ -29,12 +29,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
   private ImageClassifier mImageClassifier = null;
 
-  public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
-  private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-  public void setConfidenceThreshold(float confidence) {
-      mConfidenceThreshold = confidence;
-  }
-
   private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
   public void setFilterByTaxonId(Integer taxonId) {
       mFilterByTaxonId = taxonId;
@@ -95,12 +89,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     }
 
     // Destructure optional parameters and set values
-    String confidenceThreshold = (String)arguments.get("confidenceThreshold");
-    if (confidenceThreshold == null) {
-      confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
-    }
-    setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
-
     String filterByTaxonId = (String)arguments.get("filterByTaxonId");
     if (filterByTaxonId != null) {
       setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
@@ -168,11 +156,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
         if (prediction.rank % 10 != 0) {
           continue;
         }
-        if (prediction.probability > mConfidenceThreshold) {
-          Map map = Taxonomy.nodeToMap(prediction);
-          if (map == null) continue;
-          cleanedPredictions.add(map);
-        }
+        Map map = Taxonomy.nodeToMap(prediction);
+        if (map == null) continue;
+        cleanedPredictions.add(map);
       }
     }
 

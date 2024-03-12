@@ -94,14 +94,6 @@
   NSString* modelPath = arguments[@"modelPath"];
   // Destructure taxonomy path out of options
   NSString* taxonomyPath = arguments[@"taxonomyPath"];
-  // Destructure threshold out of options
-  NSString* confidenceThreshold = arguments[@"confidenceThreshold"];
-
-  // Setup threshold
-  float threshold = 0.70;
-  if (confidenceThreshold) {
-    threshold = [confidenceThreshold floatValue];
-  }
 
   CMSampleBufferRef buffer = frame.buffer;
   UIImageOrientation orientation = frame.orientation;
@@ -111,8 +103,6 @@
       NSLog(@"unable to get pixel buffer");
       return nil;
   }
-
-  int NUM_RECENT_PREDICTIONS = 5;
 
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
@@ -153,10 +143,6 @@
   // convert the VCPPredictions in the bestRecentBranch into dicts
   NSMutableArray *bestBranchAsDict = [NSMutableArray array];
   for (VCPPrediction *prediction in topBranches.firstObject) {
-      // only add predictions that are above the threshold
-      if (prediction.score < threshold) {
-          continue;
-      }
       [bestBranchAsDict addObject:[prediction asDict]];
   }
 

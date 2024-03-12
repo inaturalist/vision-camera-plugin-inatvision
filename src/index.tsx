@@ -236,16 +236,21 @@ function handleResult(result: any, options: Options): Result {
   }
 
   // Add the rank to the predictions if not present
-  const predictions = current.predictions.map((prediction: Prediction) => ({
-    ...prediction,
-    rank: prediction.rank
-      ? prediction.rank
-      : mapLevelToRank[prediction.rank_level],
-  }));
   const handledResult = {
     ...current,
     predictions,
   };
+  const predictions = current.predictions
+    .filter(
+      (prediction) =>
+        prediction.score > parseFloat(options.confidenceThreshold || '0')
+    )
+    .map((prediction: Prediction) => ({
+      ...prediction,
+      rank: prediction.rank
+        ? prediction.rank
+        : mapLevelToRank[prediction.rank_level],
+    }));
   return handledResult;
 }
 

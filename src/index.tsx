@@ -2,6 +2,7 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import { VisionCameraProxy } from 'react-native-vision-camera';
 import type { Frame } from 'react-native-vision-camera';
+import { Worklets } from 'react-native-worklets-core';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
@@ -208,26 +209,50 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
   return true;
 }
 
+// If we do this in the worklet directly it is not stored the next frame runs
+const pushResult = Worklets.createRunInJsFn((result: Result) => {
+  state.storedResults.push(result);
+});
+
+// react-native-worklets-core 0.3.0 does not support the `shift` method on arrays
+// inside the worklet, so we have to shift the array in a JS thread
+const shiftResult = Worklets.createRunInJsFn(() => {
+  state.storedResults.shift();
+});
+
 function handleResult(result: any, options: Options): Result {
   'worklet';
 
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
 
-  // Store the result
-  state.storedResults.push(result);
-  if (state.storedResults.length > (options.numStoredResults || 5)) {
-    state.storedResults.shift();
+  // Store the result to the function-wide state
+  const storedResults = state.storedResults;
+  storedResults.push(result);
+  // Store the result to module-wide state
+  pushResult(result);
+  // TODO: if options.numStoredResults is changed to be a lower number while running, only one entry is removed
+  if (storedResults.length > (options.numStoredResults || 5)) {
+    // Remove the oldest result = the first in the array
+    // This is async and will be done in a JS thread but that does not matter here because we
+    // only interact with the last element in the array.
+    shiftResult();
   }
 
-  // Select the best result from the stored results
-  let current = state.storedResults[state.storedResults.length - 1] || result;
-  let currentScore = current.predictions[current.predictions.length - 1].score;
+  let current: Result = result;
+  const currentLastPrediction =
+    current.predictions[current.predictions.length - 1];
+  let currentScore = currentLastPrediction?.score || 0;
 
-  for (let i = state.storedResults.length - 1; i >= 0; i--) {
-    const candidateResult = state.storedResults[i] || result;
-    const candidateScore =
-      candidateResult.predictions[candidateResult.predictions.length - 1].score;
+  // Select the best result from the stored results
+  for (let i = storedResults.length - 1; i >= 0; i--) {
+    const candidateResult = storedResults[i];
+    if (!candidateResult) {
+      break;
+    }
+    const candidateLastPrediction =
+      candidateResult.predictions[candidateResult.predictions.length - 1];
+    const candidateScore = candidateLastPrediction?.score || 0;
 
     if (candidateScore > currentScore) {
       current = candidateResult;

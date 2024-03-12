@@ -241,6 +241,9 @@ function handleResult(result: any, options: Options): Result {
     predictions,
   };
   const predictions = current.predictions
+    // only KPCOFGS ranks qualify as "top" predictions
+    // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+    .filter((prediction) => prediction.rank_level % 10 === 0)
     .filter(
       (prediction) =>
         prediction.score > parseFloat(options.confidenceThreshold || '0')

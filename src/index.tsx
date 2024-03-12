@@ -236,10 +236,6 @@ function handleResult(result: any, options: Options): Result {
   }
 
   // Add the rank to the predictions if not present
-  const handledResult = {
-    ...current,
-    predictions,
-  };
   const predictions = current.predictions
     // only KPCOFGS ranks qualify as "top" predictions
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
@@ -254,6 +250,10 @@ function handleResult(result: any, options: Options): Result {
         ? prediction.rank
         : mapLevelToRank[prediction.rank_level],
     }));
+  const handledResult = {
+    ...current,
+    predictions,
+  };
   return handledResult;
 }
 

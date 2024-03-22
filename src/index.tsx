@@ -216,18 +216,16 @@ function handleResult(result: any, options: Options): Result {
   result.timestamp = new Date().getTime();
 
   // Store the result to module-wide state
-  state.storedResults.value.push(result);
-  // TODO: if options.numStoredResults is changed to be a lower number while running, only one entry is removed
+  const length = state.storedResults.value.push(result);
   const maxNumStoredResults = options.numStoredResults || 5;
-  if (state.storedResults.value.length > maxNumStoredResults) {
-    // Remove the oldest result = the first in the array
-    // This is async and will be done in a JS thread but that does not matter here because we
-    // only interact with the last element in the array.
-    // This is a workaround to shift the array in the worklet
+  if (length > maxNumStoredResults) {
+    // We want to remove the oldest result(s) = the first ones in the array
+    // Unfortunately, Array.shift() is not available in the JSI worklet, so
+    // this is a workaround to shift the array in the worklet
     let counter = 0;
     const newState = state.storedResults.value.filter(() => {
       counter++;
-      return counter <= maxNumStoredResults;
+      return counter > length - maxNumStoredResults;
     });
     state.storedResults.value = newState;
   }

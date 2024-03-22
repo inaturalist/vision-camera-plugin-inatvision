@@ -247,6 +247,10 @@ export default function App() {
               }
             />
           </View>
+          <Button
+            title="Reset module state"
+            onPress={() => InatVision.resetStoredResults()}
+          />
         </View>
       );
     } else if (viewStatus === VIEW_STATUS.CAMERA) {

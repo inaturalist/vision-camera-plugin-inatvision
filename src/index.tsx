@@ -38,6 +38,13 @@ const state: State = {
 };
 
 /**
+ *  Reset the stored results to an empty array
+ */
+export function resetStoredResults(): void {
+  state.storedResults.value = [];
+}
+
+/**
  *  Adds a listener for the camera log event
  */
 export function addLogListener(callback: Function): void {

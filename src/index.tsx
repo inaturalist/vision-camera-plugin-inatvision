@@ -3,6 +3,7 @@ import type { EmitterSubscription } from 'react-native';
 import { VisionCameraProxy } from 'react-native-vision-camera';
 import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
+import type { ISharedValue } from 'react-native-worklets-core';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
@@ -28,12 +29,12 @@ Object.defineProperty(INatVisionError.prototype, 'name', {
 
 interface State {
   eventListener: null | EmitterSubscription;
-  storedResults: Result[];
+  storedResults: ISharedValue<Result[]>;
 }
 
 const state: State = {
   eventListener: null,
-  storedResults: [],
+  storedResults: Worklets.createSharedValue([]),
 };
 
 /**
@@ -208,34 +209,27 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
   return true;
 }
 
-// If we do this in the worklet directly it is not stored the next frame runs
-const pushResult = Worklets.createRunInJsFn((result: Result) => {
-  state.storedResults.push(result);
-});
-
-// react-native-worklets-core 0.3.0 does not support the `shift` method on arrays
-// inside the worklet, so we have to shift the array in a JS thread
-const shiftResult = Worklets.createRunInJsFn(() => {
-  state.storedResults.shift();
-});
-
 function handleResult(result: any, options: Options): Result {
   'worklet';
 
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
 
-  // Store the result to the function-wide state
-  const storedResults = state.storedResults;
-  storedResults.push(result);
   // Store the result to module-wide state
-  pushResult(result);
+  state.storedResults.value.push(result);
   // TODO: if options.numStoredResults is changed to be a lower number while running, only one entry is removed
-  if (storedResults.length > (options.numStoredResults || 5)) {
+  const maxNumStoredResults = options.numStoredResults || 5;
+  if (state.storedResults.value.length > maxNumStoredResults) {
     // Remove the oldest result = the first in the array
     // This is async and will be done in a JS thread but that does not matter here because we
     // only interact with the last element in the array.
-    shiftResult();
+    // This is a workaround to shift the array in the worklet
+    let counter = 0;
+    const newState = state.storedResults.value.filter(() => {
+      counter++;
+      return counter <= maxNumStoredResults;
+    });
+    state.storedResults.value = newState;
   }
 
   let current: Result = result;
@@ -244,8 +238,8 @@ function handleResult(result: any, options: Options): Result {
   let currentScore = currentLastPrediction?.score || 0;
 
   // Select the best result from the stored results
-  for (let i = storedResults.length - 1; i >= 0; i--) {
-    const candidateResult = storedResults[i];
+  for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
+    const candidateResult = state.storedResults.value[i];
     if (!candidateResult) {
       break;
     }

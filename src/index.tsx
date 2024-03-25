@@ -234,6 +234,7 @@ function handleResult(result: any, options: Options): Result {
     current.predictions[current.predictions.length - 1];
   let currentScore = currentLastPrediction?.score || 0;
 
+  const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
   // Select the best result from the stored results
   for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
     const candidateResult = state.storedResults.value[i];
@@ -244,7 +245,10 @@ function handleResult(result: any, options: Options): Result {
       candidateResult.predictions[candidateResult.predictions.length - 1];
     const candidateScore = candidateLastPrediction?.score || 0;
 
-    if (candidateScore > currentScore) {
+    const penalty =
+      1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+
+    if (candidateScore * penalty > currentScore) {
       current = candidateResult;
       currentScore = candidateScore;
     }

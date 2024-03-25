@@ -333,7 +333,7 @@ PODS:
     - React-Core
   - react-native-image-picker (7.0.3):
     - React-Core
-  - react-native-worklets-core (0.3.0):
+  - react-native-worklets-core (0.4.0):
     - React
     - React-callinvoker
     - React-Core
@@ -638,7 +638,7 @@ SPEC CHECKSUMS:
   React-logger: 186dd536128ae5924bc38ed70932c00aa740cd5b
   react-native-cameraroll: 2a198b0eb86c7ccf3303fb57702b2465cc292c94
   react-native-image-picker: 2381c008bbb09e72395a2d043c147b11bd1523d9
-  react-native-worklets-core: a894d572639fcf37c6d284cc799882d25d00c93d
+  react-native-worklets-core: 2efe80a3ee87fe5e6fefa814e0e20c2708d3ad25
   React-perflogger: e706562ab7eb8eb590aa83a224d26fa13963d7f2
   React-RCTActionSheet: 57d4bd98122f557479a3359ad5dad8e109e20c5a
   React-RCTAnimation: ccf3ef00101ea74bda73a045d79a658b36728a60

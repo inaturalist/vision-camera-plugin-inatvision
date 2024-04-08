@@ -131,7 +131,10 @@ export default function App() {
     (p: InatVision.Prediction[]) => {
       let predictions = p;
       if (!Array.isArray(predictions)) {
-        predictions = Object.keys(predictions).map((key) => predictions[key]);
+        predictions = Object.keys(predictions).map(
+          // @ts-ignore
+          (key) => predictions[key]
+        );
       }
       setResult(predictions);
     }

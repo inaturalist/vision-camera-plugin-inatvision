@@ -1,29 +1,30 @@
 package com.visioncameraplugininatvision;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.module.annotations.ReactModule;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.Arguments;
-
-import timber.log.Timber;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.IOException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import com.facebook.react.bridge.ReadableMap;
 import java.util.List;
-import com.facebook.react.bridge.WritableArray;
-import android.net.Uri;
+import java.util.Map;
+
+import timber.log.Timber;
 
 @ReactModule(name = VisionCameraPluginInatVisionModule.NAME)
 public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModule {
@@ -166,10 +167,13 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
               continue;
             }
             if (prediction.probability > mConfidenceThreshold) {
-                WritableMap map = Taxonomy.nodeToMap(prediction);
+                Map map = Taxonomy.nodeToMap(prediction);
                 if (map == null) continue;
-                cleanedPredictions.pushMap(map);
+                // Transform the Map to a ReadableMap
+                ReadableMap readableMap = Arguments.makeNativeMap(map);
+                cleanedPredictions.pushMap(readableMap);
             }
+
         }
 
         WritableMap resultMap = Arguments.createMap();

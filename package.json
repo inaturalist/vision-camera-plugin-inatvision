@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-plugin-inatvision",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -72,7 +72,8 @@
     "react": "18.2.0",
     "react-native": "0.72.0",
     "react-native-builder-bob": "^0.20.4",
-    "react-native-vision-camera": "^2.15.4",
+    "react-native-vision-camera": "3.9.1",
+    "react-native-worklets-core": "0.4.0",
     "release-it": "^15.0.0",
     "typescript": "^4.5.2"
   },
@@ -82,8 +83,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-reanimated": ">=2.1.0",
-    "react-native-vision-camera": ">=2.0.0"
+    "react-native-vision-camera": ">=3.6.3"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -93,6 +93,9 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
+    ],
+    "setupFiles": [
+      "<rootDir>/src/jestSetup/jest.setup.js"
     ]
   },
   "commitlint": {

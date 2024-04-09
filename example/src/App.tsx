@@ -9,19 +9,19 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
-import { runOnJS } from 'react-native-reanimated';
 import {
   Camera,
-  useCameraDevices,
+  useCameraDevice,
   useFrameProcessor,
+  useCameraPermission,
+  runAsync,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
-
+import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
@@ -40,17 +40,11 @@ const taxonomyPath =
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App() {
-  interface Result {
-    name: string;
-    score: number;
-    taxon_id: number;
-    spatial_class_id?: number;
-    iconic_class_id?: number;
-  }
-  const [hasPermission, setHasPermission] = useState(false);
-  const [results, setResult] = useState<Result[]>([]);
-  const [elapsed, setElapsed] = useState<number>(0);
-  const [filterByTaxonId, setFilterByTaxonId] = useState<null | string>(null);
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const [results, setResult] = useState<InatVision.Prediction[]>([]);
+  const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
+    undefined
+  );
   const [negativeFilter, setNegativeFilter] = useState(false);
 
   enum VIEW_STATUS {
@@ -59,10 +53,9 @@ export default function App() {
     GALLERY,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
-  const [confidenceThreshold, setConfidenceThreshold] = useState<string>('0.7');
+  const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
 
-  const devices = useCameraDevices();
-  const device = devices.back;
+  const device = useCameraDevice('back');
 
   const [photos, getPhotos] = useCameraRoll();
 
@@ -74,16 +67,15 @@ export default function App() {
     if (!filterByTaxonId) {
       setFilterByTaxonId('47126');
     } else {
-      setFilterByTaxonId(null);
+      setFilterByTaxonId(undefined);
     }
   };
 
   useEffect(() => {
     (async () => {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'authorized');
+      requestPermission();
     })();
-  }, []);
+  }, [requestPermission]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -135,34 +127,47 @@ export default function App() {
     }
   }, []);
 
+  const handleResults = Worklets.createRunInJsFn(
+    (p: InatVision.Prediction[]) => {
+      let predictions = p;
+      if (!Array.isArray(predictions)) {
+        predictions = Object.keys(predictions).map(
+          // @ts-ignore
+          (key) => predictions[key]
+        );
+      }
+      setResult(predictions);
+    }
+  );
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-
-      try {
-        const timeBefore = new Date().getTime();
-        const cvResult = InatVision.inatVision(frame, {
-          version: modelVersion,
-          modelPath,
-          taxonomyPath,
-          confidenceThreshold,
-          filterByTaxonId,
-          negativeFilter,
-          numStoredResults: 4,
-          cropRatio: 0.9,
-        });
-        const timeAfter = new Date().getTime();
-        console.log('time taken ms: ', timeAfter - timeBefore);
-        console.log('age of result: ', timeAfter - cvResult.timestamp);
-
-        runOnJS(setResult)(cvResult.predictions);
-        runOnJS(setElapsed)(timeAfter - cvResult.timestamp);
-      } catch (classifierError) {
-        // TODO: needs to throw Exception in the native code for it to work here?
-        console.log(`Error: ${classifierError}`);
-      }
+      runAsync(frame, () => {
+        'worklet';
+        try {
+          const timeBefore = new Date().getTime();
+          const cvResult: InatVision.Result = InatVision.inatVision(frame, {
+            version: modelVersion,
+            modelPath,
+            taxonomyPath,
+            confidenceThreshold,
+            filterByTaxonId,
+            negativeFilter,
+            numStoredResults: 4,
+            cropRatio: 0.9,
+            patchedOrientationAndroid: 'portrait',
+          });
+          const timeAfter = new Date().getTime();
+          console.log('time taken ms: ', timeAfter - timeBefore);
+          console.log('age of result: ', timeAfter - cvResult.timestamp);
+          handleResults(cvResult.predictions);
+        } catch (classifierError) {
+          console.log(`Error: ${classifierError}`);
+        }
+      });
     },
-    [confidenceThreshold, filterByTaxonId, negativeFilter]
+    [confidenceThreshold, filterByTaxonId, negativeFilter, handleResults]
   );
 
   function selectImage() {
@@ -226,21 +231,28 @@ export default function App() {
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
           <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
-          <TextInput
-            value={confidenceThreshold?.toString() || ''}
-            onChangeText={(value) => {
-              const valueAsNumber = parseFloat(value);
-              if (valueAsNumber < 0 || valueAsNumber > 1) {
-                Alert.alert(
-                  'Nope',
-                  'Confidence threshold must be between 0 and 1'
-                );
-                setConfidenceThreshold(confidenceThreshold);
-                return;
+          <View style={styles.row}>
+            <Button
+              title="-"
+              onPress={() =>
+                setConfidenceThreshold(
+                  Math.round((confidenceThreshold - 0.1) * 10) / 10
+                )
               }
-              setConfidenceThreshold(value);
-            }}
-            style={styles.textInput}
+            />
+            <Text style={styles.text}>{confidenceThreshold}</Text>
+            <Button
+              title="+"
+              onPress={() =>
+                setConfidenceThreshold(
+                  Math.round((confidenceThreshold + 0.1) * 10) / 10
+                )
+              }
+            />
+          </View>
+          <Button
+            title="Reset module state"
+            onPress={() => InatVision.resetStoredResults()}
           />
         </View>
       );
@@ -284,7 +296,10 @@ export default function App() {
           device={device}
           isActive={true}
           frameProcessor={frameProcessor}
-          frameProcessorFps={1}
+          enableZoomGesture
+          pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
+          resizeMode="contain"
+          enableFpsGraph={true}
         />
         <View style={styles.row}>
           <Button
@@ -315,21 +330,18 @@ export default function App() {
             <Text style={styles.text}>{result.name}</Text>
             <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
             <Text style={styles.smallLabel}>score {result.score}</Text>
-            <Text style={styles.smallLabel}>
-              spatial_class_id {result.spatial_class_id}
-            </Text>
-            <Text style={styles.smallLabel}>
-              iconic_class_id {result.iconic_class_id}
-            </Text>
+            {!!result.spatial_class_id && (
+              <Text style={styles.smallLabel}>
+                spatial_class_id {result.spatial_class_id}
+              </Text>
+            )}
+            {!!result.iconic_class_id && (
+              <Text style={styles.smallLabel}>
+                iconic_class_id {result.iconic_class_id}
+              </Text>
+            )}
           </View>
         ))}
-      {!!elapsed && (
-        <View style={styles.info}>
-          <Text style={styles.smallLabel}>
-            Time since result: {Math.round(elapsed / 1000)}s
-          </Text>
-        </View>
-      )}
     </SafeAreaView>
   );
 }

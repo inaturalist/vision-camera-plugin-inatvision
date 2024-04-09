@@ -1,7 +1,11 @@
-/* globals __inatVision */
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
+import { VisionCameraProxy } from 'react-native-vision-camera';
 import type { Frame } from 'react-native-vision-camera';
+import { Worklets } from 'react-native-worklets-core';
+import type { ISharedValue } from 'react-native-worklets-core';
+
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
 
 const LINKING_ERROR =
   `The package 'vision-camera-plugin-inatvision' doesn't seem to be linked. Make sure: \n\n` +
@@ -25,13 +29,20 @@ Object.defineProperty(INatVisionError.prototype, 'name', {
 
 interface State {
   eventListener: null | EmitterSubscription;
-  storedResults: Result[];
+  storedResults: ISharedValue<Result[]>;
 }
 
 const state: State = {
   eventListener: null,
-  storedResults: [],
+  storedResults: Worklets.createSharedValue([]),
 };
+
+/**
+ *  Reset the stored results to an empty array
+ */
+export function resetStoredResults(): void {
+  state.storedResults.value = [];
+}
 
 /**
  *  Adds a listener for the camera log event
@@ -155,7 +166,7 @@ const mapLevelToRank = {
   5: RANK.subspecies,
 };
 
-interface Prediction {
+export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;
@@ -181,11 +192,10 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
     throw new Error('This model version is not supported.');
   }
   if (options.confidenceThreshold) {
-    const confidenceThreshold = parseFloat(options.confidenceThreshold);
     if (
-      isNaN(confidenceThreshold) ||
-      confidenceThreshold < 0 ||
-      confidenceThreshold > 1
+      isNaN(options.confidenceThreshold) ||
+      options.confidenceThreshold < 0 ||
+      options.confidenceThreshold > 1
     ) {
       throw new INatVisionError(
         'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
@@ -212,34 +222,52 @@ function handleResult(result: any, options: Options): Result {
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
 
-  // Store the result
-  state.storedResults.push(result);
-  if (state.storedResults.length > (options.numStoredResults || 5)) {
-    state.storedResults.shift();
+  // Store the result to module-wide state
+  state.storedResults.value.push(result);
+  const maxNumStoredResults = options.numStoredResults || 5;
+  while (state.storedResults.value.length > maxNumStoredResults) {
+    state.storedResults.value.shift();
   }
 
+  let current: Result = result;
+  const currentLastPrediction =
+    current.predictions[current.predictions.length - 1];
+  let currentScore = currentLastPrediction?.score || 0;
+
+  const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
   // Select the best result from the stored results
-  let current = state.storedResults[state.storedResults.length - 1] || result;
-  let currentScore = current.predictions[current.predictions.length - 1].score;
+  for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
+    const candidateResult = state.storedResults.value[i];
+    if (!candidateResult) {
+      break;
+    }
+    const candidateLastPrediction =
+      candidateResult.predictions[candidateResult.predictions.length - 1];
+    const candidateScore = candidateLastPrediction?.score || 0;
 
-  for (let i = state.storedResults.length - 1; i >= 0; i--) {
-    const candidateResult = state.storedResults[i] || result;
-    const candidateScore =
-      candidateResult.predictions[candidateResult.predictions.length - 1].score;
+    const penalty =
+      1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
 
-    if (candidateScore > currentScore) {
+    if (candidateScore * penalty > currentScore) {
       current = candidateResult;
       currentScore = candidateScore;
     }
   }
 
   // Add the rank to the predictions if not present
-  const predictions = current.predictions.map((prediction: Prediction) => ({
-    ...prediction,
-    rank: prediction.rank
-      ? prediction.rank
-      : mapLevelToRank[prediction.rank_level],
-  }));
+  const predictions = current.predictions
+    // only KPCOFGS ranks qualify as "top" predictions
+    // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+    .filter((prediction) => prediction.rank_level % 10 === 0)
+    .filter(
+      (prediction) => prediction.score > (options.confidenceThreshold || 0)
+    )
+    .map((prediction: Prediction) => ({
+      ...prediction,
+      rank: prediction.rank
+        ? prediction.rank
+        : mapLevelToRank[prediction.rank_level],
+    }));
   const handledResult = {
     ...current,
     predictions,
@@ -268,13 +296,17 @@ interface Options {
   /**
    * The confidence threshold for the predictions.
    */
-  confidenceThreshold?: string;
+  confidenceThreshold?: number;
   /**
+   * *Android only.*
+   *
    * The iconic taxon id to filter by.
    */
   filterByTaxonId?: null | string;
   /**
-   * The spatial taxon id to filter by.
+   * *Android only.*
+   *
+   * Wether to exclude the taxon set by filterByTaxonId or to only include it (and exclude all other).
    */
   negativeFilter?: null | boolean;
   /**
@@ -293,6 +325,13 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
+  // Patches
+  /**
+   * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
+   * So, we have to patch the orientation on Android. This takes in a string of the current device orientation
+   * and then rotates the frame accordingly before it is used for processing.
+   */
+  patchedOrientationAndroid?: string;
 }
 
 /**
@@ -302,10 +341,13 @@ interface Options {
  */
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
+  if (plugin === undefined) {
+    throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
+  }
   optionsAreValid(options);
   // @ts-expect-error Frame Processors are not typed.
-  const result = __inatVision(frame, options);
-  const handledResult = handleResult(result, options);
+  const result = plugin.call(frame, options);
+  const handledResult: Result = handleResult(result, options);
   return handledResult;
 }
 
@@ -316,7 +358,7 @@ interface OptionsForImage {
   modelPath: string;
   taxonomyPath: string;
   // Optional
-  confidenceThreshold?: string;
+  confidenceThreshold?: number;
   cropRatio?: number;
 }
 

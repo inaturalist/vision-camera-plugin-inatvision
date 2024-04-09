@@ -25,12 +25,7 @@ cd ios && pod install
 ```js
 module.exports = {
   plugins: [
-    [
-      'react-native-reanimated/plugin',
-      {
-        globals: ['__inatVision'],
-      },
-    ],
+    ['react-native-worklets-core/plugin'],
 
     // ...
 ```

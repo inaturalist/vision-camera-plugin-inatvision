@@ -1,32 +1,33 @@
 package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.util.Log;
 
-import androidx.camera.core.ImageProxy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.facebook.react.bridge.ReadableNativeMap;
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
+import com.mrousavy.camera.frameprocessor.Frame;
 import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
-
-import org.jetbrains.annotations.NotNull;
+import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import timber.log.Timber;
 
 public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
+  VisionCameraPluginInatVisionPlugin(VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
+    super();
+    Log.d("VisionCameraPluginInatVisionPlugin", "initialized with options: " + options);
+  }
+
   private final static String TAG = "VisionCameraPluginInatVisionPlugin";
 
   private ImageClassifier mImageClassifier = null;
-
-  public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
-  private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-  public void setConfidenceThreshold(float confidence) {
-      mConfidenceThreshold = confidence;
-  }
 
   private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
   public void setFilterByTaxonId(Integer taxonId) {
@@ -49,52 +50,57 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       mCropRatio = cropRatio;
   }
 
+  @Nullable
   @Override
-  public Object callback(@NotNull ImageProxy frame, @NotNull Object[] params) {
-    Log.d(TAG, "2: " + frame.getWidth() + " x " + frame.getHeight() + " frame with format #" + frame.getFormat() + ". Logging " + params.length + " parameters:" + params.length);
-    for (Object param : params) {
-      Log.d(TAG, "  -> " + (param == null ? "(null)" : param.toString() + " (" + param.getClass().getName() + ")"));
+  public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) {
+    Image image = frame.getImage();
+    // This should give the orientation of the passed in frame, as of vision-camera v3.2.2 this is not working though
+    // instead we use a string passed in via the arguments to signify the device orientation
+    // String orientation = frame.getOrientation();
+    Log.d(TAG, "1: " + image.getWidth() + " x " + image.getHeight() + " Image with format #" + image.getFormat() + ". Logging " + arguments.size());
+
+    for (String key : arguments.keySet()) {
+        Object value = arguments.get(key);
+        Log.d(TAG, "2: " + "  -> " + (value == null ? "(null)" : value + " (" + value.getClass().getName() + ")"));
     }
 
-    // The first parameter is the options object
-    ReadableNativeMap options = (ReadableNativeMap)params[0];
-    if (options == null) {
+    if (arguments == null) {
       throw new RuntimeException("Options object is null");
     };
-    // Destructure the version from the options map
-    String version = options.getString("version");
+    // Destructure the version from the arguments map
+    String version = (String)arguments.get("version");
     if (version == null) {
       throw new RuntimeException("Version is null");
     };
-    // Destructure the model path from the options map
-    String modelPath = options.getString("modelPath");
+    // Destructure the model path from the arguments map
+    String modelPath = (String)arguments.get("modelPath");
     if (modelPath == null) {
       throw new RuntimeException("Model path is null");
     };
-    // Destructure the taxonomy path from the options map
-    String taxonomyPath = options.getString("taxonomyPath");
+    // Destructure the taxonomy path from the arguments map
+    String taxonomyPath = (String)arguments.get("taxonomyPath");
     if (taxonomyPath == null) {
       throw new RuntimeException("Taxonomy path is null");
     };
 
-    // Destructure optional parameters and set values
-    if (options.hasKey("confidenceThreshold")) {
-      String confidenceThreshold = options.getString("confidenceThreshold");
-      if (confidenceThreshold == null) {
-        confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
-      }
-      setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+    String patchedOrientationAndroid = (String)arguments.get("patchedOrientationAndroid");
+    if (patchedOrientationAndroid == null) {
+      throw new RuntimeException("patchedOrientationAndroid must be a string passing in the current device orientation");
     }
-    if (options.hasKey("filterByTaxonId")) {
-      String filterByTaxonId = options.getString("filterByTaxonId");
+
+    // Destructure optional parameters and set values
+    String filterByTaxonId = (String)arguments.get("filterByTaxonId");
+    if (filterByTaxonId != null) {
       setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
     }
-    if (options.hasKey("negativeFilter")) {
-      Boolean negativeFilter = options.getBoolean("negativeFilter");
+
+    Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
+    if (negativeFilter != null) {
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
     }
-    if (options.hasKey("cropRatio")) {
-      double cropRatio = options.getDouble("cropRatio");
+
+    Double cropRatio = (Double)arguments.get("cropRatio");
+    if (cropRatio != null) {
       setCropRatio(cropRatio);
     }
 
@@ -120,11 +126,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
-    WritableNativeArray cleanedPredictions = new WritableNativeArray();
+    List<Map> cleanedPredictions = new ArrayList<>();
     if (mImageClassifier != null) {
-      Bitmap bmp = BitmapUtils.getBitmap(frame);
+      Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
-      // Crop the center square of the frame with the given crop ratio
+      // Crop the center square of the frame
       int minDim = (int) Math.round(Math.min(bmp.getWidth(), bmp.getHeight()) * mCropRatio);
       int cropX = (bmp.getWidth() - minDim) / 2;
       int cropY = (bmp.getHeight() - minDim) / 2;
@@ -145,25 +151,14 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       Log.d(TAG, "Predictions: " + predictions.size());
 
       for (Prediction prediction : predictions) {
-        // only KPCOFGS ranks qualify as "top" predictions
-        // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-        if (prediction.rank % 10 != 0) {
-          continue;
-        }
-        if (prediction.probability > mConfidenceThreshold) {
-          WritableNativeMap map = Taxonomy.nodeToMap(prediction);
-          if (map == null) continue;
-          cleanedPredictions.pushMap(map);
-        }
+        Map map = Taxonomy.nodeToMap(prediction);
+        if (map == null) continue;
+        cleanedPredictions.add(map);
       }
     }
 
-    WritableNativeMap resultMap = new WritableNativeMap();
-    resultMap.putArray("predictions", cleanedPredictions);
+    Map<String, Object> resultMap = new HashMap<>();
+    resultMap.put("predictions", cleanedPredictions);
     return resultMap;
-  }
-
-  public VisionCameraPluginInatVisionPlugin() {
-    super("inatVision");
   }
 }

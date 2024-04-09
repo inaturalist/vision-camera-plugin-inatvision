@@ -14,7 +14,7 @@ jest.mock('react-native', () => ({
 
 const correctOptions = {
   version: '1.0',
-  confidenceThreshold: '0.5',
+  confidenceThreshold: 0.5,
   cropRatio: 0.8,
 };
 
@@ -41,7 +41,7 @@ describe('confidenceThreshold', () => {
   it('should throw an error when confidenceThreshold is less than 0', () => {
     const options = {
       ...correctOptions,
-      confidenceThreshold: '-0.5',
+      confidenceThreshold: -0.5,
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
@@ -52,7 +52,7 @@ describe('confidenceThreshold', () => {
   it('should throw an error when confidenceThreshold is greater than 1', () => {
     const options = {
       ...correctOptions,
-      confidenceThreshold: '1.5',
+      confidenceThreshold: 1.5,
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(

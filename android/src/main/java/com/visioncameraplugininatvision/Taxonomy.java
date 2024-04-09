@@ -1,8 +1,5 @@
 package com.visioncameraplugininatvision;
 
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -252,23 +249,23 @@ public class Taxonomy {
     }
 
     /** Converts a prediction result to a map */
-    public static WritableNativeMap nodeToMap(Prediction prediction) {
-        WritableNativeMap result = new WritableNativeMap();
+    public static Map nodeToMap(Prediction prediction) {
+        Map result = new HashMap();
 
         if (prediction.node == null) return null;
 
         try {
-            result.putInt("taxon_id", Integer.valueOf(prediction.node.key));
-            result.putString("name", prediction.node.name);
-            result.putDouble("score", prediction.probability);
-            result.putDouble("rank_level", prediction.node.rank);
-            result.putString("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
+            result.put("taxon_id", Integer.valueOf(prediction.node.key));
+            result.put("name", prediction.node.name);
+            result.put("score", prediction.probability);
+            result.put("rank_level", (double) prediction.node.rank);
+            result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
               if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
-                result.putInt("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
+                result.put("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
               }
               if ((prediction.node.spatialId != null) && (prediction.node.spatialId.length() > 0)) {
-                result.putInt("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
+                result.put("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
               }
             }
         } catch (NumberFormatException exc) {
@@ -287,12 +284,12 @@ public class Taxonomy {
             currentNode = currentNode.parent;
         }
         Collections.reverse(ancestorsList);
-        WritableNativeArray ancestors = new WritableNativeArray();
+        ArrayList ancestors = new ArrayList();
         for (Integer id : ancestorsList) {
-            ancestors.pushInt(id);
+            ancestors.add(id);
         }
 
-        result.putArray("ancestor_ids", ancestors);
+        result.put("ancestor_ids", ancestors);
 
         return result;
     }

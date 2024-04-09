@@ -307,6 +307,7 @@ export default function App() {
           pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
           resizeMode="contain"
           enableFpsGraph={true}
+          photoQualityBalance="quality"
           enableLocation={location.hasPermission}
         />
         <View style={styles.row}>

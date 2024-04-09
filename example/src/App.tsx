@@ -16,6 +16,7 @@ import {
   useCameraDevice,
   useFrameProcessor,
   useCameraPermission,
+  useLocationPermission,
   runAsync,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
@@ -41,6 +42,8 @@ const taxonomyPath =
 
 export default function App() {
   const { hasPermission, requestPermission } = useCameraPermission();
+  const location = useLocationPermission();
+
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
   const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
     undefined
@@ -76,6 +79,10 @@ export default function App() {
       requestPermission();
     })();
   }, [requestPermission]);
+
+  useEffect(() => {
+    location.requestPermission();
+  }, [location]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -300,6 +307,7 @@ export default function App() {
           pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
           resizeMode="contain"
           enableFpsGraph={true}
+          enableLocation={location.hasPermission}
         />
         <View style={styles.row}>
           <Button

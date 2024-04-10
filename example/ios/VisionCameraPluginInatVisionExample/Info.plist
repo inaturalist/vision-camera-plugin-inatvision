@@ -38,7 +38,8 @@
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Camera.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>VisionCamera needs access to your current location to add location tags to captured photos and videos.</string>	<key>NSMicrophoneUsageDescription</key>
+	<string>VisionCamera needs access to your current location to add location tags to captured photos and videos.</string>
+  <key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your photo library.</string>

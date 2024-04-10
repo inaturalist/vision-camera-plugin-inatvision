@@ -144,7 +144,6 @@ public class ImageClassifier {
             return;
         }
         imgData.rewind();
-        long startTime = SystemClock.uptimeMillis();
 
         // Convert pixel values to be float from 0 to 1
         float[][][][] input = new float[1][ImageClassifier.DIM_IMG_SIZE_X][ImageClassifier.DIM_IMG_SIZE_Y][3];
@@ -179,8 +178,6 @@ public class ImageClassifier {
             }
             byteBuffer.rewind();
             imgData.put(byteBuffer);
-            long endTime = SystemClock.uptimeMillis();
-            Timber.tag(TAG).d("Timecost to put values into ByteBuffer: " + Long.toString(endTime - startTime));
         } catch (BufferOverflowException exc) {
             Timber.tag(TAG).w("Exception while converting to byte buffer: " + exc);
         }

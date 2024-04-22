@@ -94,7 +94,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     // Destructure taxonomy path out of options
     NSString* taxonomyPath = options[@"taxonomyPath"];
     // Destructure threshold out of options
-    NSString* confidenceThreshold = options[@"confidenceThreshold"];
+    NSNumber* confidenceThreshold = options[@"confidenceThreshold"];
 
     // Setup threshold
     float threshold = 0.70;

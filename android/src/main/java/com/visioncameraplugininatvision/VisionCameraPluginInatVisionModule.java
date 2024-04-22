@@ -93,11 +93,8 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String version = options.getString(OPTION_VERSION);
         // Destructure optional parameters and set values
         if (options.hasKey(OPTION_CONFIDENCE_THRESHOLD)) {
-          String confidenceThreshold = options.getString(OPTION_CONFIDENCE_THRESHOLD);
-          if (confidenceThreshold == null) {
-            confidenceThreshold = String.valueOf(DEFAULT_CONFIDENCE_THRESHOLD);
-          }
-          setConfidenceThreshold(Float.parseFloat(confidenceThreshold));
+          Float confidenceThreshold = (float) options.getDouble(OPTION_CONFIDENCE_THRESHOLD);
+          setConfidenceThreshold(confidenceThreshold);
         }
         double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 

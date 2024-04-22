@@ -134,18 +134,16 @@ export default function App() {
     }
   }, []);
 
-  const handleResults = Worklets.createRunInJsFn(
-    (p: InatVision.Prediction[]) => {
-      let predictions = p;
-      if (!Array.isArray(predictions)) {
-        predictions = Object.keys(predictions).map(
-          // @ts-ignore
-          (key) => predictions[key]
-        );
-      }
-      setResult(predictions);
+  const handleResults = Worklets.createRunOnJS((p: InatVision.Prediction[]) => {
+    let predictions = p;
+    if (!Array.isArray(predictions)) {
+      predictions = Object.keys(predictions).map(
+        // @ts-ignore
+        (key) => predictions[key]
+      );
     }
-  );
+    setResult(predictions);
+  });
 
   const frameProcessor = useFrameProcessor(
     (frame) => {
@@ -304,7 +302,7 @@ export default function App() {
           isActive={true}
           frameProcessor={frameProcessor}
           enableZoomGesture
-          pixelFormat={Platform.OS === 'ios' ? 'native' : 'yuv'}
+          pixelFormat={'yuv'}
           resizeMode="contain"
           enableFpsGraph={true}
           photoQualityBalance="quality"

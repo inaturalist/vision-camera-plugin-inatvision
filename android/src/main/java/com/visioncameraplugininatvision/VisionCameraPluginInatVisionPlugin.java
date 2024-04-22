@@ -7,9 +7,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mrousavy.camera.frameprocessor.Frame;
-import com.mrousavy.camera.frameprocessor.FrameProcessorPlugin;
-import com.mrousavy.camera.frameprocessor.VisionCameraProxy;
+import com.mrousavy.camera.core.FrameInvalidError;
+import com.mrousavy.camera.frameprocessors.Frame;
+import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin;
+import com.mrousavy.camera.frameprocessors.VisionCameraProxy;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
-  VisionCameraPluginInatVisionPlugin(VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
+  VisionCameraPluginInatVisionPlugin(@NonNull VisionCameraProxy proxy, @Nullable Map<String, Object> options) {
     super();
     Log.d("VisionCameraPluginInatVisionPlugin", "initialized with options: " + options);
   }
@@ -50,9 +51,8 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       mCropRatio = cropRatio;
   }
 
-  @Nullable
   @Override
-  public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) {
+  public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) throws FrameInvalidError {
     Image image = frame.getImage();
     // This should give the orientation of the passed in frame, as of vision-camera v3.2.2 this is not working though
     // instead we use a string passed in via the arguments to signify the device orientation

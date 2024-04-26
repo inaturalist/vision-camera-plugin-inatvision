@@ -134,16 +134,11 @@ export default function App() {
     }
   }, []);
 
-  const handleResults = Worklets.createRunOnJS((p: InatVision.Prediction[]) => {
-    let predictions = p;
-    if (!Array.isArray(predictions)) {
-      predictions = Object.keys(predictions).map(
-        // @ts-ignore
-        (key) => predictions[key]
-      );
+  const handleResults = Worklets.createRunOnJS(
+    (predictions: InatVision.Prediction[]) => {
+      setResult(predictions);
     }
-    setResult(predictions);
-  });
+  );
 
   const frameProcessor = useFrameProcessor(
     (frame) => {

@@ -136,6 +136,22 @@ export default function App() {
 
   const handleResults = Worklets.createRunOnJS(
     (predictions: InatVision.Prediction[]) => {
+      // Here test1 and test2 are an empty object {}, test3 is the same as firstResult
+      // Example logs:
+      // LOG  firstResult {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+      // LOG  test1 {}
+      // LOG  test2 {}
+      // LOG  test3 {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+      const firstResult =
+        predictions && predictions.length > 0 ? predictions[0] : undefined;
+      console.log('firstResult', firstResult);
+      const test1 = Object.assign({}, firstResult);
+      const test2 = { ...firstResult };
+      const test3 = JSON.parse(JSON.stringify(firstResult));
+      console.log('test1', test1);
+      console.log('test2', test2);
+      console.log('test3', test3);
+      //
       setResult(predictions);
     }
   );
@@ -161,6 +177,24 @@ export default function App() {
           const timeAfter = new Date().getTime();
           console.log('time taken ms: ', timeAfter - timeBefore);
           console.log('age of result: ', timeAfter - cvResult.timestamp);
+          // Here test1 and test2 are an empty object {}, test3 is the same as firstResult
+          // Example logs:
+          // LOG  firstResult {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+          // LOG  test1 {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+          // LOG  test2 {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+          // LOG  test3 {"name": "Life", "rank": "stateofmatter", "rank_level": 100, "score": 0.996168851852417, "taxon_id": 48460}
+          const firstResult =
+            cvResult.predictions && cvResult.predictions.length > 0
+              ? cvResult.predictions[0]
+              : undefined;
+          console.log('firstResult', firstResult);
+          const test1 = Object.assign({}, firstResult);
+          const test2 = { ...firstResult };
+          const test3 = JSON.parse(JSON.stringify(firstResult));
+          console.log('test1', test1);
+          console.log('test2', test2);
+          console.log('test3', test3);
+          //
           handleResults(cvResult.predictions);
         } catch (classifierError) {
           console.log(`Error: ${classifierError}`);

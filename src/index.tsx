@@ -5,7 +5,7 @@ import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
 
-const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision');
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
 const LINKING_ERROR =
   `The package 'vision-camera-plugin-inatvision' doesn't seem to be linked. Make sure: \n\n` +

@@ -333,7 +333,7 @@ PODS:
     - React-Core
   - react-native-image-picker (7.0.3):
     - React-Core
-  - react-native-worklets-core (1.2.0):
+  - react-native-worklets-core (1.3.0):
     - React
     - React-callinvoker
     - React-Core
@@ -424,19 +424,19 @@ PODS:
   - RNFS (2.20.0):
     - React-Core
   - SocketRocket (0.6.0)
-  - VisionCamera (4.0.1):
-    - VisionCamera/Core (= 4.0.1)
-    - VisionCamera/FrameProcessors (= 4.0.1)
-    - VisionCamera/React (= 4.0.1)
-  - VisionCamera/Core (4.0.1)
-  - VisionCamera/FrameProcessors (4.0.1):
+  - VisionCamera (4.0.3):
+    - VisionCamera/Core (= 4.0.3)
+    - VisionCamera/FrameProcessors (= 4.0.3)
+    - VisionCamera/React (= 4.0.3)
+  - VisionCamera/Core (4.0.3)
+  - VisionCamera/FrameProcessors (4.0.3):
     - React
     - React-callinvoker
     - react-native-worklets-core
-  - VisionCamera/React (4.0.1):
+  - VisionCamera/React (4.0.3):
     - React-Core
     - VisionCamera/FrameProcessors
-  - VisionCameraPluginInatVision (4.0.1):
+  - VisionCameraPluginInatVision (4.0.2):
     - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -645,7 +645,7 @@ SPEC CHECKSUMS:
   React-logger: a41d4cad677e9726b71a45a4012431d2fb1edd80
   react-native-cameraroll: 2a198b0eb86c7ccf3303fb57702b2465cc292c94
   react-native-image-picker: 2381c008bbb09e72395a2d043c147b11bd1523d9
-  react-native-worklets-core: a316975bba20b73d47aa4d41bffb0ca984ba592e
+  react-native-worklets-core: 7a50c0c14005cc57df8583eabd99ea3f467fa277
   React-perflogger: 2588b59d386dbbc1df392da9493a8baa690bc89c
   React-RCTActionSheet: 057d6c6fc29e2a6d183d323ef35d9f6aedae936b
   React-RCTAnimation: 4c25b2c7953ea5b983eda940922fb4036f03e3f1
@@ -661,8 +661,8 @@ SPEC CHECKSUMS:
   ReactCommon: 91850c06577766d9970edec2a6929a6e14865a21
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  VisionCamera: 8e00df84a76cf26ca70ecd3b6ed05dc0d3b60beb
-  VisionCameraPluginInatVision: b52d470949789abc1ad3c434d3fbaf366972f989
+  VisionCamera: b633f90960feab2669b7a1c51f8a201dd0a5bfc3
+  VisionCameraPluginInatVision: 2f2aa58b49c50b1b09bb552cab85c605fbb80053
   Yoga: fb40589bb1a96e2573358586fc2903b3811ce254
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

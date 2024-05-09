@@ -171,7 +171,8 @@ export interface Prediction {
   rank_level: RANK_LEVEL; // Android has
   score: number;
   taxon_id: number;
-  ancestor_ids?: number[]; // TODO: this is Android only atm
+  // TODO: this is only present in __inatVision iOS (from JS code) and Android, and getPredictionsForImage on Android
+  ancestor_ids?: number[];
   // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
   rank?: RANK;
   iconic_class_id?: number;
@@ -229,9 +230,9 @@ function handleResult(result: any, options: Options): Result {
     if (!ancestorIds) {
       ancestorIds = result.predictions
         // Filter to all predictions with higher rank level
-        .filter((p) => p.rank_level > prediction.rank_level)
+        .filter((p: Prediction) => p.rank_level > prediction.rank_level)
         // Map their taxon_id
-        .map((p) => Number(p.taxon_id));
+        .map((p: Prediction) => Number(p.taxon_id));
     }
     return {
       ...prediction,

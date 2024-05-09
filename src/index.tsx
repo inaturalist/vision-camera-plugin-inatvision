@@ -223,6 +223,16 @@ function handleResult(result: any, options: Options): Result {
   result.timestamp = new Date().getTime();
   // Add the rank to the predictions if not present
   result.predictions = result.predictions.map((prediction: Prediction) => {
+    // If there is ancestor_ids set, i.e. currently Android only use it
+    let ancestorIds = prediction.ancestor_ids;
+    // If not, get the ancestor ids for this prediction
+    if (!ancestorIds) {
+      ancestorIds = result.predictions
+        // Filter to all predictions with higher rank level
+        .filter((p) => p.rank_level > prediction.rank_level)
+        // Map their taxon_id
+        .map((p) => Number(p.taxon_id));
+    }
     return {
       ...prediction,
       rank: prediction.rank

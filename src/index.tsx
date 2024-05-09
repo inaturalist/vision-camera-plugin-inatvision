@@ -221,6 +221,16 @@ function handleResult(result: any, options: Options): Result {
 
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
+  // Add the rank to the predictions if not present
+  result.predictions = result.predictions.map((prediction: Prediction) => {
+    return {
+      ...prediction,
+      rank: prediction.rank
+        ? prediction.rank
+        : mapLevelToRank[prediction.rank_level],
+      ancestor_ids: ancestorIds,
+    };
+  });
 
   // Store the result to module-wide state
   state.storedResults.value.push(result);
@@ -254,20 +264,13 @@ function handleResult(result: any, options: Options): Result {
     }
   }
 
-  // Add the rank to the predictions if not present
   const predictions = current.predictions
     // only KPCOFGS ranks qualify as "top" predictions
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
     .filter((prediction) => prediction.rank_level % 10 === 0)
     .filter(
       (prediction) => prediction.score > (options.confidenceThreshold || 0)
-    )
-    .map((prediction: Prediction) => ({
-      ...prediction,
-      rank: prediction.rank
-        ? prediction.rank
-        : mapLevelToRank[prediction.rank_level],
-    }));
+    );
   const handledResult = {
     ...current,
     predictions,

@@ -171,7 +171,8 @@ export interface Prediction {
   rank_level: RANK_LEVEL; // Android has
   score: number;
   taxon_id: number;
-  ancestor_ids?: number[]; // TODO: this is Android only atm
+  // TODO: this is only present in __inatVision iOS (from JS code) and Android, and getPredictionsForImage on Android
+  ancestor_ids?: number[];
   // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
   rank?: RANK;
   iconic_class_id?: number;
@@ -221,6 +222,26 @@ function handleResult(result: any, options: Options): Result {
 
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
+  // Add the rank to the predictions if not present
+  result.predictions = result.predictions.map((prediction: Prediction) => {
+    // If there is ancestor_ids set, i.e. currently Android only use it
+    let ancestorIds = prediction.ancestor_ids;
+    // If not, get the ancestor ids for this prediction
+    if (!ancestorIds) {
+      ancestorIds = result.predictions
+        // Filter to all predictions with higher rank level
+        .filter((p: Prediction) => p.rank_level > prediction.rank_level)
+        // Map their taxon_id
+        .map((p: Prediction) => Number(p.taxon_id));
+    }
+    return {
+      ...prediction,
+      rank: prediction.rank
+        ? prediction.rank
+        : mapLevelToRank[prediction.rank_level],
+      ancestor_ids: ancestorIds,
+    };
+  });
 
   // Store the result to module-wide state
   state.storedResults.value.push(result);
@@ -254,20 +275,13 @@ function handleResult(result: any, options: Options): Result {
     }
   }
 
-  // Add the rank to the predictions if not present
   const predictions = current.predictions
     // only KPCOFGS ranks qualify as "top" predictions
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
     .filter((prediction) => prediction.rank_level % 10 === 0)
     .filter(
       (prediction) => prediction.score > (options.confidenceThreshold || 0)
-    )
-    .map((prediction: Prediction) => ({
-      ...prediction,
-      rank: prediction.rank
-        ? prediction.rank
-        : mapLevelToRank[prediction.rank_level],
-    }));
+    );
   const handledResult = {
     ...current,
     predictions,

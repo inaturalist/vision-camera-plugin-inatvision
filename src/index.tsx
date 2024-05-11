@@ -352,7 +352,14 @@ interface Options {
 }
 
 interface OptionsWithResizedFrame extends Options {
-  resizedBuffer?: Uint8Array | Float32Array | undefined;
+  // Index signature
+  [key: string]: any;
+  /**
+   * *Android only.*
+   *
+   * The resized frame buffer.
+   */
+  resizedBuffer?: ArrayBufferLike | undefined;
 }
 
 /**

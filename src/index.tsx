@@ -378,7 +378,7 @@ export function inatVision(frame: Frame, options: Options): Result {
   optionsAreValid(options);
 
   let resized;
-  // Use a the resize plugin to resize the frame to the expected input size on Android
+  // Use the resize plugin to resize the frame to the expected input size on Android
   // On iOS, the frame is center-cropped and resized to 299x299 in the native code using the CoreML API
   if (Platform.OS === 'android') {
     resized = resize(frame, {

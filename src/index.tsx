@@ -4,6 +4,9 @@ import { VisionCameraProxy } from 'react-native-vision-camera';
 import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
+import { createResizePlugin } from 'vision-camera-resize-plugin';
+
+const { resize } = createResizePlugin();
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
@@ -348,6 +351,10 @@ interface Options {
   patchedOrientationAndroid?: string;
 }
 
+interface OptionsWithResizedFrame extends Options {
+  resizedBuffer?: Uint8Array | Float32Array | undefined;
+}
+
 /**
  * Function to call the computer vision model with a frame from the camera
  * @param frame The frame to predict on.
@@ -358,9 +365,30 @@ export function inatVision(frame: Frame, options: Options): Result {
   if (plugin === undefined) {
     throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
   }
+  if (resize === undefined) {
+    throw new Error("Couldn't find the 'vision-camera-resize-plugin' plugin.");
+  }
   optionsAreValid(options);
-  // @ts-expect-error Frame Processors are not typed.
-  const result = plugin.call(frame, options);
+
+  let resized;
+  // Use a the resize plugin to resize the frame to the expected input size on Android
+  // On iOS, the frame is center-cropped and resized to 299x299 in the native code using the CoreML API
+  if (Platform.OS === 'android') {
+    resized = resize(frame, {
+      scale: {
+        width: 299,
+        height: 299,
+      },
+      pixelFormat: 'rgb',
+      dataType: options.version === '1.0' ? 'float32' : 'uint8',
+    });
+  }
+  const optionsWithResizedFrame: OptionsWithResizedFrame = {
+    ...options,
+    resizedBuffer: resized?.buffer,
+  };
+
+  const result = plugin.call(frame, optionsWithResizedFrame);
   const handledResult: Result = handleResult(result, options);
   return handledResult;
 }

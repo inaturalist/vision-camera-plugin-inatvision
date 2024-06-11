@@ -152,8 +152,11 @@
         return [NSDictionary dictionaryWithDictionary:allScores];
     } else {
         // base case, no children
+        NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
+        NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
+        NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
         return @{
-            node.taxonId: [classification objectAtIndexedSubscript:node.leafId.integerValue]
+            node.taxonId: leafScore
         };
     }
 }

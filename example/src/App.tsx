@@ -214,7 +214,7 @@ export default function App() {
         setResult(result.predictions);
       })
       .catch((err) => {
-        console.log('Error', err);
+        console.log('getPredictionsForImage Error', err);
       });
   }
 

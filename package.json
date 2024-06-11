@@ -87,7 +87,7 @@
     "react-native-worklets-core": ">=1.2.0"
   },
   "engines": {
-    "node": ">= 16.0.0"
+    "node": ">= 18.0.0"
   },
   "jest": {
     "preset": "react-native",

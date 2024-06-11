@@ -40,7 +40,7 @@ const taxonomyPath =
     ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
-export default function App() {
+export default function App(): React.JSX.Element {
   const { hasPermission, requestPermission } = useCameraPermission();
   const location = useLocationPermission();
 

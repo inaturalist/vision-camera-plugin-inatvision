@@ -185,7 +185,7 @@ export interface Result {
   uri?: string;
 }
 
-const supportedVersions = ['1.0', '2.3', '2.4' as const];
+const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
 
 function optionsAreValid(options: Options | OptionsForImage): boolean {
   'worklet';

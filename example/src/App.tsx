@@ -108,7 +108,7 @@ export default function App(): React.JSX.Element {
           console.log(`moved model file from`, result);
         })
         .catch((error) => {
-          console.log(`error moving model file from`, error);
+          console.log(`error moving model file`, error);
         });
       RNFS.copyFile(
         `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
@@ -119,6 +119,7 @@ export default function App(): React.JSX.Element {
         })
         .catch((error) => {
           console.log(`error moving file from`, error);
+          console.log(`error moving file`, error);
         });
     } else {
       (async () => {

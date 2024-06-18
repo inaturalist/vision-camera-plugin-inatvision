@@ -118,7 +118,6 @@ export default function App(): React.JSX.Element {
           console.log(`moved file from`, result);
         })
         .catch((error) => {
-          console.log(`error moving file from`, error);
           console.log(`error moving file`, error);
         });
     } else {

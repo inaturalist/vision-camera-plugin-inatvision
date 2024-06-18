@@ -150,16 +150,15 @@ public class ImageClassifier {
         for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
                 int pixel = bitmap.getPixel(x, y);
-                // TODO: rephrase to check for 1.0 version and have 2 as else
-                if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
-                  input[0][x][y][0] = Color.red(pixel);
-                  input[0][x][y][1] = Color.green(pixel);
-                  input[0][x][y][2] = Color.blue(pixel);
-                } else {
+                if (mModelVersion.equals("1.0")) {
                   // Normalize channel values to [0.0, 1.0] for version 1.0
                   input[0][x][y][0] = Color.red(pixel) / 255.0f;
                   input[0][x][y][1] = Color.green(pixel) / 255.0f;
                   input[0][x][y][2] = Color.blue(pixel) / 255.0f;
+                } else {
+                  input[0][x][y][0] = Color.red(pixel);
+                  input[0][x][y][1] = Color.green(pixel);
+                  input[0][x][y][2] = Color.blue(pixel);
                 }
             }
         }

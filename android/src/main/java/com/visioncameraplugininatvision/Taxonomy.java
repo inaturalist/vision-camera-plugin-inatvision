@@ -260,7 +260,7 @@ public class Taxonomy {
             result.put("score", prediction.probability);
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
-            if (mModelVersion.equals("2.3") || mModelVersion.equals("2.4")) {
+            if (!mModelVersion.equals("1.0")) {
               if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
                 result.put("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
               }

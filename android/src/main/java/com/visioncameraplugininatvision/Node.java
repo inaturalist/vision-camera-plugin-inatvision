@@ -38,12 +38,12 @@ public class Node {
         this.key = parts[1];
         this.rank = Float.parseFloat(parts[2]);
         this.leafId = parts[3];
-        if (version.equals("2.3") || version.equals("2.4")) {
+        if (version.equals("1.0")) {
+            this.name = parts[4];
+        } else {
             this.iconicId = parts[4];
             this.spatialId = parts[5];
             this.name = parts[6];
-        } else {
-            this.name = parts[4];
         }
     }
 

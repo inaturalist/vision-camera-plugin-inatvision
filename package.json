@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-plugin-inatvision",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

@@ -75,16 +75,16 @@ public class BitmapUtils {
     int rotationDegrees;
     switch (orientation) {
       case "portrait":
-        rotationDegrees = 90;
-        break;
-      case "portrait-upside-down":
-        rotationDegrees = 270;
-        break;
-      case "landscape-left":
         rotationDegrees = 0;
         break;
-      case "landscape-right":
+      case "portrait-upside-down":
         rotationDegrees = 180;
+        break;
+      case "landscape-left":
+        rotationDegrees = 270;
+        break;
+      case "landscape-right":
+        rotationDegrees = 90;
         break;
       default:
         rotationDegrees = 0;

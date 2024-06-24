@@ -339,13 +339,6 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
-  // Patches
-  /**
-   * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
-   * So, we have to patch the orientation on Android. This takes in a string of the current device orientation
-   * and then rotates the frame accordingly before it is used for processing.
-   */
-  patchedOrientationAndroid?: string;
 }
 
 /**

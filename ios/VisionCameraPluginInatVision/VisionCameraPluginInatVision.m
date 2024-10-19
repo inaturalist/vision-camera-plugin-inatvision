@@ -83,7 +83,7 @@
     
     // Create a result MLMultiArray with the same shape as the input arrays
     MLMultiArray *combinedArray = [[MLMultiArray alloc] initWithShape:visionScores.shape
-                                                             dataType:MLMultiArrayDataTypeDouble
+                                                             dataType:MLMultiArrayDataTypeFloat32
                                                                 error:error];
     if (!combinedArray) {
         NSDictionary *userInfo = @{
@@ -96,29 +96,28 @@
     }
     
     // Get the data pointers
-    double *visionData = (double *)visionScores.dataPointer;
-    double *geoData = (double *)geoScores.dataPointer;
-    double *combinedData = (double *)combinedArray.dataPointer;
-
+    float *visionData = (float *)visionScores.dataPointer;
+    float *geoData = (float *)geoScores.dataPointer;
+    float *combinedData = (float *)combinedArray.dataPointer;
+    
     // Get the number of elements
     NSInteger count = visionScores.count;
-
+    
     // Perform element-wise multiplication using vDSP_vmul
-    vDSP_vmulD(visionData, 1, geoData, 1, combinedData, 1, count);
-        
+    vDSP_vmul(visionData, 1, geoData, 1, combinedData, 1, count);
+    
     return combinedArray;
 }
 
 - (MLMultiArray *)normalizeMultiArray:(MLMultiArray *)mlArray error:(NSError **)error {
     NSInteger count = mlArray.count;
-    double *mlData = (double *)mlArray.dataPointer;
+    float *mlData = (float *)mlArray.dataPointer;
     
-    double sum = 0.0;
-    vDSP_sveD(mlData, 1, &sum, count);
+    float sum = 0.0;
+    vDSP_sve(mlData, 1, &sum, count);
     
-    // Normalize by dividing each element by the sum
     if (sum != 0) {
-        vDSP_vsdivD(mlData, 1, &sum, mlData, 1, count);
+        vDSP_vsdiv(mlData, 1, &sum, mlData, 1, count);
     } else {
         NSDictionary *userInfo = @{
             NSLocalizedDescriptionKey: @"Sum of elements is zero, normalization not possible."

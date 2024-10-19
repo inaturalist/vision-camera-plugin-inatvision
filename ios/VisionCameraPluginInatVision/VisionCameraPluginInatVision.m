@@ -72,11 +72,12 @@
 - (MLMultiArray *)combineVisionScores:(MLMultiArray *)visionScores with:(MLMultiArray *)geoScores error:(NSError **)error {
     // Ensure both arrays have the same shape
     if (![visionScores.shape isEqualToArray:geoScores.shape]) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
-                                         code:1
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Arrays must have the same shape"}];
-        }
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Arrays must have the same shape",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:1
+                                 userInfo:userInfo];
         return nil;
     }
     
@@ -85,6 +86,12 @@
                                                              dataType:MLMultiArrayDataTypeDouble
                                                                 error:error];
     if (!combinedArray) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Failed to make combined array",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:2
+                                 userInfo:userInfo];
         return nil;
     }
     
@@ -113,11 +120,12 @@
     if (sum != 0) {
         vDSP_vsdivD(mlData, 1, &sum, mlData, 1, count);
     } else {
-        if (error) {
-            *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
-                                         code:2
-                                     userInfo:@{NSLocalizedDescriptionKey: @"Sum of elements is zero, normalization not possible."}];
-        }
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Sum of elements is zero, normalization not possible."
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:3
+                                 userInfo:userInfo];
         return nil;
     }
 

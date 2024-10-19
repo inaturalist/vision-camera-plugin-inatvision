@@ -296,7 +296,7 @@ export default function App(): React.JSX.Element {
           isActive={true}
           frameProcessor={frameProcessor}
           enableZoomGesture
-          pixelFormat={'yuv'}
+          pixelFormat={'rgb'}
           resizeMode="contain"
           enableFpsGraph={true}
           photoQualityBalance="quality"

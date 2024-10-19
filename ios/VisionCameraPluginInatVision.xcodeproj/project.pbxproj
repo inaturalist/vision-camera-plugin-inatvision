@@ -13,6 +13,7 @@
 		8F3C41832A4AFF5B008FBC67 /* VCPClassifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C417C2A4AFF5B008FBC67 /* VCPClassifier.m */; };
 		8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */; };
 		8F3C41852A4AFF5B008FBC67 /* VCPPrediction.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */; };
+		FA5FF9642CC3182D00BA8E22 /* VCPVisionModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA5FF9632CC3182D00BA8E22 /* VCPVisionModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +40,8 @@
 		8F3C417F2A4AFF5B008FBC67 /* VCPTaxonomy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VCPTaxonomy.h; sourceTree = "<group>"; };
 		8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPTaxonomy.m; sourceTree = "<group>"; };
 		8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VCPPrediction.m; sourceTree = "<group>"; };
+		FA5FF9622CC3182D00BA8E22 /* VCPVisionModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VCPVisionModel.h; sourceTree = "<group>"; };
+		FA5FF9632CC3182D00BA8E22 /* VCPVisionModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VCPVisionModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +92,8 @@
 				8F3C41812A4AFF5B008FBC67 /* VCPPrediction.m */,
 				8F3C417F2A4AFF5B008FBC67 /* VCPTaxonomy.h */,
 				8F3C41802A4AFF5B008FBC67 /* VCPTaxonomy.m */,
+				FA5FF9622CC3182D00BA8E22 /* VCPVisionModel.h */,
+				FA5FF9632CC3182D00BA8E22 /* VCPVisionModel.m */,
 			);
 			path = Classifier;
 			sourceTree = "<group>";
@@ -154,6 +159,7 @@
 				8F3C41832A4AFF5B008FBC67 /* VCPClassifier.m in Sources */,
 				1DB58401D995067FF278746C /* VisionCameraPluginInatVision.m in Sources */,
 				8F3C41842A4AFF5B008FBC67 /* VCPTaxonomy.m in Sources */,
+				FA5FF9642CC3182D00BA8E22 /* VCPVisionModel.m in Sources */,
 				8F3C41822A4AFF5B008FBC67 /* VCPNode.m in Sources */,
 				8F2D62CB2B1B9DD500412573 /* VisionCameraPluginInatVisionModule.m in Sources */,
 			);

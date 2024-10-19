@@ -7,17 +7,19 @@
 @import Vision;
 @import CoreML;
 @import Accelerate;
+@import CoreGraphics;
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
 
 @class VCPGeoModel;
+#import "VCPVisionModel.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
-+ (VNCoreMLModel *)visionModelWithModelFile:(NSString *)modelPath;
 + (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
 
@@ -51,58 +53,14 @@
     return geoModel;
 }
 
-+ (VNCoreMLModel *)visionModelWithModelFile:(NSString *)modelPath {
-    static VNCoreMLModel *visionModel = nil;
-    if (visionModel == nil) {
-        // Setup vision
-        //NSURL *modelUrl = [NSURL fileURLWithPath:modelPath];
-        NSURL *modelUrl = [[NSBundle mainBundle] URLForResource:@"cvmodel" withExtension:@"mlmodelc"];
-        if (!modelUrl) {
-            // TODO: handle this error
-            // [self.delegate classifierError:@"no file for optimized model"];
-            NSLog(@"no file for optimized model");
-            return nil;
-        }
-        
-        NSError *loadError = nil;
-        MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
-                                                   error:&loadError];
-        if (loadError) {
-            NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
-                                   loadError.localizedDescription];
-            NSLog(@"vision model mlmodel load error: %@", errString);
-            // TODO: handle this error
-            // [self.delegate classifierError:errString];
-            return nil;
-        } else {
-            NSLog(@"no error produced while loading vision model");
-        }
-        
-        if (!model) {
-            // TODO: handle this error
-            // [self.delegate classifierError:@"unable to make model"];
-            NSLog(@"unable to make vision mlmodel");
-            return nil;
-        }
-        
-        NSError *modelError = nil;
-        visionModel = [VNCoreMLModel modelForMLModel:model
-                                               error:&modelError];
-        if (modelError) {
-            NSString *errString = [NSString stringWithFormat:@"error making vision model: %@",
-                                   modelError.localizedDescription];
-            // [self.delegate classifierError:errString];
-            NSLog(@"vision model vncoreml load error %@", errString);
-            return nil;
-        }
-        if (!visionModel) {
-            // [self.delegate classifierError:@"unable to make vision model"];
-            NSLog(@"unable to make vision model vncoreml");
-            return nil;
-        }
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
+    static VCPVisionModel *cvModel = nil;
+    
+    if (cvModel == nil) {
+        cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
     }
     
-    return visionModel;
+    return cvModel;
 }
 
 - (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
@@ -197,58 +155,31 @@
     NSString* taxonomyPath = arguments[@"taxonomyPath"];
     
     CMSampleBufferRef buffer = frame.buffer;
+    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
     UIImageOrientation orientation = frame.orientation;
     
-    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
-    if (!pixelBuffer) {
-        NSLog(@"unable to get pixel buffer");
-        return nil;
+    VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
+    MLMultiArray *visionScores = [cvModel visionPredictionsFor:pixelBuffer orientation:orientation];
+    
+    MLMultiArray *results = nil;
+    
+
+    if (geoModelPreds != nil) {
+        NSError *err = nil;
+        results = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
+        results = [self normalizeMultiArray:results error:&err];
+    } else {
+        results = visionScores;
     }
+
     
     // Setup taxonomy
     VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-    
-    // Setup vision model
-    VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
-    
-    // Setup top branches
+
     NSMutableArray *topBranches = [NSMutableArray array];
-    VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-        VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-        MLFeatureValue *firstFV = firstResult.featureValue;
-        MLMultiArray *visionScores = firstFV.multiArrayValue;
-        
-        MLMultiArray *mm = nil;
-        if (geoModelPreds != nil) {
-            NSError *err = nil;
-            mm = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
-            mm = [self normalizeMultiArray:mm error:&err];
-        } else {
-            mm = visionScores;
-        }
-        
-        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
-        // add this to the end of the recent top branches array
-        [topBranches addObject:bestBranch];
-    };
-    
-    VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
-                                                              completionHandler:recognitionHandler];
-    objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
-    NSArray *requests = @[objectRecognition];
-    
-    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixelBuffer
-                                                                              orientation:orientation
-                                                                                  options:@{}];
-    NSError *requestError = nil;
-    [handler performRequests:requests
-                       error:&requestError];
-    if (requestError) {
-        NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                               requestError.localizedDescription];
-        NSLog(@"%@", errString);
-        return nil;
-    }
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+    // add this to the end of the recent top branches array
+    [topBranches addObject:bestBranch];
     
     // convert the VCPPredictions in the bestRecentBranch into dicts
     NSMutableArray *bestBranchAsDict = [NSMutableArray array];

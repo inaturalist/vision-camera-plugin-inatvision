@@ -3,7 +3,7 @@
 //  VisionCameraPluginInatVision
 //
 //  Created by Alex Shepard on 10/18/24.
-//  Copyright © 2024 Facebook. All rights reserved.
+//  Copyright © 2024 iNaturalist. All rights reserved.
 //
 
 #import "VCPVisionModel.h"

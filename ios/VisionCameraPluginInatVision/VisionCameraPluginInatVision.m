@@ -11,8 +11,7 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
-
-@class VCPGeoModel;
+#import "VCPGeoModel.h"
 #import "VCPVisionModel.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
@@ -22,16 +21,6 @@
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
-
-@interface VCPGeoModel: NSObject
-
-- (instancetype)initWithModelPath:(NSString *)modelPath;
-- (MLMultiArray *)predictionsForLat:(float)latitude lng:(float)longitude elevation:(float)elevation;
-
-@property MLModel *geoModel;
-
-@end
-
 
 @implementation VisionCameraPluginInatVisionPlugin
 
@@ -136,13 +125,14 @@
     NSDate *startDate = [NSDate date];
 
     MLMultiArray *geoModelPreds = nil;
-    if ([arguments objectForKey:@"latitude"]
-        && [arguments objectForKey:@"longitude"]
-        && [arguments objectForKey:@"elevation"]
-        && [arguments objectForKey:@"geoModelPath"])
+    if ([arguments objectForKey:@"useGeoModel"] &&
+        [[arguments objectForKey:@"useGeoModel"] boolValue] &&
+        [arguments objectForKey:@"latitude"] &&
+        [arguments objectForKey:@"longitude"] &&
+        [arguments objectForKey:@"elevation"] &&
+        [arguments objectForKey:@"geoModelPath"])
     {
-        NSString *geoModelPath = arguments[@"geoModelPath"];
-        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:geoModelPath];
+        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:arguments[@"geoModelPath"]];
         geoModelPreds = [geoModel predictionsForLat:[[arguments objectForKey:@"latitude"] floatValue]
                                                 lng:[[arguments objectForKey:@"longitude"] floatValue]
                                           elevation:[[arguments objectForKey:@"elevation"] floatValue]];
@@ -150,8 +140,6 @@
         NSLog(@"not doing anything geo related.");
     }
     
-    NSLog(@"got %ld geo model scores", geoModelPreds.count);
-
     // Log arguments
     NSLog(@"inatVision arguments: %@", arguments);
     // Destructure version out of options
@@ -209,78 +197,3 @@ VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
 
 @end
 
-
-
-
-@implementation VCPGeoModel
-
-- (instancetype _Nullable)initWithModelPath:(NSString *)modelPath {
-    if (self = [super init]) {
-        NSURL *geoModelUrl = [NSURL fileURLWithPath:modelPath];
-        if (!geoModelUrl) {
-            NSLog(@"no file for geo model");
-            return nil;
-        }
-        
-        NSError *loadError = nil;
-        self.geoModel = [MLModel modelWithContentsOfURL:geoModelUrl error:&loadError];
-        if (loadError) {
-            NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
-                                   loadError.localizedDescription];
-            NSLog(@"%@", errString);
-            return nil;
-        }
-        if (!self.geoModel) {
-            NSLog(@"unable to make geo model");
-            return nil;
-        }
-    }
-    
-    return self;
-}
-
-- (NSArray *)normAndEncodeLat:(float)latitude lng:(float)longitude elevation:(float)elevation {
-    float normLat = latitude / 90.0;
-    float normLng = longitude / 180.0;
-    float normElev = 0.0;
-    if (elevation > 0) {
-        normElev = elevation / 5705.63;
-    } else {
-        normElev = elevation / 32768.0;
-    }
-    float a = sin(M_PI * normLng);
-    float b = sin(M_PI * normLat);
-    float c = cos(M_PI * normLng);
-    float d = cos(M_PI * normLat);
-    
-    return @[ @(a), @(b), @(c), @(d), @(normElev) ];
-}
-
-- (MLMultiArray *)predictionsForLat:(float)latitude lng:(float)longitude elevation:(float)elevation {
-    NSArray *geoModelInputs = [self normAndEncodeLat:latitude
-                                                 lng:longitude
-                                           elevation:elevation];
-    
-    NSError *err = nil;
-    MLMultiArray *mlInputs = [[MLMultiArray alloc] initWithShape:@[@1, @5]
-                                                        dataType:MLMultiArrayDataTypeDouble
-                                                           error:&err];
-    for (int i = 0; i < 5; i++) {
-        mlInputs[i] = geoModelInputs[i];
-    }
-    MLFeatureValue *fv = [MLFeatureValue featureValueWithMultiArray:mlInputs];
-    
-    NSError *fpError = nil;
-    NSDictionary *fpDict = @{ @"input_1": fv };
-    MLDictionaryFeatureProvider *fp = [[MLDictionaryFeatureProvider alloc] initWithDictionary:fpDict
-                                                                                        error:&fpError];
-    
-    NSError *predError = nil;
-    id <MLFeatureProvider> results = [self.geoModel predictionFromFeatures:fp error:&predError];
-    MLFeatureValue *result = [results featureValueForName:@"Identity"];
-    MLMultiArray *geoModelScores = result.multiArrayValue;
-    
-    return geoModelScores;
-}
-
-@end

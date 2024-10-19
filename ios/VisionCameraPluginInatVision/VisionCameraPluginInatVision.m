@@ -69,7 +69,7 @@
     return self;
 }
 
-- (MLMultiArray *)combineVisionScores:(MLMultiArray *)visionScores with:(MLMultiArray *)geoScores error:(NSError **)error {
+- (MLMultiArray * _Nullable)combineVisionScores:(MLMultiArray *)visionScores with:(MLMultiArray *)geoScores error:(NSError **)error {
     // Ensure both arrays have the same shape
     if (![visionScores.shape isEqualToArray:geoScores.shape]) {
         NSDictionary *userInfo = @{

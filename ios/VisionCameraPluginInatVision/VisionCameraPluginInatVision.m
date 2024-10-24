@@ -182,13 +182,17 @@
         [bestBranchAsDict addObject:[prediction asDict]];
     }
     
-    // Create a new dictionary with the bestBranchAsDict under the key "predictions"
-    NSDictionary *response = [NSDictionary dictionary];
-    response = @{@"predictions": bestBranchAsDict};
-    
-    // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"inatVision took %f seconds", timeElapsed);
+
+    // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+    NSDictionary *response = [NSDictionary dictionary];
+    response = @{
+        @"predictions": bestBranchAsDict,
+        @"timeElapsed": @(timeElapsed),
+    };
+    
+    // End timestamp
     
     return response;
 }

@@ -63,6 +63,8 @@ public class Taxonomy {
     private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
     private boolean mNegativeFilter = false;
 
+    private float mTaxonomyRollupCutoff = 0.01f;
+
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {
             Timber.tag(TAG).d("setFilterByTaxonId: changing taxonID filter from " + mFilterByTaxonId + " to " + taxonId);
@@ -159,21 +161,22 @@ public class Taxonomy {
 
     /** Following: https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136 */
     private Map<String, Float> aggregateScores(float[] results, Node currentNode) {
+        // we'll populate this and return it
         Map<String, Float> allScores = new HashMap<>();
 
         if (currentNode.children.size() > 0) {
-            // we'll populate this and return it
-
-            for (Node child : currentNode.children) {
-                Map<String, Float> childScores = aggregateScores(results, child);
-                allScores.putAll(childScores);
-            }
-
             float thisScore = 0.0f;
             for (Node child : currentNode.children) {
-                thisScore += allScores.get(child.key);
-            }
+                Map<String, Float> childScores = aggregateScores(results, child);
+                if (childScores.containsKey(child.key)) {
+                  float childScore = childScores.get(child.key);
+                  if (childScore > mTaxonomyRollupCutoff) {
+                    allScores.putAll(childScores);
+                    thisScore += childScore;
+                  }
 
+                }
+            }
             allScores.put(currentNode.key, thisScore);
 
         } else {
@@ -190,7 +193,10 @@ public class Taxonomy {
                 resetScore = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
             }
 
-            allScores.put(currentNode.key, resetScore ? 0.0f : results[Integer.valueOf(currentNode.leafId)]);
+            float leafScore = results[Integer.valueOf(currentNode.leafId)];
+            if (leafScore > mTaxonomyRollupCutoff) {
+              allScores.put(currentNode.key, resetScore ? 0.0f : leafScore);
+            }
         }
 
         return allScores;
@@ -229,11 +235,13 @@ public class Taxonomy {
             Node bestChild = null;
             float bestChildScore = -1;
             for (Node child : currentNodeChildren) {
+              if (scores.containsKey(child.key)) {
                 float childScore = scores.get(child.key);
                 if (childScore > bestChildScore) {
-                    bestChildScore = childScore;
-                    bestChild = child;
+                  bestChildScore = childScore;
+                  bestChild = child;
                 }
+              }
             }
 
             if (bestChild != null) {

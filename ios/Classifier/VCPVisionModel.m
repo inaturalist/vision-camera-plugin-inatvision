@@ -30,21 +30,12 @@
             NSLog(@"unable to make cv model");
             return nil;
         }
-        
+      
         NSError *modelError = nil;
         self.visionModel = [VNCoreMLModel modelForMLModel:self.cvModel
-                                               error:&modelError];
-
-        __weak typeof(self) weakSelf = self;
-        VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-            
-            VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-            MLFeatureValue *firstFV = firstResult.featureValue;
-            weakSelf.recentVisionScores = firstFV.multiArrayValue;
-        };
+                                                    error:&modelError];
         
-        self.classification = [[VNCoreMLRequest alloc] initWithModel:self.visionModel
-                                                   completionHandler:recognitionHandler];
+        self.classification = [[VNCoreMLRequest alloc] initWithModel:self.visionModel];
         self.classification.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
         self.requests = @[ self.classification ];
     }
@@ -57,12 +48,16 @@
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixBuf
                                                                               orientation:cgOrient
                                                                                   options:@{}];
-
+    
     NSError *requestError = nil;
     [handler performRequests:self.requests
                        error:&requestError];
     
-    return self.recentVisionScores;
+    VNCoreMLRequest *request = self.requests.firstObject;
+    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
+    MLFeatureValue *firstFV = firstResult.featureValue;
+    
+    return firstFV.multiArrayValue;
 }
 
 - (CGImagePropertyOrientation)cgOrientationFor:(UIImageOrientation)uiOrientation {

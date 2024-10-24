@@ -24,8 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property VNCoreMLRequest *classification;
 @property NSArray *requests;
 
-@property MLMultiArray *recentVisionScores;
-
 @end
 
 NS_ASSUME_NONNULL_END

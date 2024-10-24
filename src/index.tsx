@@ -339,6 +339,12 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
+
+  useGeoModel?: boolean;
+  latitude?: number;
+  longitude?: number;
+  elevation?: number;
+  geoModelPath?: string;
 }
 
 /**

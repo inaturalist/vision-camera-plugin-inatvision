@@ -49,6 +49,10 @@
     return self;
 }
 
+/*
+ * iNat geo model input normalization documented here:
+ * https://github.com/inaturalist/inatGeoModelTraining/tree/main#input-normalization
+ */
 - (NSArray *)normAndEncodeLat:(float)latitude lng:(float)longitude elevation:(float)elevation {
     float normLat = latitude / 90.0;
     float normLng = longitude / 180.0;

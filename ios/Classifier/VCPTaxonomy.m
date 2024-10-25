@@ -133,8 +133,6 @@
     return nil;
 }
 
-// following
-// https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
     NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
 

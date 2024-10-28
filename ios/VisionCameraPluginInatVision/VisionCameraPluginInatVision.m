@@ -94,6 +94,8 @@
   NSString* modelPath = arguments[@"modelPath"];
   // Destructure taxonomy path out of options
   NSString* taxonomyPath = arguments[@"taxonomyPath"];
+  // Destructure taxonomyRollupCutoff out of options
+  NSNumber* taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
 
   CMSampleBufferRef buffer = frame.buffer;
   UIImageOrientation orientation = frame.orientation;

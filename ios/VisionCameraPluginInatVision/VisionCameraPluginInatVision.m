@@ -108,6 +108,9 @@
 
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
+  if (taxonomyRollupCutoff) {
+    [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
+  }
 
   // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];

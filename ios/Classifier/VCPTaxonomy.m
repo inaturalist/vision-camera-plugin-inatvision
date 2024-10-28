@@ -98,6 +98,11 @@
     self.nodesByTaxonId = nil;
 }
 
+- (void)setTaxonomyRollupCutoff:(float)taxonomyRollupCutoff {
+    NSAssert(taxonomyRollupCutoff >= 0.0 && taxonomyRollupCutoff <= 1.0, @"taxonomyRollupCutoff must be between 0.0 and 1.0");
+    _taxonomyRollupCutoff = taxonomyRollupCutoff;
+}
+
 - (NSDictionary *)leafScoresFromClassification:(MLMultiArray *)classification {
     NSMutableDictionary *scores = [NSMutableDictionary dictionary];
 

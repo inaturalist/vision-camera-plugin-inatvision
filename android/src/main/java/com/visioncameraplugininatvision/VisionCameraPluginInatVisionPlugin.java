@@ -46,6 +46,14 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  private float mTaxonomyRollupCutoff = 0.01f;
+  public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
+      mTaxonomyRollupCutoff = taxonomyRollupCutoff;
+      if (mImageClassifier != null) {
+        mImageClassifier.setTaxonomyRollupCutoff(mTaxonomyRollupCutoff);
+      }
+  }
+
   private double mCropRatio = 1.0;
   public void setCropRatio(double cropRatio) {
       mCropRatio = cropRatio;
@@ -97,6 +105,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
     if (negativeFilter != null) {
       setNegativeFilter(negativeFilter != null ? negativeFilter : false);
+    }
+
+    Double taxonomyRollupCutoff = (Double)arguments.get("taxonomyRollupCutoff");
+    if (taxonomyRollupCutoff != null) {
+      setTaxonomyRollupCutoff(taxonomyRollupCutoff != null ? taxonomyRollupCutoff.floatValue() : null);
     }
 
     Double cropRatio = (Double)arguments.get("cropRatio");

@@ -87,6 +87,17 @@ public class Taxonomy {
         return mNegativeFilter;
     }
 
+    public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
+        if (mTaxonomyRollupCutoff != taxonomyRollupCutoff) {
+            Timber.tag(TAG).d("setTaxonomyRollupCutoff: changing taxonomyRollupCutoff from " + mTaxonomyRollupCutoff + " to " + taxonomyRollupCutoff);
+        }
+        mTaxonomyRollupCutoff = taxonomyRollupCutoff;
+    }
+
+    public float getTaxonomyRollupCutoff() {
+        return mTaxonomyRollupCutoff;
+    }
+
     Taxonomy(InputStream is, String version) {
         mModelVersion = version;
         // Read the taxonomy CSV file into a list of nodes

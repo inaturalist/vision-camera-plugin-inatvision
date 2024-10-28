@@ -314,6 +314,13 @@ interface Options {
   /**
    * *Android only.*
    *
+   * Value of cv prediction score for lower of which to exclude nodes from performing the taxonomy rollup.
+   * Defaults to 0.01.
+   */
+  taxonomyRollupCutoff?: number;
+  /**
+   * *Android only.*
+   *
    * The iconic taxon id to filter by.
    */
   filterByTaxonId?: null | string;

@@ -152,6 +152,7 @@ export default function App(): React.JSX.Element {
             modelPath,
             taxonomyPath,
             confidenceThreshold,
+            taxonomyRollupCutoff: 0.001,
             filterByTaxonId,
             negativeFilter,
             numStoredResults: 4,

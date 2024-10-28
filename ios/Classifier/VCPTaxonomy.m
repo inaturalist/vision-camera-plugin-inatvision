@@ -84,8 +84,8 @@
                 [self.life addChild:node];
             }
         }
-        
-        self.taxonomyRollupCutoff = 0.01;   
+
+        self.taxonomyRollupCutoff = 0.01;
     }
 
     return self;
@@ -143,7 +143,7 @@
         for (VCPNode *child in node.children) {
             NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
             NSNumber *childScore = childScores[child.taxonId];
-            
+
             if ([childScore floatValue] > self.taxonomyRollupCutoff) {
                 [allScores addEntriesFromDictionary:childScores];
                 thisScore += [childScore floatValue];
@@ -156,12 +156,12 @@
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
         NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
         NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
-        
+
         if ([leafScore floatValue] > self.taxonomyRollupCutoff) {
             allScores[node.taxonId] = leafScore;
         }
     }
-    
+
     return [allScores copy];
 }
 

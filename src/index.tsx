@@ -180,6 +180,7 @@ export interface Prediction {
 }
 
 export interface Result {
+  options: Options;
   timestamp: number;
   predictions: Prediction[];
   uri?: string;
@@ -224,6 +225,8 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
 function handleResult(result: any, options: Options): Result {
   'worklet';
 
+  // Add the options to the result
+  result.options = options;
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
   // Add the rank to the predictions if not present

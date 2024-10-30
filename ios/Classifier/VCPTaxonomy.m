@@ -85,7 +85,7 @@
             }
         }
 
-        self.taxonomyRollupCutoff = 0.01;
+        self.taxonomyRollupCutoff = 0.0;
     }
 
     return self;

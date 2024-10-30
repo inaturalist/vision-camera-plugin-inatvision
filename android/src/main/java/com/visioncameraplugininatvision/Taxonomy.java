@@ -181,7 +181,7 @@ public class Taxonomy {
                 Map<String, Float> childScores = aggregateScores(results, child);
                 if (childScores.containsKey(child.key)) {
                   float childScore = childScores.get(child.key);
-                  if (childScore > mTaxonomyRollupCutoff) {
+                  if (childScore >= mTaxonomyRollupCutoff) {
                     allScores.putAll(childScores);
                     thisScore += childScore;
                   }
@@ -205,7 +205,7 @@ public class Taxonomy {
             }
 
             float leafScore = results[Integer.valueOf(currentNode.leafId)];
-            if (leafScore > mTaxonomyRollupCutoff) {
+            if (leafScore >= mTaxonomyRollupCutoff) {
               allScores.put(currentNode.key, resetScore ? 0.0f : leafScore);
             }
         }

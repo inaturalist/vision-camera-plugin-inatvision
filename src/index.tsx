@@ -319,7 +319,7 @@ interface Options {
    * A taxonomy rollup cutoff threshold.
    * As a fraction of 1. After computer vision predictions are returned, this value filters out all nodes with
    * a lower score for the caluclation of the best branch or top predictions.
-   * Defaults to 0.01.
+   * Defaults to 0.0 on iOS and 0.01 on Android.
    */
   taxonomyRollupCutoff?: number;
   /**

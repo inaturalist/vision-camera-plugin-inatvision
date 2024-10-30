@@ -149,11 +149,12 @@
             NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
             NSNumber *childScore = childScores[child.taxonId];
 
-            if ([childScore floatValue] > self.taxonomyRollupCutoff) {
+            if ([childScore floatValue] >= self.taxonomyRollupCutoff) {
                 [allScores addEntriesFromDictionary:childScores];
                 thisScore += [childScore floatValue];
             }
         }
+        // TODO: does it make sense to not add the node if it's score is 0?
         allScores[node.taxonId] = @(thisScore);
 
     } else {
@@ -162,7 +163,7 @@
         NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
         NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
 
-        if ([leafScore floatValue] > self.taxonomyRollupCutoff) {
+        if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
             allScores[node.taxonId] = leafScore;
         }
     }

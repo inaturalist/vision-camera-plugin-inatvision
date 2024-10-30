@@ -46,6 +46,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  // TODO: default to 0 like on iOS
   private float mTaxonomyRollupCutoff = 0.01f;
   public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
       mTaxonomyRollupCutoff = taxonomyRollupCutoff;

@@ -159,6 +159,7 @@ public class Taxonomy {
         float[] results = ((float[][]) outputs.get(0))[0];
 
         Map<String, Float> scores = aggregateScores(results);
+        Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(scores);
 
         return bestBranch;

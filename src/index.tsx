@@ -214,6 +214,10 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       );
     }
   }
+  if (options.taxonomyRollupCutoff) {
+    // TODO: validate the taxonomyRollupCutoff
+    // have not done this because I can not test it because issue #36
+  }
   return true;
 }
 
@@ -380,6 +384,7 @@ interface OptionsForImage {
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: number;
+  taxonomyRollupCutoff?: number;
   cropRatio?: number;
 }
 

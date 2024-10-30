@@ -63,8 +63,7 @@ public class Taxonomy {
     private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
     private boolean mNegativeFilter = false;
 
-    // TODO: default to 0
-    private float mTaxonomyRollupCutoff = 0.01f;
+    private float mTaxonomyRollupCutoff = 0.0f;
 
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {

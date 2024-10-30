@@ -312,9 +312,9 @@ interface Options {
    */
   confidenceThreshold?: number;
   /**
-   * *Android only.*
-   *
-   * Value of cv prediction score for lower of which to exclude nodes from performing the taxonomy rollup.
+   * A taxonomy rollup cutoff threshold.
+   * As a fraction of 1. After computer vision predictions are returned, this value filters out all nodes with
+   * a lower score for the caluclation of the best branch or top predictions.
    * Defaults to 0.01.
    */
   taxonomyRollupCutoff?: number;

@@ -116,6 +116,8 @@
 
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {
     NSDictionary *scores = [self aggregateScores:classification];
+    // Log number of nodes in scores
+    NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
     return [self buildBestBranchFromScores:scores];
 }
 

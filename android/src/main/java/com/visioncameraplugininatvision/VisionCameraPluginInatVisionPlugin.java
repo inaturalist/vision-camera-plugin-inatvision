@@ -98,9 +98,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     // Destructure optional parameters and set values
     String filterByTaxonId = (String)arguments.get("filterByTaxonId");
-    if (filterByTaxonId != null) {
-      setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
-    }
+    setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
 
     Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
     if (negativeFilter != null) {

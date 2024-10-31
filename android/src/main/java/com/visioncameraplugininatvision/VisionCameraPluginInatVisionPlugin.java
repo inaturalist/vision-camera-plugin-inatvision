@@ -104,12 +104,12 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
     if (negativeFilter != null) {
-      setNegativeFilter(negativeFilter != null ? negativeFilter : false);
+      setNegativeFilter(negativeFilter);
     }
 
     Double taxonomyRollupCutoff = (Double)arguments.get("taxonomyRollupCutoff");
     if (taxonomyRollupCutoff != null) {
-      setTaxonomyRollupCutoff(taxonomyRollupCutoff != null ? taxonomyRollupCutoff.floatValue() : null);
+      setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
     }
 
     Double cropRatio = (Double)arguments.get("cropRatio");

@@ -45,9 +45,9 @@ export default function App(): React.JSX.Element {
   const location = useLocationPermission();
 
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
-  const [filterByTaxonId, setFilterByTaxonId] = useState<undefined | string>(
-    undefined
-  );
+  const [filterByTaxonId, setFilterByTaxonId] = useState<
+    undefined | string | null
+  >(undefined);
   const [negativeFilter, setNegativeFilter] = useState(false);
 
   enum VIEW_STATUS {
@@ -70,7 +70,7 @@ export default function App(): React.JSX.Element {
     if (!filterByTaxonId) {
       setFilterByTaxonId('47126');
     } else {
-      setFilterByTaxonId(undefined);
+      setFilterByTaxonId(null);
     }
   };
 

@@ -189,7 +189,9 @@ public class Taxonomy {
 
                 }
             }
-            allScores.put(currentNode.key, thisScore);
+            if (thisScore != 0.0f) {
+              allScores.put(currentNode.key, thisScore);
+            }
 
         } else {
             // base case, no children

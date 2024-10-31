@@ -193,7 +193,7 @@ public class Taxonomy {
 
         } else {
             // base case, no children
-            boolean resetScore = false;
+            boolean filterOut = false;
 
             if (mFilterByTaxonId != null) {
                 // Filter
@@ -202,12 +202,12 @@ public class Taxonomy {
                 // A) Negative filter + prediction does contain taxon ID as ancestor
                 // B) Non-negative filter + prediction does not contain taxon ID as ancestor
                 boolean containsAncestor = hasAncestor(currentNode, mFilterByTaxonId.toString());
-                resetScore = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
+                filterOut = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
             }
 
             float leafScore = results[Integer.valueOf(currentNode.leafId)];
-            if (leafScore >= mTaxonomyRollupCutoff) {
-              allScores.put(currentNode.key, resetScore ? 0.0f : leafScore);
+            if (!filterOut && leafScore >= mTaxonomyRollupCutoff) {
+              allScores.put(currentNode.key, leafScore);
             }
         }
 

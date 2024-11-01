@@ -179,11 +179,15 @@ export interface Prediction {
   spatial_class_id?: number;
 }
 
+export interface ResultForImage {
+  options: OptionsForImage;
+  predictions: Prediction[];
+}
+
 export interface Result {
   options: Options;
-  timestamp: number;
   predictions: Prediction[];
-  uri?: string;
+  timestamp: number;
 }
 
 const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
@@ -413,7 +417,7 @@ interface OptionsForImage {
  */
 export function getPredictionsForImage(
   options: OptionsForImage
-): Promise<Result> {
+): Promise<ResultForImage> {
   optionsAreValidForImage(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

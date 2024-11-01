@@ -175,9 +175,9 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           }
 
           // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
-          // and the original image URI under the key "uri"
+          // and the options passed in under the key "options"
           NSDictionary *response = [NSDictionary dictionary];
-          response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+          response = @{@"predictions": bestRecentBranchAsDict, @"options": options};
 
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
@@ -216,8 +216,9 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
         }
 
         // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+        // and the options passed in under the key "options"
         NSDictionary *response = [NSDictionary dictionary];
-        response = @{@"predictions": bestRecentBranchAsDict, @"uri": uri};
+        response = @{@"predictions": bestRecentBranchAsDict, @"options": options};
 
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];

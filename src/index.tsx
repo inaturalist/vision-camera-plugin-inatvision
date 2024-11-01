@@ -215,11 +215,27 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       );
     }
   }
-  if (options.taxonomyRollupCutoff) {
-    // TODO: validate the taxonomyRollupCutoff
-    // have not done this because I can not test it because issue #36
-  }
   return true;
+}
+
+function optionsAreValidForFrame(options: Options): boolean {
+  'worklet';
+  if (options.taxonomyRollupCutoff) {
+    if (
+      isNaN(options.taxonomyRollupCutoff) ||
+      options.taxonomyRollupCutoff < 0 ||
+      options.taxonomyRollupCutoff > 1
+    ) {
+      // have used INatVisionError here because I can not test it due to issue #36
+      throw new Error('option cropRatio must be a number between 0 and 1.');
+    }
+  }
+  return optionsAreValid(options);
+}
+
+function optionsAreValidForImage(options: OptionsForImage): boolean {
+  'worklet';
+  return optionsAreValid(options);
 }
 
 function handleResult(result: any, options: Options): Result {
@@ -372,7 +388,7 @@ export function inatVision(frame: Frame, options: Options): Result {
   if (plugin === undefined) {
     throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
   }
-  optionsAreValid(options);
+  optionsAreValidForFrame(options);
   // @ts-expect-error Frame Processors are not typed.
   const result = plugin.call(frame, options);
   const handledResult: Result = handleResult(result, options);
@@ -387,7 +403,6 @@ interface OptionsForImage {
   taxonomyPath: string;
   // Optional
   confidenceThreshold?: number;
-  taxonomyRollupCutoff?: number;
   cropRatio?: number;
 }
 
@@ -397,6 +412,6 @@ interface OptionsForImage {
 export function getPredictionsForImage(
   options: OptionsForImage
 ): Promise<Result> {
-  optionsAreValid(options);
+  optionsAreValidForImage(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

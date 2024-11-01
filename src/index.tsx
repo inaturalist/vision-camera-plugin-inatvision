@@ -227,7 +227,9 @@ function optionsAreValidForFrame(options: Options): boolean {
       options.taxonomyRollupCutoff > 1
     ) {
       // have used INatVisionError here because I can not test it due to issue #36
-      throw new Error('option cropRatio must be a number between 0 and 1.');
+      throw new Error(
+        'option taxonomyRollupCutoff must be a number between 0 and 1.'
+      );
     }
   }
   return optionsAreValid(options);

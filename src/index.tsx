@@ -230,7 +230,7 @@ function optionsAreValidForFrame(options: Options): boolean {
       options.taxonomyRollupCutoff < 0 ||
       options.taxonomyRollupCutoff > 1
     ) {
-      // have used INatVisionError here because I can not test it due to issue #36
+      // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error(
         'option taxonomyRollupCutoff must be a number between 0 and 1.'
       );

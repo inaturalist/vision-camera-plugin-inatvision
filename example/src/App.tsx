@@ -156,6 +156,7 @@ export default function App(): React.JSX.Element {
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
+            patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
           console.log('time taken ms: ', timeAfter - timeBefore);
@@ -301,7 +302,6 @@ export default function App(): React.JSX.Element {
           enableFpsGraph={true}
           photoQualityBalance="quality"
           enableLocation={location.hasPermission}
-          outputOrientation="device"
         />
         <View style={styles.row}>
           <Button

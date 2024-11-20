@@ -364,6 +364,13 @@ interface Options {
    * The path to the geo model file.
    */
   geoModelPath?: string;
+  // Patches
+  /**
+   * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
+   * So, we have to patch the orientation on Android. This takes in a string of the current device orientation
+   * and then rotates the frame accordingly before it is used for processing.
+   */
+  patchedOrientationAndroid?: string;
 }
 
 /**

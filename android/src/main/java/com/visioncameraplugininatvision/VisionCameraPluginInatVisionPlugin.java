@@ -83,6 +83,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       throw new RuntimeException("Taxonomy path is null");
     };
 
+    String patchedOrientationAndroid = (String)arguments.get("patchedOrientationAndroid");
+    if (patchedOrientationAndroid == null) {
+      throw new RuntimeException("patchedOrientationAndroid must be a string passing in the current device orientation");
+    }
+
     // Destructure optional parameters and set values
     String filterByTaxonId = (String)arguments.get("filterByTaxonId");
     if (filterByTaxonId != null) {
@@ -123,7 +128,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     List<Map> cleanedPredictions = new ArrayList<>();
     if (mImageClassifier != null) {
-      Bitmap bmp = BitmapUtils.getBitmap(image, frame.getOrientation().getUnionValue());
+      Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       // Crop the center square of the frame
       int minDim = (int) Math.round(Math.min(bmp.getWidth(), bmp.getHeight()) * mCropRatio);

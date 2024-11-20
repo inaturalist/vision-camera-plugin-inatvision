@@ -1,6 +1,6 @@
 {
   "name": "vision-camera-plugin-inatvision",
-  "version": "4.1.1",
+  "version": "4.0.5",
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -72,7 +72,7 @@
     "react": "18.2.0",
     "react-native": "0.71.17",
     "react-native-builder-bob": "^0.20.4",
-    "react-native-vision-camera": "4.3.2",
+    "react-native-vision-camera": "4.0.5",
     "react-native-worklets-core": "1.3.3",
     "release-it": "^15.0.0",
     "typescript": "^4.5.2"
@@ -82,8 +82,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": ">=0.73.0",
-    "react-native-vision-camera": ">=4.1.0",
+    "react-native": "*",
+    "react-native-vision-camera": ">=4.0.1",
     "react-native-worklets-core": ">=1.2.0"
   },
   "engines": {

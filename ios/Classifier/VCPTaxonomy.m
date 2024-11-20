@@ -84,8 +84,8 @@
                 [self.life addChild:node];
             }
         }
-        
-        self.taxonomyRollupCutoff = 0.01;   
+      
+        self.taxonomyRollupCutoff = 0.0;
     }
 
     return self;
@@ -97,6 +97,7 @@
     self.nodes = nil;
     self.nodesByTaxonId = nil;
 }
+
 
 - (NSDictionary *)leafScoresFromClassification:(MLMultiArray *)classification {
     NSMutableDictionary *scores = [NSMutableDictionary dictionary];
@@ -111,6 +112,8 @@
 
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {
     NSDictionary *scores = [self aggregateScores:classification];
+    // Log number of nodes in scores
+    NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
     return [self buildBestBranchFromScores:scores];
 }
 
@@ -135,31 +138,31 @@
 
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
     NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
-
     if (node.children.count > 0) {
         float thisScore = 0.0f;
         for (VCPNode *child in node.children) {
             NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
             NSNumber *childScore = childScores[child.taxonId];
-            
-            if ([childScore floatValue] > self.taxonomyRollupCutoff) {
+
+            if ([childScore floatValue] >= self.taxonomyRollupCutoff) {
                 [allScores addEntriesFromDictionary:childScores];
                 thisScore += [childScore floatValue];
             }
         }
-        allScores[node.taxonId] = @(thisScore);
-
+        if (thisScore > 0) {
+          allScores[node.taxonId] = @(thisScore);
+        }
     } else {
         // base case, no children
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
         NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
         NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
-        
-        if ([leafScore floatValue] > self.taxonomyRollupCutoff) {
+
+        if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
             allScores[node.taxonId] = leafScore;
         }
     }
-    
+
     return [allScores copy];
 }
 

@@ -148,7 +148,9 @@
     NSString* modelPath = arguments[@"modelPath"];
     // Destructure taxonomy path out of options
     NSString* taxonomyPath = arguments[@"taxonomyPath"];
-    
+    // Destructure taxonomyRollupCutoff out of options
+    NSNumber* taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
+  
     CMSampleBufferRef buffer = frame.buffer;
     CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
     UIImageOrientation orientation = frame.orientation;
@@ -158,7 +160,6 @@
     
     MLMultiArray *results = nil;
     
-
     if (geoModelPreds != nil) {
         NSError *err = nil;
         results = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
@@ -167,10 +168,12 @@
         results = visionScores;
     }
 
-    
     // Setup taxonomy
     VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-
+    if (taxonomyRollupCutoff) {
+      [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
+    }
+  
     NSMutableArray *topBranches = [NSMutableArray array];
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
     // add this to the end of the recent top branches array
@@ -182,6 +185,7 @@
         [bestBranchAsDict addObject:[prediction asDict]];
     }
     
+    // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"inatVision took %f seconds", timeElapsed);
 
@@ -191,8 +195,6 @@
         @"predictions": bestBranchAsDict,
         @"timeElapsed": @(timeElapsed),
     };
-    
-    // End timestamp
     
     return response;
 }

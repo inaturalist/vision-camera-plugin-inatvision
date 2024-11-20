@@ -46,6 +46,14 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
+  private float mTaxonomyRollupCutoff = 0.0f;
+  public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
+      mTaxonomyRollupCutoff = taxonomyRollupCutoff;
+      if (mImageClassifier != null) {
+        mImageClassifier.setTaxonomyRollupCutoff(mTaxonomyRollupCutoff);
+      }
+  }
+
   private double mCropRatio = 1.0;
   public void setCropRatio(double cropRatio) {
       mCropRatio = cropRatio;
@@ -90,13 +98,16 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     // Destructure optional parameters and set values
     String filterByTaxonId = (String)arguments.get("filterByTaxonId");
-    if (filterByTaxonId != null) {
-      setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
-    }
+    setFilterByTaxonId(filterByTaxonId != null ? Integer.valueOf(filterByTaxonId) : null);
 
     Boolean negativeFilter = (Boolean)arguments.get("negativeFilter");
     if (negativeFilter != null) {
-      setNegativeFilter(negativeFilter != null ? negativeFilter : false);
+      setNegativeFilter(negativeFilter);
+    }
+
+    Double taxonomyRollupCutoff = (Double)arguments.get("taxonomyRollupCutoff");
+    if (taxonomyRollupCutoff != null) {
+      setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
     }
 
     Double cropRatio = (Double)arguments.get("cropRatio");

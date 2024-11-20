@@ -63,6 +63,8 @@ public class Taxonomy {
     private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
     private boolean mNegativeFilter = false;
 
+    private float mTaxonomyRollupCutoff = 0.0f;
+
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {
             Timber.tag(TAG).d("setFilterByTaxonId: changing taxonID filter from " + mFilterByTaxonId + " to " + taxonId);
@@ -83,6 +85,17 @@ public class Taxonomy {
 
     public boolean getNegativeFilter() {
         return mNegativeFilter;
+    }
+
+    public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
+        if (mTaxonomyRollupCutoff != taxonomyRollupCutoff) {
+            Timber.tag(TAG).d("setTaxonomyRollupCutoff: changing taxonomyRollupCutoff from " + mTaxonomyRollupCutoff + " to " + taxonomyRollupCutoff);
+        }
+        mTaxonomyRollupCutoff = taxonomyRollupCutoff;
+    }
+
+    public float getTaxonomyRollupCutoff() {
+        return mTaxonomyRollupCutoff;
     }
 
     Taxonomy(InputStream is, String version) {
@@ -146,6 +159,7 @@ public class Taxonomy {
         float[] results = ((float[][]) outputs.get(0))[0];
 
         Map<String, Float> scores = aggregateScores(results);
+        Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(scores);
 
         return bestBranch;
@@ -159,26 +173,29 @@ public class Taxonomy {
 
     /** Following: https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136 */
     private Map<String, Float> aggregateScores(float[] results, Node currentNode) {
+        // we'll populate this and return it
         Map<String, Float> allScores = new HashMap<>();
 
         if (currentNode.children.size() > 0) {
-            // we'll populate this and return it
-
-            for (Node child : currentNode.children) {
-                Map<String, Float> childScores = aggregateScores(results, child);
-                allScores.putAll(childScores);
-            }
-
             float thisScore = 0.0f;
             for (Node child : currentNode.children) {
-                thisScore += allScores.get(child.key);
-            }
+                Map<String, Float> childScores = aggregateScores(results, child);
+                if (childScores.containsKey(child.key)) {
+                  float childScore = childScores.get(child.key);
+                  if (childScore >= mTaxonomyRollupCutoff) {
+                    allScores.putAll(childScores);
+                    thisScore += childScore;
+                  }
 
-            allScores.put(currentNode.key, thisScore);
+                }
+            }
+            if (thisScore != 0.0f) {
+              allScores.put(currentNode.key, thisScore);
+            }
 
         } else {
             // base case, no children
-            boolean resetScore = false;
+            boolean filterOut = false;
 
             if (mFilterByTaxonId != null) {
                 // Filter
@@ -187,10 +204,13 @@ public class Taxonomy {
                 // A) Negative filter + prediction does contain taxon ID as ancestor
                 // B) Non-negative filter + prediction does not contain taxon ID as ancestor
                 boolean containsAncestor = hasAncestor(currentNode, mFilterByTaxonId.toString());
-                resetScore = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
+                filterOut = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
             }
 
-            allScores.put(currentNode.key, resetScore ? 0.0f : results[Integer.valueOf(currentNode.leafId)]);
+            float leafScore = results[Integer.valueOf(currentNode.leafId)];
+            if (!filterOut && leafScore >= mTaxonomyRollupCutoff) {
+              allScores.put(currentNode.key, leafScore);
+            }
         }
 
         return allScores;
@@ -229,11 +249,13 @@ public class Taxonomy {
             Node bestChild = null;
             float bestChildScore = -1;
             for (Node child : currentNodeChildren) {
+              if (scores.containsKey(child.key)) {
                 float childScore = scores.get(child.key);
                 if (childScore > bestChildScore) {
-                    bestChildScore = childScore;
-                    bestChild = child;
+                  bestChildScore = childScore;
+                  bestChild = child;
                 }
+              }
             }
 
             if (bestChild != null) {

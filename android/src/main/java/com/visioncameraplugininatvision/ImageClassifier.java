@@ -69,6 +69,13 @@ public class ImageClassifier {
         return mTaxonomy.getNegativeFilter();
     }
 
+    public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
+        mTaxonomy.setTaxonomyRollupCutoff(taxonomyRollupCutoff);
+    }
+
+    public float getTaxonomyRollupCutoff() {
+        return mTaxonomy.getTaxonomyRollupCutoff();
+    }
 
     /** Initializes an {@code ImageClassifier}. */
     public ImageClassifier(String modelPath, String taxonomyPath, String version) throws IOException {

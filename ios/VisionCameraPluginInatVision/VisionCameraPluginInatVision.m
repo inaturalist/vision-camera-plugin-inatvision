@@ -94,6 +94,8 @@
   NSString* modelPath = arguments[@"modelPath"];
   // Destructure taxonomy path out of options
   NSString* taxonomyPath = arguments[@"taxonomyPath"];
+  // Destructure taxonomyRollupCutoff out of options
+  NSNumber* taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
 
   CMSampleBufferRef buffer = frame.buffer;
   UIImageOrientation orientation = frame.orientation;
@@ -106,6 +108,9 @@
 
   // Setup taxonomy
   VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
+  if (taxonomyRollupCutoff) {
+    [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
+  }
 
   // Setup vision model
   VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
@@ -146,13 +151,16 @@
       [bestBranchAsDict addObject:[prediction asDict]];
   }
 
-  // Create a new dictionary with the bestBranchAsDict under the key "predictions"
-  NSDictionary *response = [NSDictionary dictionary];
-  response = @{@"predictions": bestBranchAsDict};
-
   // End timestamp
   NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
   NSLog(@"inatVision took %f seconds", timeElapsed);
+
+  // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+  NSDictionary *response = [NSDictionary dictionary];
+  response = @{
+    @"predictions": bestBranchAsDict,
+    @"timeElapsed": @(timeElapsed)
+  };
 
   return response;
 }

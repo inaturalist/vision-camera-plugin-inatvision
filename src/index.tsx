@@ -179,10 +179,17 @@ export interface Prediction {
   spatial_class_id?: number;
 }
 
-export interface Result {
-  timestamp: number;
+export interface ResultForImage {
+  options: OptionsForImage;
   predictions: Prediction[];
-  uri?: string;
+  timeElapsed?: number; //iOS only
+}
+
+export interface Result {
+  options: Options;
+  predictions: Prediction[];
+  timestamp: number;
+  timeElapsed?: number; //iOS only
 }
 
 const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
@@ -217,9 +224,33 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
   return true;
 }
 
+function optionsAreValidForFrame(options: Options): boolean {
+  'worklet';
+  if (options.taxonomyRollupCutoff) {
+    if (
+      isNaN(options.taxonomyRollupCutoff) ||
+      options.taxonomyRollupCutoff < 0 ||
+      options.taxonomyRollupCutoff > 1
+    ) {
+      // have not used INatVisionError here because I can not test it due to issue #36
+      throw new Error(
+        'option taxonomyRollupCutoff must be a number between 0 and 1.'
+      );
+    }
+  }
+  return optionsAreValid(options);
+}
+
+function optionsAreValidForImage(options: OptionsForImage): boolean {
+  'worklet';
+  return optionsAreValid(options);
+}
+
 function handleResult(result: any, options: Options): Result {
   'worklet';
 
+  // Add the options to the result
+  result.options = options;
   // Add timestamp to the result
   result.timestamp = new Date().getTime();
   // Add the rank to the predictions if not present
@@ -312,6 +343,13 @@ interface Options {
    */
   confidenceThreshold?: number;
   /**
+   * A taxonomy rollup cutoff threshold.
+   * As a fraction of 1. After computer vision predictions are returned, this value filters out all nodes with
+   * a lower score for the caluclation of the best branch or top predictions.
+   * Defaults to 0.0.
+   */
+  taxonomyRollupCutoff?: number;
+  /**
    * *Android only.*
    *
    * The iconic taxon id to filter by.
@@ -358,7 +396,7 @@ export function inatVision(frame: Frame, options: Options): Result {
   if (plugin === undefined) {
     throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
   }
-  optionsAreValid(options);
+  optionsAreValidForFrame(options);
   // @ts-expect-error Frame Processors are not typed.
   const result = plugin.call(frame, options);
   const handledResult: Result = handleResult(result, options);
@@ -381,7 +419,7 @@ interface OptionsForImage {
  */
 export function getPredictionsForImage(
   options: OptionsForImage
-): Promise<Result> {
-  optionsAreValid(options);
+): Promise<ResultForImage> {
+  optionsAreValidForImage(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }

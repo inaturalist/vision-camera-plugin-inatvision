@@ -12,19 +12,20 @@
 // maybe there is some kind of name conflict somewhere. So I changed the name to AwesomeModule
 // because it doesn't matter what the name is and it is quite awesome.
 @interface AwesomeModule : NSObject <RCTBridgeModule>
-+ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
+
++ (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
 @end
 
 @implementation AwesomeModule
 RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
 
-+ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath {
-  static VCPTaxonomy* taxonomy = nil;
-  if (taxonomy == nil) {
-    taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
-  }
-  return taxonomy;
++ (VCPTaxonomy *)taxonomyWithTaxonomyFile:(NSString *)taxonomyPath {
+    static VCPTaxonomy *taxonomy = nil;
+    if (taxonomy == nil) {
+        taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+    }
+    return taxonomy;
 }
 
 + (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath {

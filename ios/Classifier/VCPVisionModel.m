@@ -17,7 +17,7 @@
             NSLog(@"no file for vision model");
             return nil;
         }
-        
+
         NSError *loadError = nil;
         self.cvModel = [MLModel modelWithContentsOfURL:visionModelUrl error:&loadError];
         if (loadError) {
@@ -30,16 +30,16 @@
             NSLog(@"unable to make cv model");
             return nil;
         }
-      
+
         NSError *modelError = nil;
         self.visionModel = [VNCoreMLModel modelForMLModel:self.cvModel
                                                     error:&modelError];
-        
+
         self.classification = [[VNCoreMLRequest alloc] initWithModel:self.visionModel];
         self.classification.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
         self.requests = @[ self.classification ];
     }
-    
+
     return self;
 }
 

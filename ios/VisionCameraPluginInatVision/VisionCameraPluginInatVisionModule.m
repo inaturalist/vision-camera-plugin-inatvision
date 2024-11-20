@@ -5,6 +5,7 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
+#import "VCPVisionModel.h"
 
 #import <React/RCTBridgeModule.h>
 
@@ -12,9 +13,10 @@
 // maybe there is some kind of name conflict somewhere. So I changed the name to AwesomeModule
 // because it doesn't matter what the name is and it is quite awesome.
 @interface AwesomeModule : NSObject <RCTBridgeModule>
-+ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
+
 @end
 
 @implementation AwesomeModule
@@ -28,53 +30,14 @@ RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
     return taxonomy;
 }
 
-+ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath {
-  static VNCoreMLModel* visionModel = nil;
-  if (visionModel == nil) {
-    // Setup vision
-    NSURL *modelUrl = [NSURL fileURLWithPath:modelPath];
-    if (!modelUrl) {
-      // TODO: handle this error
-      // [self.delegate classifierError:@"no file for optimized model"];
-      NSLog(@"no file for optimized model");
-      return nil;
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
+    static VCPVisionModel *cvModel = nil;
+
+    if (cvModel == nil) {
+        cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
     }
 
-    NSError *loadError = nil;
-    MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
-                                                error:&loadError];
-    if (loadError) {
-      NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
-                                loadError.localizedDescription];
-      NSLog(@"%@", errString);
-      // TODO: handle this error
-      // [self.delegate classifierError:errString];
-      return nil;
-    }
-    if (!model) {
-      // TODO: handle this error
-      // [self.delegate classifierError:@"unable to make model"];
-      NSLog(@"unable to make model");
-      return nil;
-    }
-
-    NSError *modelError = nil;
-    visionModel = [VNCoreMLModel modelForMLModel:model
-                                              error:&modelError];
-    if (modelError) {
-        NSString *errString = [NSString stringWithFormat:@"error making vision model: %@",
-                                modelError.localizedDescription];
-        // [self.delegate classifierError:errString];
-        NSLog(@"%@", errString);
-        return nil;
-    }
-    if (!visionModel) {
-        // [self.delegate classifierError:@"unable to make vision model"];
-        NSLog(@"unable to make vision model");
-        return nil;
-    }
-  }
-  return visionModel;
+    return cvModel;
 }
 
 RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
@@ -107,24 +70,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
 
     // Setup vision model
-    VNCoreMLModel *visionModel = [AwesomeModule visionModelWithModelFile:modelPath];
-
-    NSMutableArray *topBranches = [NSMutableArray array];
-    VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-      VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-      MLFeatureValue *firstFV = firstResult.featureValue;
-      MLMultiArray *mm = firstFV.multiArrayValue;
-
-      // evaluate the best branch
-      NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
-      // add this to the end of the recent top branches array
-      [topBranches addObject:bestBranch];
-    };
-
-    VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
-                                                              completionHandler:recognitionHandler];
-    objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
-    NSArray *requests = @[objectRecognition];
+    VCPVisionModel *cvModel = [AwesomeModule visionModelWithModelFile:modelPath];
 
     // If uri starts with ph://, it's a photo library asset
     if ([uri hasPrefix:@"ph://"]) {
@@ -146,44 +92,32 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               return;
           }
 
-          VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithData:imageData options:@{}];
+          MLMultiArray *visionScores = [cvModel visionPredictionsForImageData:imageData orientation:orientation];
 
-          NSError *requestError = nil;
-          [handler performRequests:requests
-                              error:&requestError];
-          if (requestError) {
-              NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                                      requestError.localizedDescription];
-              NSLog(@"%@", errString);
-              reject(@"request_error", errString, nil);
-          }
+          NSMutableArray *topBranches = [NSMutableArray array];
+          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:visionScores];
+          // add this to the end of the recent top branches array
+          [topBranches addObject:bestBranch];
 
-          NSArray *bestRecentBranch = nil;
-          if (topBranches.count == 0) {
-              //resolve(@[]);
-          } else if (topBranches.count == 1) {
-              bestRecentBranch = topBranches.firstObject;
-          }
-
-          // convert the VCPPredictions in the bestRecentBranch into dicts
-          NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
-          for (VCPPrediction *prediction in bestRecentBranch) {
+          // convert the VCPPredictions in the bestBranch into dicts
+          NSMutableArray *bestBranchAsDict = [NSMutableArray array];
+          for (VCPPrediction *prediction in bestBranch) {
               // only add predictions that are above the threshold
               if (prediction.score < threshold) {
                   continue;
               }
-              [bestRecentBranchAsDict addObject:[prediction asDict]];
+              [bestBranchAsDict addObject:[prediction asDict]];
           }
 
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
           NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-          // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+          // Create a new dictionary with the bestBranchAsDict under the key "predictions"
           // and the options passed in under the key "options"
           NSDictionary *response = [NSDictionary dictionary];
           response = @{
-            @"predictions": bestRecentBranchAsDict,
+            @"predictions": bestBranchAsDict,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
           };
@@ -191,44 +125,32 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           resolve(response);
       }];
     } else {
-        VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:[NSURL URLWithString:uri]
-                                                                                  options:@{}];
-        NSError *requestError = nil;
-        [handler performRequests:requests
-                            error:&requestError];
-        if (requestError) {
-            NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                                    requestError.localizedDescription];
-            NSLog(@"%@", errString);
-            reject(@"request_error", errString, nil);
-        }
+        MLMultiArray *visionScores = [cvModel visionPredictionsForUrl:[NSURL URLWithString:uri]];
 
-        NSArray *bestRecentBranch = nil;
-        if (topBranches.count == 0) {
-            //resolve(@[]);
-        } else if (topBranches.count == 1) {
-            bestRecentBranch = topBranches.firstObject;
-        }
+        NSMutableArray *topBranches = [NSMutableArray array];
+        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:visionScores];
+        // add this to the end of the recent top branches array
+        [topBranches addObject:bestBranch];
 
-        // convert the VCPPredictions in the bestRecentBranch into dicts
-        NSMutableArray *bestRecentBranchAsDict = [NSMutableArray array];
-        for (VCPPrediction *prediction in bestRecentBranch) {
+        // convert the VCPPredictions in the bestBranch into dicts
+        NSMutableArray *bestBranchAsDict = [NSMutableArray array];
+        for (VCPPrediction *prediction in bestBranch) {
             // only add predictions that are above the threshold
             if (prediction.score < threshold) {
                 continue;
             }
-            [bestRecentBranchAsDict addObject:[prediction asDict]];
+            [bestBranchAsDict addObject:[prediction asDict]];
         }
 
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-        // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+        // Create a new dictionary with the bestBranchAsDict under the key "predictions"
         // and the options passed in under the key "options"
         NSDictionary *response = [NSDictionary dictionary];
         response = @{
-            @"predictions": bestRecentBranchAsDict,
+            @"predictions": bestBranchAsDict,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
         };

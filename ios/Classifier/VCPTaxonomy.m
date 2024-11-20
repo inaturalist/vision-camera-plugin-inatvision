@@ -16,6 +16,7 @@
 // this is a convenience array for testing
 @property NSArray *leaves;
 @property VCPNode *life;
+@property float taxonomyRollupCutoff;
 @end
 
 @implementation VCPTaxonomy
@@ -83,7 +84,7 @@
                 [self.life addChild:node];
             }
         }
-
+      
         self.taxonomyRollupCutoff = 0.0;
     }
 
@@ -135,11 +136,8 @@
     return nil;
 }
 
-// following
-// https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
     NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
-
     if (node.children.count > 0) {
         float thisScore = 0.0f;
         for (VCPNode *child in node.children) {

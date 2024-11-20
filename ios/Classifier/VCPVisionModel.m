@@ -75,43 +75,15 @@
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithData:imageData
                                                                     orientation:cgOrient
                                                                     options:@{}];
-
-    NSError *requestError = nil;
-    [handler performRequests:self.requests
-                       error:&requestError];
-    if (requestError) {
-        NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                                requestError.localizedDescription];
-        NSLog(@"%@", errString);
-        // reject(@"request_error", errString, nil);
-    }
-
-    VNCoreMLRequest *request = self.requests.firstObject;
-    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-    MLFeatureValue *firstFV = firstResult.featureValue;
-
-    return firstFV.multiArrayValue;
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
 }
 
 - (MLMultiArray * _Nullable)visionPredictionsForUrl:(NSURL *)url {
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:url
                                                                     options:@{}];
-
-    NSError *requestError = nil;
-    [handler performRequests:self.requests
-                       error:&requestError];
-    if (requestError) {
-        NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                                requestError.localizedDescription];
-        NSLog(@"%@", errString);
-        // reject(@"request_error", errString, nil);
-    }
-
-    VNCoreMLRequest *request = self.requests.firstObject;
-    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-    MLFeatureValue *firstFV = firstResult.featureValue;
-
-    return firstFV.multiArrayValue;
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
 }
 
 - (CGImagePropertyOrientation)cgOrientationFor:(UIImageOrientation)uiOrientation {

@@ -215,14 +215,18 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             [bestRecentBranchAsDict addObject:[prediction asDict]];
         }
 
-        // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
-        // and the options passed in under the key "options"
-        NSDictionary *response = [NSDictionary dictionary];
-        response = @{@"predictions": bestRecentBranchAsDict, @"options": options};
-
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
+
+        // Create a new dictionary with the bestRecentBranchAsDict under the key "predictions"
+        // and the options passed in under the key "options"
+        NSDictionary *response = [NSDictionary dictionary];
+        response = @{
+            @"predictions": bestBranchAsDict,
+            @"options": options,
+            @"timeElapsed": @(timeElapsed),
+        };
 
         resolve(response);
     }

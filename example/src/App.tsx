@@ -27,6 +27,7 @@ import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
+const geoModelFilenameAndroid = 'not_implemented';
 const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
 const geoModelFilenameIOS = 'small_geomodel.mlmodelc';
@@ -39,7 +40,7 @@ const modelPath =
 const geoModelPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${geoModelFilenameIOS}`
-    : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+    : `${RNFS.DocumentDirectoryPath}/${geoModelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`

@@ -16,6 +16,7 @@
 // this is a convenience array for testing
 @property NSArray *leaves;
 @property VCPNode *life;
+@property float taxonomyRollupCutoff;
 @end
 
 @implementation VCPTaxonomy
@@ -83,6 +84,8 @@
                 [self.life addChild:node];
             }
         }
+        
+        self.taxonomyRollupCutoff = 0.01;   
     }
 
     return self;
@@ -130,35 +133,34 @@
     return nil;
 }
 
-// following
-// https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
+    NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
+
     if (node.children.count > 0) {
-        // we'll populate this and return it
-        NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
-
-        for (VCPNode *child in node.children) {
-            NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
-            [allScores addEntriesFromDictionary:childScores];
-        }
-
         float thisScore = 0.0f;
         for (VCPNode *child in node.children) {
-            thisScore += [allScores[child.taxonId] floatValue];
+            NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
+            NSNumber *childScore = childScores[child.taxonId];
+            
+            if ([childScore floatValue] > self.taxonomyRollupCutoff) {
+                [allScores addEntriesFromDictionary:childScores];
+                thisScore += [childScore floatValue];
+            }
         }
-
         allScores[node.taxonId] = @(thisScore);
 
-        return [NSDictionary dictionaryWithDictionary:allScores];
     } else {
         // base case, no children
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
         NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
         NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
-        return @{
-            node.taxonId: leafScore
-        };
+        
+        if ([leafScore floatValue] > self.taxonomyRollupCutoff) {
+            allScores[node.taxonId] = leafScore;
+        }
     }
+    
+    return [allScores copy];
 }
 
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification {

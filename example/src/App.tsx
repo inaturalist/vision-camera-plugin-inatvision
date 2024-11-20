@@ -27,14 +27,20 @@ import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
+const geoModelFilenameAndroid = 'not_implemented';
 const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
+const geoModelFilenameIOS = 'small_geomodel.mlmodelc';
 const modelVersion = '1.0';
 
 const modelPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+const geoModelPath =
+  Platform.OS === 'ios'
+    ? `${RNFS.DocumentDirectoryPath}/${geoModelFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${geoModelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
@@ -49,6 +55,7 @@ export default function App(): React.JSX.Element {
     undefined
   );
   const [negativeFilter, setNegativeFilter] = useState(false);
+  const [useGeoModel, setUseGeoModel] = useState(false);
 
   enum VIEW_STATUS {
     NONE,
@@ -64,6 +71,10 @@ export default function App(): React.JSX.Element {
 
   const toggleNegativeFilter = () => {
     setNegativeFilter(!negativeFilter);
+  };
+
+  const toggleUseGeoModel = () => {
+    setUseGeoModel(!useGeoModel);
   };
 
   const changeFilterByTaxonId = () => {
@@ -111,6 +122,16 @@ export default function App(): React.JSX.Element {
           console.log(`error moving model file`, error);
         });
       RNFS.copyFile(
+        `${RNFS.MainBundlePath}/${geoModelFilenameIOS}`,
+        `${RNFS.DocumentDirectoryPath}/${geoModelFilenameIOS}`
+      )
+        .then((result) => {
+          console.log(`moved geo model file from`, result);
+        })
+        .catch((error) => {
+          console.log(`error moving geo model file`, error);
+        });
+      RNFS.copyFile(
         `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
         `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
       )
@@ -147,6 +168,11 @@ export default function App(): React.JSX.Element {
         'worklet';
         try {
           const timeBefore = new Date().getTime();
+
+          const latitude = 37.28889;
+          const longitude = -121.94415;
+          const elevation = 15.0;
+
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
             modelPath,
@@ -156,6 +182,11 @@ export default function App(): React.JSX.Element {
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
+            latitude,
+            longitude,
+            elevation,
+            geoModelPath,
+            useGeoModel,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
@@ -167,7 +198,13 @@ export default function App(): React.JSX.Element {
         }
       });
     },
-    [confidenceThreshold, filterByTaxonId, negativeFilter, handleResults]
+    [
+      confidenceThreshold,
+      filterByTaxonId,
+      negativeFilter,
+      handleResults,
+      useGeoModel,
+    ]
   );
 
   function selectImage() {
@@ -315,6 +352,10 @@ export default function App(): React.JSX.Element {
           <Button
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
+          />
+          <Button
+            onPress={toggleUseGeoModel}
+            title={useGeoModel ? 'Disable Geo Model' : 'Enable Geo Model'}
           />
         </View>
       </View>

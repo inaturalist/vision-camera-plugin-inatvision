@@ -6,157 +6,198 @@
 @import UIKit;
 @import Vision;
 @import CoreML;
+@import Accelerate;
+@import CoreGraphics;
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
+#import "VCPGeoModel.h"
+#import "VCPVisionModel.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
 
-+ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath;
-+ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath;
++ (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
 
 @implementation VisionCameraPluginInatVisionPlugin
 
-+ (VCPTaxonomy*) taxonomyWithTaxonomyFile:(NSString*)taxonomyPath {
-  static VCPTaxonomy* taxonomy = nil;
-  if (taxonomy == nil) {
-    taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
-  }
-  return taxonomy;
++ (VCPTaxonomy *)taxonomyWithTaxonomyFile:(NSString *)taxonomyPath {
+    static VCPTaxonomy *taxonomy = nil;
+    if (taxonomy == nil) {
+        taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
+    }
+    return taxonomy;
 }
 
-+ (VNCoreMLModel*) visionModelWithModelFile:(NSString*)modelPath {
-  static VNCoreMLModel* visionModel = nil;
-  if (visionModel == nil) {
-    // Setup vision
-    NSURL *modelUrl = [NSURL fileURLWithPath:modelPath];
-    if (!modelUrl) {
-      // TODO: handle this error
-      // [self.delegate classifierError:@"no file for optimized model"];
-      NSLog(@"no file for optimized model");
-      return nil;
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
+    static VCPGeoModel *geoModel = nil;
+    
+    if (geoModel == nil) {
+        geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
     }
+    
+    return geoModel;
+}
 
-    NSError *loadError = nil;
-    MLModel *model = [MLModel modelWithContentsOfURL:modelUrl
-                                                error:&loadError];
-    if (loadError) {
-      NSString *errString = [NSString stringWithFormat:@"error loading model: %@",
-                                loadError.localizedDescription];
-      NSLog(@"%@", errString);
-      // TODO: handle this error
-      // [self.delegate classifierError:errString];
-      return nil;
++ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
+    static VCPVisionModel *cvModel = nil;
+    
+    if (cvModel == nil) {
+        cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
     }
-    if (!model) {
-      // TODO: handle this error
-      // [self.delegate classifierError:@"unable to make model"];
-      NSLog(@"unable to make model");
-      return nil;
-    }
-
-    NSError *modelError = nil;
-    visionModel = [VNCoreMLModel modelForMLModel:model
-                                              error:&modelError];
-    if (modelError) {
-        NSString *errString = [NSString stringWithFormat:@"error making vision model: %@",
-                                modelError.localizedDescription];
-        // [self.delegate classifierError:errString];
-        NSLog(@"%@", errString);
-        return nil;
-    }
-    if (!visionModel) {
-        // [self.delegate classifierError:@"unable to make vision model"];
-        NSLog(@"unable to make vision model");
-        return nil;
-    }
-  }
-  return visionModel;
+    
+    return cvModel;
 }
 
 - (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
                   withOptions:(NSDictionary* _Nullable)options {
-  self = [super initWithProxy:proxy withOptions:options];
-  return self;
+    self = [super initWithProxy:proxy withOptions:options];
+    return self;
+}
+
+- (MLMultiArray * _Nullable)combineVisionScores:(MLMultiArray *)visionScores with:(MLMultiArray *)geoScores error:(NSError **)error {
+    // Ensure both arrays have the same shape
+    if (![visionScores.shape isEqualToArray:geoScores.shape]) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Arrays must have the same shape",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:1
+                                 userInfo:userInfo];
+        return nil;
+    }
+    
+    // Create a result MLMultiArray with the same shape as the input arrays
+    MLMultiArray *combinedArray = [[MLMultiArray alloc] initWithShape:visionScores.shape
+                                                             dataType:MLMultiArrayDataTypeFloat32
+                                                                error:error];
+    if (!combinedArray) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Failed to make combined array",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:2
+                                 userInfo:userInfo];
+        return nil;
+    }
+    
+    // Get the data pointers
+    float *visionData = (float *)visionScores.dataPointer;
+    float *geoData = (float *)geoScores.dataPointer;
+    float *combinedData = (float *)combinedArray.dataPointer;
+    
+    // Get the number of elements
+    NSInteger count = visionScores.count;
+    
+    // Perform element-wise multiplication using vDSP_vmul
+    vDSP_vmul(visionData, 1, geoData, 1, combinedData, 1, count);
+    
+    return combinedArray;
+}
+
+- (MLMultiArray *)normalizeMultiArray:(MLMultiArray *)mlArray error:(NSError **)error {
+    NSInteger count = mlArray.count;
+    float *mlData = (float *)mlArray.dataPointer;
+    
+    float sum = 0.0;
+    vDSP_sve(mlData, 1, &sum, count);
+    
+    if (sum != 0) {
+        vDSP_vsdiv(mlData, 1, &sum, mlData, 1, count);
+    } else {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Sum of elements is zero, normalization not possible."
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:3
+                                 userInfo:userInfo];
+        return nil;
+    }
+
+    return mlArray;
 }
 
 - (id)callback:(Frame*)frame withArguments:(NSDictionary*)arguments {
-  // Start timestamp
-  NSDate *startDate = [NSDate date];
+    // Start timestamp
+    NSDate *startDate = [NSDate date];
 
-  // Log arguments
-  NSLog(@"inatVision arguments: %@", arguments);
-  // Destructure version out of options
-  NSString* version = arguments[@"version"];
-  // Destructure model path out of options
-  NSString* modelPath = arguments[@"modelPath"];
-  // Destructure taxonomy path out of options
-  NSString* taxonomyPath = arguments[@"taxonomyPath"];
+    MLMultiArray *geoModelPreds = nil;
+    if ([arguments objectForKey:@"useGeoModel"] &&
+        [[arguments objectForKey:@"useGeoModel"] boolValue] &&
+        [arguments objectForKey:@"latitude"] &&
+        [arguments objectForKey:@"longitude"] &&
+        [arguments objectForKey:@"elevation"] &&
+        [arguments objectForKey:@"geoModelPath"])
+    {
+        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:arguments[@"geoModelPath"]];
+        geoModelPreds = [geoModel predictionsForLat:[[arguments objectForKey:@"latitude"] floatValue]
+                                                lng:[[arguments objectForKey:@"longitude"] floatValue]
+                                          elevation:[[arguments objectForKey:@"elevation"] floatValue]];
+    } else {
+        NSLog(@"not doing anything geo related.");
+    }
+    
+    // Log arguments
+    NSLog(@"inatVision arguments: %@", arguments);
+    // Destructure version out of options
+    NSString* version = arguments[@"version"];
+    // Destructure model path out of options
+    NSString* modelPath = arguments[@"modelPath"];
+    // Destructure taxonomy path out of options
+    NSString* taxonomyPath = arguments[@"taxonomyPath"];
+    
+    CMSampleBufferRef buffer = frame.buffer;
+    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
+    UIImageOrientation orientation = frame.orientation;
+    
+    VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
+    MLMultiArray *visionScores = [cvModel visionPredictionsFor:pixelBuffer orientation:orientation];
+    
+    MLMultiArray *results = nil;
+    
 
-  CMSampleBufferRef buffer = frame.buffer;
-  UIImageOrientation orientation = frame.orientation;
+    if (geoModelPreds != nil) {
+        NSError *err = nil;
+        results = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
+        results = [self normalizeMultiArray:results error:&err];
+    } else {
+        results = visionScores;
+    }
 
-  CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
-  if (!pixelBuffer) {
-      NSLog(@"unable to get pixel buffer");
-      return nil;
-  }
+    
+    // Setup taxonomy
+    VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
 
-  // Setup taxonomy
-  VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-
-  // Setup vision model
-  VNCoreMLModel *visionModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
-
-  // Setup top branches
-  NSMutableArray *topBranches = [NSMutableArray array];
-  VNRequestCompletionHandler recognitionHandler = ^(VNRequest * _Nonnull request, NSError * _Nullable error) {
-    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-    MLFeatureValue *firstFV = firstResult.featureValue;
-    MLMultiArray *mm = firstFV.multiArrayValue;
-
-    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:mm];
+    NSMutableArray *topBranches = [NSMutableArray array];
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
     // add this to the end of the recent top branches array
     [topBranches addObject:bestBranch];
-  };
+    
+    // convert the VCPPredictions in the bestRecentBranch into dicts
+    NSMutableArray *bestBranchAsDict = [NSMutableArray array];
+    for (VCPPrediction *prediction in topBranches.firstObject) {
+        [bestBranchAsDict addObject:[prediction asDict]];
+    }
+    
+    NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+    NSLog(@"inatVision took %f seconds", timeElapsed);
 
-  VNCoreMLRequest *objectRecognition = [[VNCoreMLRequest alloc] initWithModel:visionModel
-                                                            completionHandler:recognitionHandler];
-  objectRecognition.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
-  NSArray *requests = @[objectRecognition];
-
-  VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixelBuffer
-                                                                            orientation:orientation
-                                                                                options:@{}];
-  NSError *requestError = nil;
-  [handler performRequests:requests
-                      error:&requestError];
-  if (requestError) {
-      NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
-                              requestError.localizedDescription];
-      NSLog(@"%@", errString);
-      return nil;
-  }
-
-  // convert the VCPPredictions in the bestRecentBranch into dicts
-  NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-  for (VCPPrediction *prediction in topBranches.firstObject) {
-      [bestBranchAsDict addObject:[prediction asDict]];
-  }
-
-  // Create a new dictionary with the bestBranchAsDict under the key "predictions"
-  NSDictionary *response = [NSDictionary dictionary];
-  response = @{@"predictions": bestBranchAsDict};
-
-  // End timestamp
-  NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
-  NSLog(@"inatVision took %f seconds", timeElapsed);
-
-  return response;
+    // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+    NSDictionary *response = [NSDictionary dictionary];
+    response = @{
+        @"predictions": bestBranchAsDict,
+        @"timeElapsed": @(timeElapsed),
+    };
+    
+    // End timestamp
+    
+    return response;
 }
 
 VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
 
 @end
+

@@ -299,7 +299,7 @@ interface Options {
    */
   version: string;
   /**
-   * The path to the model file.
+   * The path to the computer vision model file.
    */
   modelPath: string;
   /**
@@ -339,6 +339,31 @@ interface Options {
    * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
    */
   cropRatio?: number;
+  /**
+   *
+   * Whether to use the geo model.
+   */
+  useGeoModel?: boolean;
+  /**
+   *
+   * The latitude of the location.
+   */
+  latitude?: number;
+  /**
+   *
+   * The longitude of the location.
+   */
+  longitude?: number;
+  /**
+   *
+   * The elevation of the location.
+   */
+  elevation?: number;
+  /**
+   *
+   * The path to the geo model file.
+   */
+  geoModelPath?: string;
   // Patches
   /**
    * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.

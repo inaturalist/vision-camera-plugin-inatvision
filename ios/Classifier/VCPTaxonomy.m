@@ -16,7 +16,6 @@
 // this is a convenience array for testing
 @property NSArray *leaves;
 @property VCPNode *life;
-@property float taxonomyRollupCutoff;
 @end
 
 @implementation VCPTaxonomy
@@ -84,7 +83,7 @@
                 [self.life addChild:node];
             }
         }
-      
+
         self.taxonomyRollupCutoff = 0.0;
     }
 
@@ -97,7 +96,6 @@
     self.nodes = nil;
     self.nodesByTaxonId = nil;
 }
-
 
 - (NSDictionary *)leafScoresFromClassification:(MLMultiArray *)classification {
     NSMutableDictionary *scores = [NSMutableDictionary dictionary];

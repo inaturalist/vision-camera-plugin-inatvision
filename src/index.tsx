@@ -188,6 +188,7 @@ export interface Result {
   options: Options;
   predictions: Prediction[];
   timestamp: number;
+  timeElapsed?: number; //iOS only
 }
 
 const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];

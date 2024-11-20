@@ -162,6 +162,7 @@ export default function App(): React.JSX.Element {
           const timeAfter = new Date().getTime();
           console.log('time taken ms: ', timeAfter - timeBefore);
           console.log('age of result: ', timeAfter - cvResult.timestamp);
+          console.log('cvResult.timeElapsed', cvResult.timeElapsed);
           handleResults(cvResult.predictions);
         } catch (classifierError) {
           console.log(`Error: ${classifierError}`);
@@ -212,6 +213,7 @@ export default function App(): React.JSX.Element {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('Result', JSON.stringify(result));
+        console.log('result.timeElapsed', result.timeElapsed);
         setResult(result.predictions);
       })
       .catch((err) => {

@@ -155,9 +155,9 @@
                 thisScore += [childScore floatValue];
             }
         }
-        // TODO: does it make sense to not add the node if it's score is 0?
-        allScores[node.taxonId] = @(thisScore);
-
+        if (thisScore > 0) {
+          allScores[node.taxonId] = @(thisScore);
+        }
     } else {
         // base case, no children
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);

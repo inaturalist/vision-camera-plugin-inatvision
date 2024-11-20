@@ -198,7 +198,13 @@ export default function App(): React.JSX.Element {
         }
       });
     },
-    [confidenceThreshold, filterByTaxonId, negativeFilter, handleResults]
+    [
+      confidenceThreshold,
+      filterByTaxonId,
+      negativeFilter,
+      handleResults,
+      useGeoModel,
+    ]
   );
 
   function selectImage() {

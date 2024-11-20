@@ -15,9 +15,10 @@
 
 @property BOOL linneanPredictionsOnly;
 
+@property float taxonomyRollupCutoff;
+
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
 - (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
-- (void)setTaxonomyRollupCutoff:(float)taxonomyRollupCutoff;
 
 @end

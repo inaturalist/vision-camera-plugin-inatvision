@@ -43,12 +43,7 @@
     return self;
 }
 
-- (MLMultiArray * _Nullable)visionPredictionsForPixelBuffer:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
-    CGImagePropertyOrientation cgOrient = [self cgOrientationFor:orient];
-    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixBuf
-                                                                              orientation:cgOrient
-                                                                                  options:@{}];
-
+- (MLMultiArray * _Nullable)performVisionRequestsWithHandler:(VNImageRequestHandler *)handler {
     NSError *requestError = nil;
     [handler performRequests:self.requests
                        error:&requestError];
@@ -64,6 +59,15 @@
     MLFeatureValue *firstFV = firstResult.featureValue;
 
     return firstFV.multiArrayValue;
+}
+
+- (MLMultiArray * _Nullable)visionPredictionsForPixelBuffer:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
+    CGImagePropertyOrientation cgOrient = [self cgOrientationFor:orient];
+    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixBuf
+                                                                              orientation:cgOrient
+                                                                                  options:@{}];
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
 }
 
 - (MLMultiArray * _Nullable)visionPredictionsForImageData:(NSData *)imageData orientation:(UIImageOrientation)orient  {

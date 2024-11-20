@@ -156,7 +156,7 @@
     UIImageOrientation orientation = frame.orientation;
 
     VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
-    MLMultiArray *visionScores = [cvModel visionPredictionsFor:pixelBuffer orientation:orientation];
+    MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];
 
     MLMultiArray *results = nil;
 

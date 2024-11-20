@@ -43,7 +43,7 @@
     return self;
 }
 
-- (MLMultiArray * _Nullable)visionPredictionsFor:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
+- (MLMultiArray * _Nullable)visionPredictionsForPixelBuffer:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
     CGImagePropertyOrientation cgOrient = [self cgOrientationFor:orient];
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixBuf
                                                                               orientation:cgOrient

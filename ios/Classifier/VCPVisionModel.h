@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VCPVisionModel : NSObject
 
 - (instancetype _Nullable)initWithModelPath:(NSString *)modelPath;
-- (MLMultiArray * _Nullable)visionPredictionsFor:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient;
+- (MLMultiArray * _Nullable)visionPredictionsForPixelBuffer:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient;
 
 @property MLModel *cvModel;
 @property VNCoreMLModel *visionModel;

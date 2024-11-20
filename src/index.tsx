@@ -182,6 +182,7 @@ export interface Prediction {
 export interface ResultForImage {
   options: OptionsForImage;
   predictions: Prediction[];
+  timeElapsed?: number; //iOS only
 }
 
 export interface Result {

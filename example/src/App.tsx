@@ -172,9 +172,11 @@ export default function App(): React.JSX.Element {
         try {
           const timeBefore = new Date().getTime();
 
-          const latitude = 37.28889;
-          const longitude = -121.94415;
-          const elevation = 15.0;
+          const locationObject = {
+            latitude: 37.28889,
+            longitude: -121.94415,
+            elevation: 15,
+          };
 
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
@@ -186,11 +188,9 @@ export default function App(): React.JSX.Element {
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
-            latitude,
-            longitude,
-            elevation,
+            useGeoModel: true,
             geoModelPath,
-            useGeoModel,
+            location: locationObject,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();

@@ -205,8 +205,9 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       options.confidenceThreshold < 0 ||
       options.confidenceThreshold > 1
     ) {
-      throw new INatVisionError(
-        'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      // have not used INatVisionError here because I can not test it due to issue #36
+      throw new Error(
+        'confidenceThreshold must be a string for a number between 0 and 1.'
       );
     }
   }
@@ -216,8 +217,23 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       options.cropRatio < 0 ||
       options.cropRatio > 1
     ) {
-      throw new INatVisionError(
-        'option cropRatio must be a number between 0 and 1.'
+      // have not used INatVisionError here because I can not test it due to issue #36
+      throw new Error('cropRatio must be a number between 0 and 1.');
+    }
+  }
+  if (options.useGeoModel) {
+    if (!options.location) {
+      // have not used INatVisionError here because I can not test it due to issue #36
+      throw new Error('location must be set when useGeoModel is true.');
+    }
+    if (
+      !options.location.latitude ||
+      !options.location.longitude ||
+      !options.location.elevation
+    ) {
+      // have not used INatVisionError here because I can not test it due to issue #36
+      throw new Error(
+        'location must have latitude, longitude, and elevation set when useGeoModel is true.'
       );
     }
   }
@@ -233,9 +249,7 @@ function optionsAreValidForFrame(options: Options): boolean {
       options.taxonomyRollupCutoff > 1
     ) {
       // have not used INatVisionError here because I can not test it due to issue #36
-      throw new Error(
-        'option taxonomyRollupCutoff must be a number between 0 and 1.'
-      );
+      throw new Error('taxonomyRollupCutoff must be a number between 0 and 1.');
     }
   }
   return optionsAreValid(options);
@@ -320,10 +334,7 @@ function handleResult(result: any, options: Options): Result {
   return handledResult;
 }
 
-/**
- * Represents the options for a call to use the plugin to predict on a frame.
- */
-interface Options {
+interface BaseOptions {
   // Required
   /**
    * The version of the model to use.
@@ -343,6 +354,60 @@ interface Options {
    */
   confidenceThreshold?: number;
   /**
+   * *Android only.*
+   *
+   * Ratio to crop the center square.
+   *
+   * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
+   */
+  cropRatio?: number;
+  /**
+   *
+   * Whether to use the geo model.
+   */
+  useGeoModel?: boolean;
+  /**
+   *
+   * The location object used for geomodel prediction.
+   */
+  location?: {
+    /**
+     *
+     * The latitude of the location.
+     */
+    latitude?: number;
+    /**
+     *
+     * The longitude of the location.
+     */
+    longitude?: number;
+    /**
+     *
+     * The elevation of the location.
+     */
+    elevation?: number;
+  };
+  /**
+   *
+   * The path to the geo model file.
+   */
+  geoModelPath?: string;
+}
+
+/**
+ * Represents the options for a call to use the plugin to predict on a frame.
+ */
+interface Options extends BaseOptions {
+  // Optional
+  /**
+   * The number of results to keep stored internally.
+   *
+   * Specifies the integer number of results to store internally that the plugin serves the best out of.
+   * E.g. if the plugin is called with this number set to 5, the plugin will serve the best result out of the 5 stored previous results.
+   * Setting this number to 0 or 1 will always return the current result (i.e. none or only one frame result will be stored at a time).
+   */
+  numStoredResults?: number;
+  /**
    * A taxonomy rollup cutoff threshold.
    * As a fraction of 1. After computer vision predictions are returned, this value filters out all nodes with
    * a lower score for the caluclation of the best branch or top predictions.
@@ -361,47 +426,6 @@ interface Options {
    * Wether to exclude the taxon set by filterByTaxonId or to only include it (and exclude all other).
    */
   negativeFilter?: null | boolean;
-  /**
-   * The number of results to keep stored internally.
-   *
-   * Specifies the integer number of results to store internally that the plugin serves the best out of.
-   * E.g. if the plugin is called with this number set to 5, the plugin will serve the best result out of the 5 stored previous results.
-   * Setting this number to 0 or 1 will always return the current result (i.e. none or only one frame result will be stored at a time).
-   */
-  numStoredResults?: number;
-  /**
-   * *Android only.*
-   *
-   * Ratio to crop the center square.
-   *
-   * As a fraction of 1. E.g. 0.8 will crop the center 80% of the frame before sending it to the cv model.
-   */
-  cropRatio?: number;
-  /**
-   *
-   * Whether to use the geo model.
-   */
-  useGeoModel?: boolean;
-  /**
-   *
-   * The latitude of the location.
-   */
-  latitude?: number;
-  /**
-   *
-   * The longitude of the location.
-   */
-  longitude?: number;
-  /**
-   *
-   * The elevation of the location.
-   */
-  elevation?: number;
-  /**
-   *
-   * The path to the geo model file.
-   */
-  geoModelPath?: string;
   // Patches
   /**
    * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
@@ -428,15 +452,9 @@ export function inatVision(frame: Frame, options: Options): Result {
   return handledResult;
 }
 
-interface OptionsForImage {
+interface OptionsForImage extends BaseOptions {
   // Required
   uri: string;
-  version: string;
-  modelPath: string;
-  taxonomyPath: string;
-  // Optional
-  confidenceThreshold?: number;
-  cropRatio?: number;
 }
 
 /**

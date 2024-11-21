@@ -165,11 +165,31 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
 {
     // Start timestamp
     NSDate *startDate = [NSDate date];
-
     // Log args
     NSLog(@"getPredictionsForLocation options: %@", options);
     // Destructure location out of options
     NSDictionary* location = options[@"location"];
+    // Destructure latitude out of location
+    NSNumber *latitude = location[@"latitude"];
+    // Destructure longitude out of location
+    NSNumber *longitude = location[@"longitude"];
+    // Destructure elevation out of location
+    NSNumber *elevation = location[@"elevation"];
+    // Destructure geo model path out of options
+    NSString *geoModelPath = arguments[@"geoModelPath"];
+
+    MLMultiArray *geoModelPreds = nil;
+    if ([arguments objectForKey:@"useGeoModel"] &&
+        [[arguments objectForKey:@"useGeoModel"] boolValue])
+    {
+        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:geoModelPath];
+        geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+                                                lng:longitude.floatValue
+                                          elevation:elevation.floatValue];
+    } else {
+        NSLog(@"not doing anything geo related.");
+    }
+
     NSMutableArray *sortedPredictions = [NSMutableArray array];
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];

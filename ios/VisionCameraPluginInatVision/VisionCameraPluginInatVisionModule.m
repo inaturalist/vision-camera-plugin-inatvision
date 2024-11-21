@@ -173,6 +173,7 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSDictionary *response = [NSDictionary dictionary];
     response = @{
+        @"options": options,
         @"timeElapsed": @(timeElapsed),
     };
 

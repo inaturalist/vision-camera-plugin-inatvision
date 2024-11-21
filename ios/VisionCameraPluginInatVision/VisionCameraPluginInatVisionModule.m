@@ -196,32 +196,28 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
 
     MLMultiArray *geoModelPreds = nil;
-
     VCPGeoModel *geoModel = [AwesomeModule geoModelWithModelFile:geoModelPath];
     geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
                                             lng:longitude.floatValue
                                       elevation:elevation.floatValue];
 
-    NSMutableArray *topBranches = [NSMutableArray array];
-    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:geoModelPreds];
-    // add this to the end of the recent top branches array
-    [topBranches addObject:bestBranch];
+    NSArray *leafScores = [taxonomy leafScoresFromClassification:geoModelPreds];
 
     // convert the VCPPredictions in the bestRecentBranch into dicts
-    NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-    for (VCPPrediction *prediction in topBranches.firstObject) {
-        [bestBranchAsDict addObject:[prediction asDict]];
+    NSMutableArray *predictions = [NSMutableArray array];
+    for (VCPPrediction *prediction in leafScores) {
+        [predictions addObject:[prediction asDict]];
     }
 
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"getPredictionsForLocation took %f seconds", timeElapsed);
 
-    // Create a new dictionary with the sortedPredictions under the key "predictions"
+    // Create a new dictionary with the predictions under the key "predictions"
     // and the options passed in under the key "options"
     NSDictionary *response = [NSDictionary dictionary];
     response = @{
-        @"predictions": bestBranchAsDict,
+        @"predictions": predictions,
         @"options": options,
         @"timeElapsed": @(timeElapsed),
     };

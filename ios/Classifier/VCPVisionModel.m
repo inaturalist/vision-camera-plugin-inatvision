@@ -17,7 +17,7 @@
             NSLog(@"no file for vision model");
             return nil;
         }
-        
+
         NSError *loadError = nil;
         self.cvModel = [MLModel modelWithContentsOfURL:visionModelUrl error:&loadError];
         if (loadError) {
@@ -30,34 +30,60 @@
             NSLog(@"unable to make cv model");
             return nil;
         }
-      
+
         NSError *modelError = nil;
         self.visionModel = [VNCoreMLModel modelForMLModel:self.cvModel
                                                     error:&modelError];
-        
+
         self.classification = [[VNCoreMLRequest alloc] initWithModel:self.visionModel];
         self.classification.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop;
         self.requests = @[ self.classification ];
     }
-    
+
     return self;
 }
 
-- (MLMultiArray * _Nullable)visionPredictionsFor:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
+- (MLMultiArray * _Nullable)performVisionRequestsWithHandler:(VNImageRequestHandler *)handler {
+    NSError *requestError = nil;
+    [handler performRequests:self.requests
+                       error:&requestError];
+    if (requestError) {
+        NSString *errString = [NSString stringWithFormat:@"got a request error: %@",
+                                requestError.localizedDescription];
+        NSLog(@"%@", errString);
+        // reject(@"request_error", errString, nil);
+    }
+
+    VNCoreMLRequest *request = self.requests.firstObject;
+    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
+    MLFeatureValue *firstFV = firstResult.featureValue;
+
+    return firstFV.multiArrayValue;
+}
+
+- (MLMultiArray * _Nullable)visionPredictionsForPixelBuffer:(CVPixelBufferRef)pixBuf orientation:(UIImageOrientation)orient  {
     CGImagePropertyOrientation cgOrient = [self cgOrientationFor:orient];
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCVPixelBuffer:pixBuf
                                                                               orientation:cgOrient
                                                                                   options:@{}];
-    
-    NSError *requestError = nil;
-    [handler performRequests:self.requests
-                       error:&requestError];
-    
-    VNCoreMLRequest *request = self.requests.firstObject;
-    VNCoreMLFeatureValueObservation *firstResult = request.results.firstObject;
-    MLFeatureValue *firstFV = firstResult.featureValue;
-    
-    return firstFV.multiArrayValue;
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
+}
+
+- (MLMultiArray * _Nullable)visionPredictionsForImageData:(NSData *)imageData orientation:(UIImageOrientation)orient  {
+    CGImagePropertyOrientation cgOrient = [self cgOrientationFor:orient];
+    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithData:imageData
+                                                                    orientation:cgOrient
+                                                                    options:@{}];
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
+}
+
+- (MLMultiArray * _Nullable)visionPredictionsForUrl:(NSURL *)url {
+    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithURL:url
+                                                                    options:@{}];
+    MLMultiArray *visionScores = [self performVisionRequestsWithHandler:handler];
+    return visionScores;
 }
 
 - (CGImagePropertyOrientation)cgOrientationFor:(UIImageOrientation)uiOrientation {

@@ -34,21 +34,21 @@
 
 + (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
     static VCPGeoModel *geoModel = nil;
-    
+
     if (geoModel == nil) {
         geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
     }
-    
+
     return geoModel;
 }
 
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
     static VCPVisionModel *cvModel = nil;
-    
+
     if (cvModel == nil) {
         cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
     }
-    
+
     return cvModel;
 }
 
@@ -69,7 +69,7 @@
                                  userInfo:userInfo];
         return nil;
     }
-    
+
     // Create a result MLMultiArray with the same shape as the input arrays
     MLMultiArray *combinedArray = [[MLMultiArray alloc] initWithShape:visionScores.shape
                                                              dataType:MLMultiArrayDataTypeFloat32
@@ -83,28 +83,28 @@
                                  userInfo:userInfo];
         return nil;
     }
-    
+
     // Get the data pointers
     float *visionData = (float *)visionScores.dataPointer;
     float *geoData = (float *)geoScores.dataPointer;
     float *combinedData = (float *)combinedArray.dataPointer;
-    
+
     // Get the number of elements
     NSInteger count = visionScores.count;
-    
+
     // Perform element-wise multiplication using vDSP_vmul
     vDSP_vmul(visionData, 1, geoData, 1, combinedData, 1, count);
-    
+
     return combinedArray;
 }
 
 - (MLMultiArray *)normalizeMultiArray:(MLMultiArray *)mlArray error:(NSError **)error {
     NSInteger count = mlArray.count;
     float *mlData = (float *)mlArray.dataPointer;
-    
+
     float sum = 0.0;
     vDSP_sve(mlData, 1, &sum, count);
-    
+
     if (sum != 0) {
         vDSP_vsdiv(mlData, 1, &sum, mlData, 1, count);
     } else {
@@ -139,7 +139,7 @@
     } else {
         NSLog(@"not doing anything geo related.");
     }
-    
+
     // Log arguments
     NSLog(@"inatVision arguments: %@", arguments);
     // Destructure version out of options
@@ -150,16 +150,16 @@
     NSString* taxonomyPath = arguments[@"taxonomyPath"];
     // Destructure taxonomyRollupCutoff out of options
     NSNumber* taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
-  
+
     CMSampleBufferRef buffer = frame.buffer;
     CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
     UIImageOrientation orientation = frame.orientation;
-    
+
     VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
-    MLMultiArray *visionScores = [cvModel visionPredictionsFor:pixelBuffer orientation:orientation];
-    
+    MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];
+
     MLMultiArray *results = nil;
-    
+
     if (geoModelPreds != nil) {
         NSError *err = nil;
         results = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
@@ -173,18 +173,18 @@
     if (taxonomyRollupCutoff) {
       [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
     }
-  
+
     NSMutableArray *topBranches = [NSMutableArray array];
     NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
     // add this to the end of the recent top branches array
     [topBranches addObject:bestBranch];
-    
+
     // convert the VCPPredictions in the bestRecentBranch into dicts
     NSMutableArray *bestBranchAsDict = [NSMutableArray array];
     for (VCPPrediction *prediction in topBranches.firstObject) {
         [bestBranchAsDict addObject:[prediction asDict]];
     }
-    
+
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"inatVision took %f seconds", timeElapsed);
@@ -195,7 +195,7 @@
         @"predictions": bestBranchAsDict,
         @"timeElapsed": @(timeElapsed),
     };
-    
+
     return response;
 }
 

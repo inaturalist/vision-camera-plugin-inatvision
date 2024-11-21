@@ -26,8 +26,8 @@ import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
 const testLocation = {
-  latitude: 37.28889,
-  longitude: -121.94415,
+  latitude: 54.28889,
+  longitude: 18.94415,
   elevation: 15,
 };
 

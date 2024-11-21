@@ -171,8 +171,12 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     // Destructure location out of options
     NSDictionary* location = options[@"location"];
     NSMutableArray *sortedPredictions = [NSMutableArray array];
+    // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"getPredictionsForLocation took %f seconds", timeElapsed);
+
+    // Create a new dictionary with the sortedPredictions under the key "predictions"
+    // and the options passed in under the key "options"
     NSDictionary *response = [NSDictionary dictionary];
     response = @{
         @"predictions": sortedPredictions,

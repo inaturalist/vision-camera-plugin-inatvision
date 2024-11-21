@@ -259,7 +259,20 @@ export default function App(): React.JSX.Element {
       });
   }
 
-  function predictLocation() {}
+  function predictLocation() {
+    const timeBefore = new Date().getTime();
+    InatVision.getPredictionsForLocation({
+      location: testLocation,
+    })
+      .then((result) => {
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        console.log('Result', JSON.stringify(result));
+      })
+      .catch((err) => {
+        console.log('getPredictionsForLocation Error', err);
+      });
+  }
 
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {

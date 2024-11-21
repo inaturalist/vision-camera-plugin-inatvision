@@ -470,3 +470,15 @@ export function getPredictionsForImage(
   optionsAreValidForImage(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }
+
+interface OptionsForLocation {
+  // Required
+  location: Location;
+}
+
+export function getPredictionsForLocation(
+  options: OptionsForLocation
+): Promise<Result> {
+  locationIsValid(options.location);
+  return VisionCameraPluginInatVision.getPredictionsForLocation(options);
+}

@@ -124,32 +124,38 @@
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
-    MLMultiArray *geoModelPreds = nil;
-    if ([arguments objectForKey:@"useGeoModel"] &&
-        [[arguments objectForKey:@"useGeoModel"] boolValue] &&
-        [arguments objectForKey:@"latitude"] &&
-        [arguments objectForKey:@"longitude"] &&
-        [arguments objectForKey:@"elevation"] &&
-        [arguments objectForKey:@"geoModelPath"])
-    {
-        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:arguments[@"geoModelPath"]];
-        geoModelPreds = [geoModel predictionsForLat:[[arguments objectForKey:@"latitude"] floatValue]
-                                                lng:[[arguments objectForKey:@"longitude"] floatValue]
-                                          elevation:[[arguments objectForKey:@"elevation"] floatValue]];
-    } else {
-        NSLog(@"not doing anything geo related.");
-    }
-
     // Log arguments
     NSLog(@"inatVision arguments: %@", arguments);
     // Destructure version out of options
-    NSString* version = arguments[@"version"];
+    NSString *version = arguments[@"version"];
     // Destructure model path out of options
-    NSString* modelPath = arguments[@"modelPath"];
+    NSString *modelPath = arguments[@"modelPath"];
     // Destructure taxonomy path out of options
-    NSString* taxonomyPath = arguments[@"taxonomyPath"];
+    NSString *taxonomyPath = arguments[@"taxonomyPath"];
     // Destructure taxonomyRollupCutoff out of options
-    NSNumber* taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
+    NSNumber *taxonomyRollupCutoff = arguments[@"taxonomyRollupCutoff"];
+    // Destructure location out of options
+    NSDictionary *location = arguments[@"location"];
+    // Destructure latitude out of location
+    NSNumber *latitude = location[@"latitude"];
+    // Destructure longitude out of location
+    NSNumber *longitude = location[@"longitude"];
+    // Destructure elevation out of location
+    NSNumber *elevation = location[@"elevation"];
+    // Destructure geo model path out of options
+    NSString *geoModelPath = arguments[@"geoModelPath"];
+
+    MLMultiArray *geoModelPreds = nil;
+    if ([arguments objectForKey:@"useGeoModel"] &&
+        [[arguments objectForKey:@"useGeoModel"] boolValue])
+    {
+        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:geoModelPath];
+        geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+                                                lng:longitude.floatValue
+                                          elevation:elevation.floatValue];
+    } else {
+        NSLog(@"not doing anything geo related.");
+    }
 
     CMSampleBufferRef buffer = frame.buffer;
     CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);

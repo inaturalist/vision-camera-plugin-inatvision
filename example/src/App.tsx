@@ -271,7 +271,12 @@ export default function App(): React.JSX.Element {
         console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('Result', JSON.stringify(result));
         console.log('result.timeElapsed', result.timeElapsed);
-        setResult(result.predictions);
+        // predictLocation sneds back a prediction for each leaf node in the taxonomy
+        // we filter out the ones with a score below 0.095, this is arbitrary
+        const filteredResults = result.predictions.filter(
+          (p) => p.score > 0.095
+        );
+        setResult(filteredResults);
       })
       .catch((err) => {
         console.log('getPredictionsForLocation Error', err);
@@ -338,6 +343,14 @@ export default function App(): React.JSX.Element {
       <Text style={styles.text}>Ele: {testLocation.elevation}</Text>
       <Button onPress={predictLocation} title="Use geomodel" />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
+      {results && (
+        <View>
+          <Text style={styles.text}>Node taxa expected nearby:</Text>
+          <Text style={styles.smallLabel}>
+            {results.map((r) => r.name).toString()}
+          </Text>
+        </View>
+      )}
     </>
   );
 

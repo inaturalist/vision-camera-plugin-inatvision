@@ -159,4 +159,19 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     }
 }
 
+RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    // Start timestamp
+    NSDate *startDate = [NSDate date];
+    NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+    NSDictionary *response = [NSDictionary dictionary];
+    response = @{
+        @"timeElapsed": @(timeElapsed),
+    };
+
+    resolve(response);
+}
+
 @end

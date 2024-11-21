@@ -34,7 +34,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 
@@ -45,7 +45,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 
@@ -56,7 +56,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 });
@@ -69,7 +69,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 
@@ -80,7 +80,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 
@@ -91,7 +91,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 });

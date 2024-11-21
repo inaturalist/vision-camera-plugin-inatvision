@@ -262,6 +262,7 @@ export default function App(): React.JSX.Element {
   function predictLocation() {
     const timeBefore = new Date().getTime();
     InatVision.getPredictionsForLocation({
+      taxonomyPath,
       geoModelPath,
       location: testLocation,
     })
@@ -269,6 +270,8 @@ export default function App(): React.JSX.Element {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('Result', JSON.stringify(result));
+        console.log('result.timeElapsed', result.timeElapsed);
+        setResult(result.predictions);
       })
       .catch((err) => {
         console.log('getPredictionsForLocation Error', err);

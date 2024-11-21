@@ -473,6 +473,7 @@ export function getPredictionsForImage(
 
 interface OptionsForLocation {
   // Required
+  taxonomyPath: string;
   geoModelPath: string;
   location: Location;
 }

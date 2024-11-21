@@ -179,6 +179,10 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     NSDate *startDate = [NSDate date];
     // Log args
     NSLog(@"getPredictionsForLocation options: %@", options);
+    // Destructure taxonomy path out of options
+    NSString *taxonomyPath = options[@"taxonomyPath"];
+    // Destructure geo model path out of options
+    NSString *geoModelPath = options[@"geoModelPath"];
     // Destructure location out of options
     NSDictionary* location = options[@"location"];
     // Destructure latitude out of location
@@ -187,8 +191,9 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     NSNumber *longitude = location[@"longitude"];
     // Destructure elevation out of location
     NSNumber *elevation = location[@"elevation"];
-    // Destructure geo model path out of options
-    NSString *geoModelPath = options[@"geoModelPath"];
+
+    // Setup taxonomy
+    VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
 
     MLMultiArray *geoModelPreds = nil;
 
@@ -197,7 +202,17 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
                                             lng:longitude.floatValue
                                       elevation:elevation.floatValue];
 
-    NSMutableArray *sortedPredictions = [NSMutableArray array];
+    NSMutableArray *topBranches = [NSMutableArray array];
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:geoModelPreds];
+    // add this to the end of the recent top branches array
+    [topBranches addObject:bestBranch];
+
+    // convert the VCPPredictions in the bestRecentBranch into dicts
+    NSMutableArray *bestBranchAsDict = [NSMutableArray array];
+    for (VCPPrediction *prediction in topBranches.firstObject) {
+        [bestBranchAsDict addObject:[prediction asDict]];
+    }
+
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"getPredictionsForLocation took %f seconds", timeElapsed);
@@ -206,7 +221,7 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     // and the options passed in under the key "options"
     NSDictionary *response = [NSDictionary dictionary];
     response = @{
-        @"predictions": sortedPredictions,
+        @"predictions": bestBranchAsDict,
         @"options": options,
         @"timeElapsed": @(timeElapsed),
     };

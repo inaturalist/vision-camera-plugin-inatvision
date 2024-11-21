@@ -269,7 +269,6 @@ export default function App(): React.JSX.Element {
       .then((result) => {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
-        console.log('Result', JSON.stringify(result));
         console.log('result.timeElapsed', result.timeElapsed);
         // predictLocation sneds back a prediction for each leaf node in the taxonomy
         // we filter out the ones with a score below 0.095, this is arbitrary

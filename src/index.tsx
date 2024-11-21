@@ -473,9 +473,13 @@ export function getPredictionsForImage(
 
 interface OptionsForLocation {
   // Required
+  geoModelPath: string;
   location: Location;
 }
 
+/**
+ * Function to call the geo model with a given location
+ */
 export function getPredictionsForLocation(
   options: OptionsForLocation
 ): Promise<Result> {

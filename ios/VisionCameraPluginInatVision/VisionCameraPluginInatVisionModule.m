@@ -5,6 +5,7 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
+#import "VCPGeoModel.h"
 #import "VCPVisionModel.h"
 
 #import <React/RCTBridgeModule.h>
@@ -15,6 +16,7 @@
 @interface AwesomeModule : NSObject <RCTBridgeModule>
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
@@ -28,6 +30,16 @@ RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
         taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
     }
     return taxonomy;
+}
+
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
+    static VCPGeoModel *geoModel = nil;
+
+    if (geoModel == nil) {
+        geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
+    }
+
+    return geoModel;
 }
 
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
@@ -176,19 +188,14 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     // Destructure elevation out of location
     NSNumber *elevation = location[@"elevation"];
     // Destructure geo model path out of options
-    NSString *geoModelPath = arguments[@"geoModelPath"];
+    NSString *geoModelPath = options[@"geoModelPath"];
 
     MLMultiArray *geoModelPreds = nil;
-    if ([arguments objectForKey:@"useGeoModel"] &&
-        [[arguments objectForKey:@"useGeoModel"] boolValue])
-    {
-        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:geoModelPath];
-        geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
-                                                lng:longitude.floatValue
-                                          elevation:elevation.floatValue];
-    } else {
-        NSLog(@"not doing anything geo related.");
-    }
+
+    VCPGeoModel *geoModel = [AwesomeModule geoModelWithModelFile:geoModelPath];
+    geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+                                            lng:longitude.floatValue
+                                      elevation:elevation.floatValue];
 
     NSMutableArray *sortedPredictions = [NSMutableArray array];
     // End timestamp

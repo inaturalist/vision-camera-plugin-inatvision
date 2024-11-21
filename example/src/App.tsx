@@ -262,6 +262,7 @@ export default function App(): React.JSX.Element {
   function predictLocation() {
     const timeBefore = new Date().getTime();
     InatVision.getPredictionsForLocation({
+      geoModelPath,
       location: testLocation,
     })
       .then((result) => {

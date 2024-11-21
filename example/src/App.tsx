@@ -185,7 +185,7 @@ export default function App(): React.JSX.Element {
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
-            useGeoModel: true,
+            useGeoModel,
             geoModelPath,
             location: locationObject,
             patchedOrientationAndroid: 'portrait',

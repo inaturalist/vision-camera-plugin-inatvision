@@ -55,8 +55,6 @@ export default function App(): React.JSX.Element {
     undefined | string | null
   >(undefined);
   const [negativeFilter, setNegativeFilter] = useState(false);
-
-  const [hasGeoModel, setHasGeoModel] = useState(false);
   const [useGeoModel, setUseGeoModel] = useState(false);
 
   enum VIEW_STATUS {
@@ -129,7 +127,6 @@ export default function App(): React.JSX.Element {
       )
         .then((result) => {
           console.log(`moved geo model file from`, result);
-          setHasGeoModel(true);
         })
         .catch((error) => {
           console.log(`error moving geo model file`, error);
@@ -359,12 +356,10 @@ export default function App(): React.JSX.Element {
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />
-          {hasGeoModel && (
-            <Button
-              onPress={toggleUseGeoModel}
-              title={useGeoModel ? 'Disable Geo Model' : 'Enable Geo Model'}
-            />
-          )}
+          <Button
+            onPress={toggleUseGeoModel}
+            title={useGeoModel ? 'Disable Geo Model' : 'Enable Geo Model'}
+          />
         </View>
       </View>
     ) : (

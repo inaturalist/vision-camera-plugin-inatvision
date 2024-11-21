@@ -170,8 +170,8 @@ export default function App(): React.JSX.Element {
           const timeBefore = new Date().getTime();
 
           const locationObject = {
-            latitude: 37.28889,
-            longitude: -121.94415,
+            latitude: 54.28889,
+            longitude: 18.94415,
             elevation: 15,
           };
 

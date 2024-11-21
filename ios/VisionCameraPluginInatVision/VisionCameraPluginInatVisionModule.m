@@ -165,6 +165,11 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
 {
     // Start timestamp
     NSDate *startDate = [NSDate date];
+
+    // Log args
+    NSLog(@"getPredictionsForLocation options: %@", options);
+    // Destructure location out of options
+    NSDictionary* location = options[@"location"];
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSDictionary *response = [NSDictionary dictionary];
     response = @{

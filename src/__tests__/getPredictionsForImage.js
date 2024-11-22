@@ -13,7 +13,10 @@ jest.mock('react-native', () => ({
 }));
 
 const correctOptions = {
+  uri: 'testUri',
   version: '1.0',
+  modelPath: 'testModelPath',
+  taxonomyPath: 'testTaxonomyPath',
   confidenceThreshold: 0.5,
   cropRatio: 0.8,
 };

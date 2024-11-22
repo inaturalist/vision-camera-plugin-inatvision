@@ -5,6 +5,7 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
+#import "VCPGeoModel.h"
 #import "VCPVisionModel.h"
 
 #import <React/RCTBridgeModule.h>
@@ -15,6 +16,7 @@
 @interface AwesomeModule : NSObject <RCTBridgeModule>
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
@@ -28,6 +30,16 @@ RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
         taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
     }
     return taxonomy;
+}
+
++ (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
+    static VCPGeoModel *geoModel = nil;
+
+    if (geoModel == nil) {
+        geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
+    }
+
+    return geoModel;
 }
 
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
@@ -157,6 +169,60 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
         resolve(response);
     }
+}
+
+RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    // Start timestamp
+    NSDate *startDate = [NSDate date];
+    // Log args
+    NSLog(@"getPredictionsForLocation options: %@", options);
+    // Destructure taxonomy path out of options
+    NSString *taxonomyPath = options[@"taxonomyPath"];
+    // Destructure geo model path out of options
+    NSString *geoModelPath = options[@"geoModelPath"];
+    // Destructure location out of options
+    NSDictionary* location = options[@"location"];
+    // Destructure latitude out of location
+    NSNumber *latitude = location[@"latitude"];
+    // Destructure longitude out of location
+    NSNumber *longitude = location[@"longitude"];
+    // Destructure elevation out of location
+    NSNumber *elevation = location[@"elevation"];
+
+    // Setup taxonomy
+    VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
+
+    MLMultiArray *geoModelPreds = nil;
+    VCPGeoModel *geoModel = [AwesomeModule geoModelWithModelFile:geoModelPath];
+    geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+                                            lng:longitude.floatValue
+                                      elevation:elevation.floatValue];
+
+    NSArray *leafScores = [taxonomy leafScoresFromClassification:geoModelPreds];
+
+    // convert the VCPPredictions in the bestRecentBranch into dicts
+    NSMutableArray *predictions = [NSMutableArray array];
+    for (VCPPrediction *prediction in leafScores) {
+        [predictions addObject:[prediction asDict]];
+    }
+
+    // End timestamp
+    NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+    NSLog(@"getPredictionsForLocation took %f seconds", timeElapsed);
+
+    // Create a new dictionary with the predictions under the key "predictions"
+    // and the options passed in under the key "options"
+    NSDictionary *response = [NSDictionary dictionary];
+    response = @{
+        @"predictions": predictions,
+        @"options": options,
+        @"timeElapsed": @(timeElapsed),
+    };
+
+    resolve(response);
 }
 
 @end

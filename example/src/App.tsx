@@ -25,6 +25,12 @@ import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
+const testLocation = {
+  latitude: 54.28889,
+  longitude: 18.94415,
+  elevation: 15,
+};
+
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
 const geoModelFilenameAndroid = 'not_implemented';
@@ -61,6 +67,7 @@ export default function App(): React.JSX.Element {
     NONE,
     CAMERA,
     GALLERY,
+    GEOMODEL,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
@@ -169,12 +176,6 @@ export default function App(): React.JSX.Element {
         try {
           const timeBefore = new Date().getTime();
 
-          const locationObject = {
-            latitude: 54.28889,
-            longitude: 18.94415,
-            elevation: 15,
-          };
-
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
             modelPath,
@@ -187,7 +188,7 @@ export default function App(): React.JSX.Element {
             cropRatio: 0.9,
             useGeoModel,
             geoModelPath,
-            location: locationObject,
+            location: testLocation,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
@@ -258,6 +259,29 @@ export default function App(): React.JSX.Element {
       });
   }
 
+  function predictLocation() {
+    const timeBefore = new Date().getTime();
+    InatVision.getPredictionsForLocation({
+      taxonomyPath,
+      geoModelPath,
+      location: testLocation,
+    })
+      .then((result) => {
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        console.log('result.timeElapsed', result.timeElapsed);
+        // predictLocation sneds back a prediction for each leaf node in the taxonomy
+        // we filter out the ones with a score below 0.095, this is arbitrary
+        const filteredResults = result.predictions.filter(
+          (p) => p.score > 0.095
+        );
+        setResult(filteredResults);
+      })
+      .catch((err) => {
+        console.log('getPredictionsForLocation Error', err);
+      });
+  }
+
   const contentSwitch = () => {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
@@ -294,14 +318,40 @@ export default function App(): React.JSX.Element {
             title="Reset module state"
             onPress={() => InatVision.resetStoredResults()}
           />
+          <Button
+            title="Show geomodel"
+            onPress={() => setViewStatus(VIEW_STATUS.GEOMODEL)}
+          />
         </View>
       );
     } else if (viewStatus === VIEW_STATUS.CAMERA) {
       return renderCameraView();
-    } else {
+    } else if (viewStatus === VIEW_STATUS.GALLERY) {
       return renderGalleryView();
+    } else if (viewStatus === VIEW_STATUS.GEOMODEL) {
+      return renderGeoModelView();
+    } else {
+      return <Text>Something went wrong</Text>;
     }
   };
+
+  const renderGeoModelView = () => (
+    <>
+      <Text style={styles.text}>Lat: {testLocation.latitude}</Text>
+      <Text style={styles.text}>Lng: {testLocation.longitude}</Text>
+      <Text style={styles.text}>Ele: {testLocation.elevation}</Text>
+      <Button onPress={predictLocation} title="Use geomodel" />
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
+      {results && (
+        <View>
+          <Text style={styles.text}>Node taxa expected nearby:</Text>
+          <Text style={styles.smallLabel}>
+            {results.map((r) => r.name).toString()}
+          </Text>
+        </View>
+      )}
+    </>
+  );
 
   const renderGalleryView = () => (
     <>

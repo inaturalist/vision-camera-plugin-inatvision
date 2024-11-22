@@ -97,15 +97,17 @@
     self.nodesByTaxonId = nil;
 }
 
-- (NSDictionary *)leafScoresFromClassification:(MLMultiArray *)classification {
-    NSMutableDictionary *scores = [NSMutableDictionary dictionary];
+- (NSArray *)leafScoresFromClassification:(MLMultiArray *)classification {
+    NSMutableArray *scores = [NSMutableArray array];
 
     for (VCPNode *leaf in self.leaves) {
         NSNumber *score = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
-        scores[leaf.taxonId] = score;
+        VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:leaf
+                                                            score:score.floatValue];
+        [scores addObject:prediction];
     }
 
-    return [NSDictionary dictionaryWithDictionary:scores];
+    return [NSArray arrayWithArray:scores];
 }
 
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {

@@ -194,6 +194,22 @@ export interface Result {
 
 const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
 
+function locationIsValid(location: Location): boolean {
+  'worklet';
+  if (
+    !location ||
+    !location.latitude ||
+    !location.longitude ||
+    !location.elevation
+  ) {
+    // have not used INatVisionError here because I can not test it due to issue #36
+    throw new Error(
+      'location must have latitude, longitude, and elevation set.'
+    );
+  }
+  return true;
+}
+
 function optionsAreValid(options: Options | OptionsForImage): boolean {
   'worklet';
   if (!supportedVersions.includes(options.version)) {
@@ -226,16 +242,7 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error('location must be set when useGeoModel is true.');
     }
-    if (
-      !options.location.latitude ||
-      !options.location.longitude ||
-      !options.location.elevation
-    ) {
-      // have not used INatVisionError here because I can not test it due to issue #36
-      throw new Error(
-        'location must have latitude, longitude, and elevation set when useGeoModel is true.'
-      );
-    }
+    locationIsValid(options.location);
   }
   return true;
 }
@@ -334,6 +341,24 @@ function handleResult(result: any, options: Options): Result {
   return handledResult;
 }
 
+interface Location {
+  /**
+   *
+   * The latitude of the location.
+   */
+  latitude: number;
+  /**
+   *
+   * The longitude of the location.
+   */
+  longitude: number;
+  /**
+   *
+   * The elevation of the location.
+   */
+  elevation: number;
+}
+
 interface BaseOptions {
   // Required
   /**
@@ -370,23 +395,7 @@ interface BaseOptions {
    *
    * The location object used for geomodel prediction.
    */
-  location?: {
-    /**
-     *
-     * The latitude of the location.
-     */
-    latitude?: number;
-    /**
-     *
-     * The longitude of the location.
-     */
-    longitude?: number;
-    /**
-     *
-     * The elevation of the location.
-     */
-    elevation?: number;
-  };
+  location?: Location;
   /**
    *
    * The path to the geo model file.
@@ -465,4 +474,21 @@ export function getPredictionsForImage(
 ): Promise<ResultForImage> {
   optionsAreValidForImage(options);
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
+}
+
+interface OptionsForLocation {
+  // Required
+  taxonomyPath: string;
+  geoModelPath: string;
+  location: Location;
+}
+
+/**
+ * Function to call the geo model with a given location
+ */
+export function getPredictionsForLocation(
+  options: OptionsForLocation
+): Promise<Result> {
+  locationIsValid(options.location);
+  return VisionCameraPluginInatVision.getPredictionsForLocation(options);
 }

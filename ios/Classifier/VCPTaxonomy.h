@@ -18,7 +18,8 @@
 @property float taxonomyRollupCutoff;
 
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
-- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
+- (NSArray *)leafScoresFromClassification:(MLMultiArray *)classification;
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
+- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
 
 @end

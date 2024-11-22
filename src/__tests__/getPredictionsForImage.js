@@ -1,19 +1,10 @@
 import { getPredictionsForImage } from '../index';
 
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-    select: jest.fn(),
-  },
-  NativeModules: {
-    VisionCameraPluginInatVision: {
-      getPredictionsForImage: jest.fn(),
-    },
-  },
-}));
-
 const correctOptions = {
+  uri: 'testUri',
   version: '1.0',
+  modelPath: 'testModelPath',
+  taxonomyPath: 'testTaxonomyPath',
   confidenceThreshold: 0.5,
   cropRatio: 0.8,
 };
@@ -34,7 +25,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 
@@ -45,7 +36,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 
@@ -56,7 +47,7 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'getPredictionsForImage option confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a string for a number between 0 and 1.'
     );
   });
 });
@@ -69,7 +60,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 
@@ -80,7 +71,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 
@@ -91,7 +82,7 @@ describe('cropRatio', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'option cropRatio must be a number between 0 and 1.'
+      'cropRatio must be a number between 0 and 1.'
     );
   });
 });

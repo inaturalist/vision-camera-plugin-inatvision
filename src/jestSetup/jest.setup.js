@@ -31,6 +31,7 @@ jest.mock('react-native', () => ({
   NativeModules: {
     VisionCameraPluginInatVision: {
       getPredictionsForImage: jest.fn(),
+      getPredictionsForLocation: jest.fn(),
     },
   },
 }));

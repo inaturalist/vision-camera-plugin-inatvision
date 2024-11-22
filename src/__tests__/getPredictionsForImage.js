@@ -1,17 +1,5 @@
 import { getPredictionsForImage } from '../index';
 
-jest.mock('react-native', () => ({
-  Platform: {
-    OS: 'ios',
-    select: jest.fn(),
-  },
-  NativeModules: {
-    VisionCameraPluginInatVision: {
-      getPredictionsForImage: jest.fn(),
-    },
-  },
-}));
-
 const correctOptions = {
   uri: 'testUri',
   version: '1.0',

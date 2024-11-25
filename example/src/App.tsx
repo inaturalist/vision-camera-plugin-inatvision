@@ -344,7 +344,7 @@ export default function App(): React.JSX.Element {
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>
-          <Text style={styles.text}>Node taxa expected nearby:</Text>
+          <Text style={styles.text}>Leaf taxa expected nearby:</Text>
           <Text style={styles.smallLabel}>
             {results.map((r) => r.name).toString()}
           </Text>

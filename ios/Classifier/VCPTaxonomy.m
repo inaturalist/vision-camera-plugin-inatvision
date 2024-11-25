@@ -97,15 +97,29 @@
     self.nodesByTaxonId = nil;
 }
 
-- (NSArray *)leafScoresFromClassification:(MLMultiArray *)classification {
+- (NSArray *)expectedNearbyFromClassification:(MLMultiArray *)classification {
     NSMutableArray *scores = [NSMutableArray array];
+    NSMutableArray *filteredOutScores = [NSMutableArray array];
 
     for (VCPNode *leaf in self.leaves) {
         NSNumber *score = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
         VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:leaf
                                                             score:score.floatValue];
-        [scores addObject:prediction];
+        // If score is higher than geoThreshold it means the taxon is "expected nearby"
+        if (leaf.spatialThreshold) {
+          if (score.floatValue >= leaf.spatialThreshold.floatValue) {
+            [scores addObject:prediction];
+          } else {
+            [filteredOutScores addObject:prediction];
+          }
+        } else {
+          [scores addObject:prediction];
+        }
     }
+
+    // Log length of scores
+    NSLog(@"Length of scores: %lu", (unsigned long)scores.count);
+    NSLog(@"Length of filteredOutScores: %lu", (unsigned long)filteredOutScores.count);
 
     return [NSArray arrayWithArray:scores];
 }

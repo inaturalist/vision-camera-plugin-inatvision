@@ -46,7 +46,6 @@ fs.createReadStream(filePathTaxonomy)
         entriesGeoThresholds.forEach((entry) => {
           thresholdDict[entry.taxon_id] = entry.thres;
         });
-        console.log('thresholdDict', thresholdDict);
         const combinedEntries = entriesTaxonomy.map((entry) => {
           // Add the geoThreshold to the entry
           entry.spatial_threshold = thresholdDict[entry.taxon_id]
@@ -57,6 +56,5 @@ fs.createReadStream(filePathTaxonomy)
         // Write json to file
         const json = JSON.stringify(combinedEntries, null, 2);
         fs.writeFileSync('taxonomy.json', json);
-        // TODO: replace "" with null
       });
   });

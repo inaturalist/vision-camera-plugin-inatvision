@@ -25,9 +25,15 @@ import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 
-const testLocation = {
-  latitude: 54.28889,
-  longitude: 18.94415,
+const testLocationEurope = {
+  latitude: 54.29,
+  longitude: 18.95,
+  elevation: 15,
+};
+
+const testLocationAmerica = {
+  latitude: -124.29,
+  longitude: 18.95,
   elevation: 15,
 };
 
@@ -188,7 +194,7 @@ export default function App(): React.JSX.Element {
             cropRatio: 0.9,
             useGeoModel,
             geoModelPath,
-            location: testLocation,
+            location: testLocationEurope,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
@@ -259,12 +265,12 @@ export default function App(): React.JSX.Element {
       });
   }
 
-  function predictLocation() {
+  function predictLocation(location2: Object) {
     const timeBefore = new Date().getTime();
     InatVision.getPredictionsForLocation({
       taxonomyPath,
       geoModelPath,
-      location: testLocation,
+      location: location2,
     })
       .then((result) => {
         const timeAfter = new Date().getTime();
@@ -337,10 +343,14 @@ export default function App(): React.JSX.Element {
 
   const renderGeoModelView = () => (
     <>
-      <Text style={styles.text}>Lat: {testLocation.latitude}</Text>
-      <Text style={styles.text}>Lng: {testLocation.longitude}</Text>
-      <Text style={styles.text}>Ele: {testLocation.elevation}</Text>
-      <Button onPress={predictLocation} title="Use geomodel" />
+      <Button
+        onPress={() => predictLocation(testLocationEurope)}
+        title="Use geomodel in Europe"
+      />
+      <Button
+        onPress={() => predictLocation(testLocationAmerica)}
+        title="Use geomodel in America"
+      />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>

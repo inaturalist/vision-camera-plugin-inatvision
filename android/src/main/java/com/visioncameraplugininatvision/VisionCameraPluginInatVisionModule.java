@@ -71,6 +71,8 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
     public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
     public static final String OPTION_CROP_RATIO = "cropRatio";
+    public static final String OPTION_GEO_MODEL_PATH = "geoModelPath";
+    public static final String OPTION_LOCATION = "location";
 
     public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
     private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
@@ -188,6 +190,31 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
   @ReactMethod
   public void getPredictionsForLocation(ReadableMap options, Promise promise) {
+        // Destructure the model path from the options map
+        String geoModelPath = options.getString(OPTION_GEO_MODEL_PATH);
+        String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
+        ReadableMap location = options.getMap(OPTION_LOCATION);
+
+        GeoClassifier classifier = null;
+        try {
+            classifier = new GeoClassifier(geoModelPath, taxonomyPath, "2.4");
+        } catch (IOException e) {
+            e.printStackTrace();
+            promise.reject("E_CLASSIFIER", "Failed to initialize an image mClassifier: " + e.getMessage());
+            return;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            Timber.tag(TAG).w("Out of memory - Device not supported - classifier failed to load - " + e);
+            promise.reject("E_OUT_OF_MEMORY", "Out of memory");
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Timber.tag(TAG).w("Other type of exception - Device not supported - classifier failed to load - " + e);
+            promise.reject("E_UNSUPPORTED_DEVICE", "Android version is too old - needs to be at least 6.0");
+            return;
+        }
+
+
         WritableArray cleanedPredictions = Arguments.createArray();
 
         WritableMap resultMap = Arguments.createMap();

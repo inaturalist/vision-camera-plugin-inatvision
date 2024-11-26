@@ -341,7 +341,7 @@ function handleResult(result: any, options: Options): Result {
   return handledResult;
 }
 
-interface Location {
+export interface Location {
   /**
    *
    * The latitude of the location.

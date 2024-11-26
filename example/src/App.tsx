@@ -265,7 +265,7 @@ export default function App(): React.JSX.Element {
       });
   }
 
-  function predictLocation(location2: Object) {
+  function predictLocation(location2: InatVision.Location) {
     const timeBefore = new Date().getTime();
     InatVision.getPredictionsForLocation({
       taxonomyPath,

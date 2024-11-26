@@ -178,4 +178,14 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         resultMap.putMap("options", options);
         promise.resolve(resultMap);
     }
+
+  @ReactMethod
+  public void getPredictionsForLocation(ReadableMap options, Promise promise) {
+        WritableArray cleanedPredictions = Arguments.createArray();
+
+        WritableMap resultMap = Arguments.createMap();
+        resultMap.putArray("predictions", cleanedPredictions);
+        resultMap.putMap("options", options);
+        promise.resolve(resultMap);
+  }
 }

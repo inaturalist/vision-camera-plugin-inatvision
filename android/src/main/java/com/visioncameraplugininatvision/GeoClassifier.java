@@ -80,6 +80,25 @@ public class GeoClassifier {
 
     //     return predictions;
     // }
+    /*
+    * iNat geo model input normalization documented here:
+    * https://github.com/inaturalist/inatGeoModelTraining/tree/main#input-normalization
+    */
+    public TensorBuffer normAndEncodeLocation(double latitude, double longitude, double elevation) {
+        double normLat = latitude / 90.0;
+        double normLng = longitude / 180.0;
+        double normElev = 0.0;
+        if (elevation > 0) {
+            normElev = elevation / 5705.63;
+        } else {
+            normElev = elevation / 32768.0;
+        }
+        double a = sin(PI * normLng);
+        double b = sin(PI * normLat);
+        double c = cos(PI * normLng);
+        double d = cos(PI * normLat);
+    }
+
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Geo model classifier has not been initialized; Skipped.");

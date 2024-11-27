@@ -31,6 +31,11 @@ const testLocationEurope = {
   elevation: 15,
 };
 
+const testLocationEuropeNoElevation = {
+  latitude: 54.29,
+  longitude: 18.95,
+};
+
 const testLocationAmerica = {
   latitude: -124.29,
   longitude: 18.95,
@@ -355,6 +360,10 @@ export default function App(): React.JSX.Element {
       <Button
         onPress={() => predictLocation(testLocationAmerica)}
         title="Use geomodel in America"
+      />
+      <Button
+        onPress={() => predictLocation(testLocationEuropeNoElevation)}
+        title="Use geomodel without elevation"
       />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (

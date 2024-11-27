@@ -195,6 +195,10 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
         ReadableMap location = options.getMap(OPTION_LOCATION);
 
+        double latitude = location.getDouble("latitude");
+        double longitude = location.getDouble("longitude");
+        double elevation = location.getDouble("elevation");
+
         GeoClassifier classifier = null;
         try {
             classifier = new GeoClassifier(geoModelPath, taxonomyPath, "2.4");
@@ -213,6 +217,8 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             promise.reject("E_UNSUPPORTED_DEVICE", "Android version is too old - needs to be at least 6.0");
             return;
         }
+
+        List<Prediction> predictions = classifier.classifyLocation(latitude, longitude, elevation);
 
 
         WritableArray cleanedPredictions = Arguments.createArray();

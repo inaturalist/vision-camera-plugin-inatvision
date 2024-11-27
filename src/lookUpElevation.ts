@@ -1,12 +1,10 @@
-import { createReadStream } from 'fs';
-import * as path from 'path';
-import csv from 'csv-parser';
-
 import type { Location } from '.';
+
+import elevationLookupDict from './elevation_r4_5m.json';
 
 export function lookUpElevation(location: Location): number {
   //const h3LookupTable =
-  setupElevationDataFrame();
+  // setupElevationDataFrame();
 
   // // Transform coordinates to h3 index
   // const h3Index = geoToH3(location.latitude, location.longitude, resolution);
@@ -15,7 +13,7 @@ export function lookUpElevation(location: Location): number {
   // const elevation = h3LookupTable[h3Index];
 
   // return elevation;
-  return location.latitude;
+  return elevationLookupDict['8400281ffffffff'] * location.latitude;
 }
 
 // def setup_elevation_dataframe(self):
@@ -32,30 +30,6 @@ export function lookUpElevation(location: Location): number {
 //     self.geo_elevation_cell_indices = {
 //         index: idx for idx, index in enumerate(self.geo_elevation_cells.index)
 //     }
-
-let geoElevationCells: Record<string, number>;
-// let geoElevationCellIndices: Record<string, number>;
-
-async function setupElevationDataFrame() {
-  const filePath = path.join(__dirname, 'elevation_r4_5m.csv');
-  const results: any[] = [];
-
-  createReadStream(filePath)
-    .pipe(csv())
-    .on('data', (data) => results.push(data))
-    .on('end', () => {
-      results.sort((a, b) => a.h3_04.localeCompare(b.h3_04));
-      geoElevationCells = results.reduce((acc, row) => {
-        acc[row.h3_04] = row;
-        return acc;
-      }, {});
-      console.log('geoElevationCells', geoElevationCells);
-      // geoElevationCellIndices = results.reduce((acc, row, idx) => {
-      //   acc[row.h3_04] = idx;
-      //   return acc;
-      // }, {});
-    });
-}
 
 // function geoToH3(latitude: number, longitude: number, resolution: number) {
 //   // Placeholder function to transform coordinates to h3 index

@@ -30,6 +30,7 @@ public class GeoClassifier {
     private final String mTaxonomyFilename;
     private final String mModelVersion;
     private int mModelSize;
+    private final float mLocationChangeThreshold = -0.001f;
 
     /** An instance of the driver class to run model inference with Tensorflow Lite. */
     private Interpreter mTFlite;

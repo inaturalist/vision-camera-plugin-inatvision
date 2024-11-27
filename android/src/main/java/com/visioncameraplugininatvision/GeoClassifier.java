@@ -80,6 +80,14 @@ public class GeoClassifier {
 
     //     return predictions;
     // }
+    public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
+        if (mTFlite == null) {
+            Timber.tag(TAG).e("Geo model classifier has not been initialized; Skipped.");
+            return null;
+        }
+        List<Prediction> predictions = null;
+        return predictions;
+    }
 
     /** Closes tflite to release resources. */
     public void close() {

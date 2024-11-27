@@ -201,16 +201,9 @@ const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
 
 function locationIsValid(location: Location): boolean {
   'worklet';
-  if (
-    !location ||
-    !location.latitude ||
-    !location.longitude ||
-    !location.elevation
-  ) {
+  if (!location || !location.latitude || !location.longitude) {
     // have not used INatVisionError here because I can not test it due to issue #36
-    throw new Error(
-      'location must have latitude, longitude, and elevation set.'
-    );
+    throw new Error('location must have latitude and longitude set.');
   }
   return true;
 }
@@ -361,7 +354,7 @@ export interface Location {
    *
    * The elevation of the location.
    */
-  elevation: number;
+  elevation?: number;
 }
 
 interface BaseOptions {

@@ -12,8 +12,8 @@ fs.createReadStream(filePath)
   .on('end', () => {
     entries.sort((a, b) => a.h3_04.localeCompare(b.h3_04));
     const exported = entries.reduce((acc, row) => {
-      // If elevation is positive, add it to the dictionary
-      if (parseFloat(row.elevation) > 0) {
+      // Remove the -32768.0 values
+      if (parseFloat(row.elevation) !== -32768.0) {
         acc[row.h3_04] = parseFloat(row.elevation);
       }
       return acc;

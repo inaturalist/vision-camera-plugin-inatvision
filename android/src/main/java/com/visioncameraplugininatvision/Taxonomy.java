@@ -157,6 +157,19 @@ public class Taxonomy {
     public List<Prediction> predict(Map<Integer, Object> outputs) {
         // Get raw predictions
         float[] results = ((float[][]) outputs.get(0))[0];
+        // Make a copy of results
+        float[] resultsCopy = results.clone();
+        // Make sure results is sorted by score
+        Arrays.sort(resultsCopy);
+        // Get result with the highest score
+        float topCombinedScore = resultsCopy[resultsCopy.length - 1];
+        float scoreRatioCutoff = 0.001f;
+        float cutoff = topCombinedScore * scoreRatioCutoff;
+        // If no mTaxonomyRollupCutoff is set (= 0.0) use this cutoff
+        if (mTaxonomyRollupCutoff == 0.0f) {
+            setTaxonomyRollupCutoff(cutoff);
+        }
+        resultsCopy = null;
 
         Map<String, Float> scores = aggregateScores(results);
         Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());

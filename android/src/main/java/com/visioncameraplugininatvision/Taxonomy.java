@@ -173,12 +173,7 @@ public class Taxonomy {
         }
         resultsCopy = null;
 
-        mExcludedLeafScoreSum = 0.0f;
-        Map<String, Float> scores = aggregateScores(results);
-        // Re-normalize all scores with the sum of all remaining leaf scores
-        for (String key : scores.keySet()) {
-          scores.put(key, scores.get(key) / (1.0f - mExcludedLeafScoreSum));
-        }
+        Map<String, Float> scores = aggregateAndNormalizeScores(results);
         Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(scores);
 
@@ -187,8 +182,15 @@ public class Taxonomy {
 
 
     /** Aggregates scores for nodes, including non-leaf nodes (so each non-leaf node has a score of the sum of all its dependents) */
-    private Map<String, Float> aggregateScores(float[] results) {
-        return aggregateScores(results, mLifeNode);
+    private Map<String, Float> aggregateAndNormalizeScores(float[] results) {
+        // Reset the sum of removed leaf scores
+        mExcludedLeafScoreSum = 0.0f;
+        Map<String, Float> scores = aggregateScores(results, mLifeNode);
+        // Re-normalize all scores with the sum of all remaining leaf scores
+        for (String key : scores.keySet()) {
+          scores.put(key, scores.get(key) / (1.0f - mExcludedLeafScoreSum));
+        }
+        return scores;
     }
 
     /** Following: https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136 */

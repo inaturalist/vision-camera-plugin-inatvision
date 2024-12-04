@@ -65,7 +65,7 @@ public class Taxonomy {
     private boolean mNegativeFilter = false;
 
     private float mTaxonomyRollupCutoff = 0.0f;
-    private float mExcludedScoreSum = 0.0f;
+    private float mExcludedLeafScoreSum = 0.0f;
 
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {
@@ -173,11 +173,11 @@ public class Taxonomy {
         }
         resultsCopy = null;
 
-        mExcludedScoreSum = 0.0f;
+        mExcludedLeafScoreSum = 0.0f;
         Map<String, Float> scores = aggregateScores(results);
         // Re-normalize all scores with the sum of all remaining leaf scores
         for (String key : scores.keySet()) {
-          scores.put(key, scores.get(key) / (1.0f - mExcludedScoreSum));
+          scores.put(key, scores.get(key) / (1.0f - mExcludedLeafScoreSum));
         }
         Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(scores);
@@ -231,7 +231,7 @@ public class Taxonomy {
             if (!filterOut && leafScore >= mTaxonomyRollupCutoff) {
               allScores.put(currentNode.key, leafScore);
             } else {
-              mExcludedScoreSum += leafScore;
+              mExcludedLeafScoreSum += leafScore;
             }
         }
 

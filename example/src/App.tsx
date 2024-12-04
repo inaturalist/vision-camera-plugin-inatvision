@@ -193,7 +193,7 @@ export default function App(): React.JSX.Element {
             cropRatio: 0.9,
             useGeoModel,
             geoModelPath,
-            location: testLocationEurope,
+            // location: testLocationEurope,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();

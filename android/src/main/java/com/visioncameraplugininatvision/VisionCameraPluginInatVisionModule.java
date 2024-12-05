@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -80,6 +81,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
     @ReactMethod
     public void getPredictionsForImage(ReadableMap options, Promise promise) {
+        long startTime = SystemClock.uptimeMillis();
         Log.d(TAG, "getPredictionsForImage: options:" + options);
         // Required options
         if (!options.hasKey(OPTION_URI) || !options.hasKey(OPTION_MODEL_PATH) || !options.hasKey(OPTION_TAXONOMY_PATH)|| !options.hasKey(OPTION_VERSION)) {
@@ -172,10 +174,13 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             }
 
         }
-
+        
+        long endTime = SystemClock.uptimeMillis();
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);
         resultMap.putMap("options", options);
+        // Time elapsed on the native side; in seconds
+        resultMap.putDouble("timeElapsed", (endTime - startTime) / 1000.0);
         promise.resolve(resultMap);
     }
 }

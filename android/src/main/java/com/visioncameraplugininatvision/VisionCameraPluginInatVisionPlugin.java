@@ -2,6 +2,7 @@ package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -61,6 +62,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
   @Override
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) throws FrameInvalidError {
+    long startTime = SystemClock.uptimeMillis();
     Image image = frame.getImage();
     // This should give the orientation of the passed in frame, as of vision-camera v3.2.2 this is not working though
     // instead we use a string passed in via the arguments to signify the device orientation
@@ -168,8 +170,11 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
     }
 
+    long endTime = SystemClock.uptimeMillis();
     Map<String, Object> resultMap = new HashMap<>();
     resultMap.put("predictions", cleanedPredictions);
+    // Time elapsed on the native side; in seconds
+    resultMap.put("timeElapsed", (endTime - startTime) / 1000.0);
     return resultMap;
   }
 }

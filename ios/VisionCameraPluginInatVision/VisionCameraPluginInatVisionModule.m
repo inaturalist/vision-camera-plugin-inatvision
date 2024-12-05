@@ -209,7 +209,7 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
         [predictions addObject:[prediction asDict]];
     }
 
-    // End timestamp
+    // Time elapsed on the native side; in seconds
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"getPredictionsForLocation took %f seconds", timeElapsed);
 

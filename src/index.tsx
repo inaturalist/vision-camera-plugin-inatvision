@@ -189,6 +189,11 @@ export interface Result {
   options: Options;
   predictions: Prediction[];
   timestamp: number;
+  /**
+   *
+   * The time spent on the native side for this prediction.
+   * In seconds.
+   */
   timeElapsed?: number; //iOS only
 }
 

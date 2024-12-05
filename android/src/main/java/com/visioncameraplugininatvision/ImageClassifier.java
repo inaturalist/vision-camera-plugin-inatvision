@@ -2,7 +2,6 @@ package com.visioncameraplugininatvision;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.SystemClock;
 import android.util.Log;
 
 import org.tensorflow.lite.Interpreter;
@@ -103,8 +102,6 @@ public class ImageClassifier {
             Timber.tag(TAG).e("Null input bitmap");
             return null;
         }
-
-        long startTime = SystemClock.uptimeMillis();
         convertBitmapToByteBuffer(bitmap);
 
         byte[] arr = new byte[imgData.remaining()];
@@ -127,7 +124,6 @@ public class ImageClassifier {
             exc.printStackTrace();
             return new ArrayList<Prediction>();
         }
-        long endTime = SystemClock.uptimeMillis();
 
         return predictions;
     }

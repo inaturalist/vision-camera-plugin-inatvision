@@ -69,14 +69,6 @@ public class ImageClassifier {
         return mTaxonomy.getNegativeFilter();
     }
 
-    public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
-        mTaxonomy.setTaxonomyRollupCutoff(taxonomyRollupCutoff);
-    }
-
-    public float getTaxonomyRollupCutoff() {
-        return mTaxonomy.getTaxonomyRollupCutoff();
-    }
-
     /** Initializes an {@code ImageClassifier}. */
     public ImageClassifier(String modelPath, String taxonomyPath, String version) throws IOException {
         mModelFilename = modelPath;
@@ -94,7 +86,7 @@ public class ImageClassifier {
     }
 
     /** Classifies a frame from the preview stream. */
-    public List<Prediction> classifyFrame(Bitmap bitmap) {
+    public List<Prediction> classifyFrame(Bitmap bitmap, Double taxonomyRollupCutoff) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");
             return null;
@@ -119,7 +111,7 @@ public class ImageClassifier {
         List<Prediction> predictions = null;
         try {
             mTFlite.runForMultipleInputsOutputs(input, expectedOutputs);
-            predictions = mTaxonomy.predict(expectedOutputs);
+            predictions = mTaxonomy.predict(expectedOutputs, taxonomyRollupCutoff);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();

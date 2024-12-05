@@ -96,10 +96,6 @@ public class Taxonomy {
         mTaxonomyRollupCutoff = taxonomyRollupCutoff;
     }
 
-    public float getTaxonomyRollupCutoff() {
-        return mTaxonomyRollupCutoff;
-    }
-
     Taxonomy(InputStream is, String version) {
         mModelVersion = version;
         // Read the taxonomy CSV file into a list of nodes
@@ -156,7 +152,7 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(Map<Integer, Object> outputs) {
+    public List<Prediction> predict(Map<Integer, Object> outputs, Double taxonomyRollupCutoff) {
         // Get raw predictions
         float[] results = ((float[][]) outputs.get(0))[0];
         // Make a copy of results
@@ -170,6 +166,10 @@ public class Taxonomy {
         // If no mTaxonomyRollupCutoff is set (= 0.0) use this cutoff
         if (mTaxonomyRollupCutoff == 0.0f) {
             setTaxonomyRollupCutoff(cutoff);
+        }
+        // If taxonomy rollup is given from outside use it instead
+        if (taxonomyRollupCutoff != null) {
+          setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
         }
         resultsCopy = null;
 

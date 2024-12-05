@@ -46,14 +46,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       }
   }
 
-  private float mTaxonomyRollupCutoff = 0.0f;
-  public void setTaxonomyRollupCutoff(float taxonomyRollupCutoff) {
-      mTaxonomyRollupCutoff = taxonomyRollupCutoff;
-      if (mImageClassifier != null) {
-        mImageClassifier.setTaxonomyRollupCutoff(mTaxonomyRollupCutoff);
-      }
-  }
-
   private double mCropRatio = 1.0;
   public void setCropRatio(double cropRatio) {
       mCropRatio = cropRatio;
@@ -106,9 +98,6 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     }
 
     Double taxonomyRollupCutoff = (Double)arguments.get("taxonomyRollupCutoff");
-    if (taxonomyRollupCutoff != null) {
-      setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
-    }
 
     Double cropRatio = (Double)arguments.get("cropRatio");
     if (cropRatio != null) {
@@ -157,7 +146,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       bmp.recycle();
       bmp = rescaledBitmap;
       Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
-      List<Prediction> predictions = mImageClassifier.classifyFrame(bmp);
+      List<Prediction> predictions = mImageClassifier.classifyFrame(bmp, taxonomyRollupCutoff);
       bmp.recycle();
       Log.d(TAG, "Predictions: " + predictions.size());
 

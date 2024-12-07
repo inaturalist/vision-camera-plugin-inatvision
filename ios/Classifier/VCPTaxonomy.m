@@ -16,6 +16,7 @@
 // this is a convenience array for testing
 @property NSArray *leaves;
 @property VCPNode *life;
+@property float excludedLeafScoreSum;
 @end
 
 @implementation VCPTaxonomy
@@ -125,14 +126,14 @@
 }
 
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {
-    NSDictionary *scores = [self aggregateScores:classification];
+    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
     // Log number of nodes in scores
     NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
     return [self buildBestBranchFromScores:scores];
 }
 
 - (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold {
-    NSDictionary *scores = [self aggregateScores:classification];
+    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
     NSArray *bestBranch = [self buildBestBranchFromScores:scores];
 
     for (VCPPrediction *prediction in [bestBranch reverseObjectEnumerator]) {
@@ -174,14 +175,26 @@
 
         if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
             allScores[node.taxonId] = leafScore;
+        } else {
+            self.excludedLeafScoreSum += leafScore.floatValue;
         }
     }
 
     return [allScores copy];
 }
 
-- (NSDictionary *)aggregateScores:(MLMultiArray *)classification {
-    return [self aggregateScores:classification currentNode:self.life];
+- (NSDictionary *)aggregateAndNormalizeScores:(MLMultiArray *)classification {
+    // Reset the sum of removed leaf scores
+    self.excludedLeafScoreSum = 0.0;
+    NSDictionary *scores = [self aggregateScores:classification currentNode:self.life];
+    // Re-normalize scores with the sum of the remaining leaf scores
+    NSMutableDictionary *normalizedScores = [NSMutableDictionary dictionaryWithCapacity:scores.count];
+    for (NSNumber *taxonId in scores.allKeys) {
+        NSNumber *score = scores[taxonId];
+        normalizedScores[taxonId] = @(score.floatValue / (1.0 - self.excludedLeafScoreSum));
+    }
+
+    return [normalizedScores copy];
 }
 
 - (NSArray *)buildBestBranchFromScores:(NSDictionary *)allScoresDict {

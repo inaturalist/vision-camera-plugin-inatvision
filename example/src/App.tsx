@@ -187,14 +187,13 @@ export default function App(): React.JSX.Element {
             modelPath,
             taxonomyPath,
             confidenceThreshold,
-            taxonomyRollupCutoff: 0.001,
             filterByTaxonId,
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
             useGeoModel,
             geoModelPath,
-            location: testLocationEurope,
+            // location: testLocationEurope,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();

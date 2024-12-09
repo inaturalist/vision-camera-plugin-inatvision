@@ -163,10 +163,7 @@ public class Taxonomy {
         float topCombinedScore = resultsCopy[resultsCopy.length - 1];
         float scoreRatioCutoff = 0.001f;
         float cutoff = topCombinedScore * scoreRatioCutoff;
-        // If no mTaxonomyRollupCutoff is set (= 0.0) use this cutoff
-        if (mTaxonomyRollupCutoff == 0.0f) {
-            setTaxonomyRollupCutoff(cutoff);
-        }
+        setTaxonomyRollupCutoff(cutoff);
         // If taxonomy rollup is given from outside use it instead
         if (taxonomyRollupCutoff != null) {
           setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());

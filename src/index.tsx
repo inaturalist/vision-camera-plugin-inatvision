@@ -423,9 +423,10 @@ interface Options extends BaseOptions {
   numStoredResults?: number;
   /**
    * A taxonomy rollup cutoff threshold.
+   * This is supposed to be used mainly for testing purposes. The frame processor pipeline has an inbuilt
+   * cutoff of combined top score * 0.001. Setting a value here will override the inbuilt cutoff.
    * As a fraction of 1. After computer vision predictions are returned, this value filters out all nodes with
-   * a lower score for the caluclation of the best branch or top predictions.
-   * Defaults to 0.0.
+   * a lower score for the calculation of the best branch or top predictions.
    */
   taxonomyRollupCutoff?: number;
   /**

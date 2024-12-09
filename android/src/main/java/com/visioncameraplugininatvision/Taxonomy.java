@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,7 @@ public class Taxonomy {
     private boolean mNegativeFilter = false;
 
     private float mTaxonomyRollupCutoff = 0.0f;
+    private float mExcludedLeafScoreSum = 0.0f;
 
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {
@@ -92,10 +94,6 @@ public class Taxonomy {
             Timber.tag(TAG).d("setTaxonomyRollupCutoff: changing taxonomyRollupCutoff from " + mTaxonomyRollupCutoff + " to " + taxonomyRollupCutoff);
         }
         mTaxonomyRollupCutoff = taxonomyRollupCutoff;
-    }
-
-    public float getTaxonomyRollupCutoff() {
-        return mTaxonomyRollupCutoff;
     }
 
     Taxonomy(InputStream is, String version) {
@@ -154,11 +152,25 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(Map<Integer, Object> outputs) {
+    public List<Prediction> predict(Map<Integer, Object> outputs, Double taxonomyRollupCutoff) {
         // Get raw predictions
         float[] results = ((float[][]) outputs.get(0))[0];
+        // Make a copy of results
+        float[] resultsCopy = results.clone();
+        // Make sure results is sorted by score
+        Arrays.sort(resultsCopy);
+        // Get result with the highest score
+        float topCombinedScore = resultsCopy[resultsCopy.length - 1];
+        float scoreRatioCutoff = 0.001f;
+        float cutoff = topCombinedScore * scoreRatioCutoff;
+        setTaxonomyRollupCutoff(cutoff);
+        // If taxonomy rollup is given from outside use it instead
+        if (taxonomyRollupCutoff != null) {
+          setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
+        }
+        resultsCopy = null;
 
-        Map<String, Float> scores = aggregateScores(results);
+        Map<String, Float> scores = aggregateAndNormalizeScores(results);
         Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(scores);
 
@@ -167,8 +179,15 @@ public class Taxonomy {
 
 
     /** Aggregates scores for nodes, including non-leaf nodes (so each non-leaf node has a score of the sum of all its dependents) */
-    private Map<String, Float> aggregateScores(float[] results) {
-        return aggregateScores(results, mLifeNode);
+    private Map<String, Float> aggregateAndNormalizeScores(float[] results) {
+        // Reset the sum of removed leaf scores
+        mExcludedLeafScoreSum = 0.0f;
+        Map<String, Float> scores = aggregateScores(results, mLifeNode);
+        // Re-normalize all scores with the sum of all remaining leaf scores
+        for (String key : scores.keySet()) {
+          scores.put(key, scores.get(key) / (1.0f - mExcludedLeafScoreSum));
+        }
+        return scores;
     }
 
     /** Following: https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136 */
@@ -210,6 +229,8 @@ public class Taxonomy {
             float leafScore = results[Integer.valueOf(currentNode.leafId)];
             if (!filterOut && leafScore >= mTaxonomyRollupCutoff) {
               allScores.put(currentNode.key, leafScore);
+            } else {
+              mExcludedLeafScoreSum += leafScore;
             }
         }
 

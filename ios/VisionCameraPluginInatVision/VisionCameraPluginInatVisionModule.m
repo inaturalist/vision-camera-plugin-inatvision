@@ -5,7 +5,7 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
-#import "VCPGeoModel.h"
+#import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
 
 #import <React/RCTBridgeModule.h>
@@ -16,7 +16,7 @@
 @interface AwesomeModule : NSObject <RCTBridgeModule>
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
-+ (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
++ (VCPGeomodel *)geomodelWithModelFile:(NSString *)geomodelPath;
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
@@ -32,14 +32,14 @@ RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
     return taxonomy;
 }
 
-+ (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
-    static VCPGeoModel *geoModel = nil;
++ (VCPGeomodel *)geomodelWithModelFile:(NSString *)modelPath {
+    static VCPGeomodel *geomodel = nil;
 
-    if (geoModel == nil) {
-        geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
+    if (geomodel == nil) {
+        geomodel = [[VCPGeomodel alloc] initWithModelPath:modelPath];
     }
 
-    return geoModel;
+    return geomodel;
 }
 
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
@@ -181,8 +181,8 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     NSLog(@"getPredictionsForLocation options: %@", options);
     // Destructure taxonomy path out of options
     NSString *taxonomyPath = options[@"taxonomyPath"];
-    // Destructure geo model path out of options
-    NSString *geoModelPath = options[@"geoModelPath"];
+    // Destructure geomodel path out of options
+    NSString *geomodelPath = options[@"geomodelPath"];
     // Destructure location out of options
     NSDictionary* location = options[@"location"];
     // Destructure latitude out of location
@@ -195,13 +195,13 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     // Setup taxonomy
     VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
 
-    MLMultiArray *geoModelPreds = nil;
-    VCPGeoModel *geoModel = [AwesomeModule geoModelWithModelFile:geoModelPath];
-    geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+    MLMultiArray *geomodelPreds = nil;
+    VCPGeomodel *geomodel = [AwesomeModule geomodelWithModelFile:geomodelPath];
+   geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                             lng:longitude.floatValue
                                       elevation:elevation.floatValue];
 
-    NSArray *leafScores = [taxonomy expectedNearbyFromClassification:geoModelPreds];
+    NSArray *leafScores = [taxonomy expectedNearbyFromClassification:geomodelPreds];
 
     // convert the VCPPredictions in the bestRecentBranch into dicts
     NSMutableArray *predictions = [NSMutableArray array];

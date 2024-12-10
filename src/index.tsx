@@ -242,10 +242,10 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       throw new Error('cropRatio must be a number between 0 and 1.');
     }
   }
-  if (options.useGeoModel) {
+  if (options.useGeomodel) {
     if (!options.location) {
       // have not used INatVisionError here because I can not test it due to issue #36
-      throw new Error('location must be set when useGeoModel is true.');
+      throw new Error('location must be set when useGeomodel is true.');
     }
     locationIsValid(options.location);
   }
@@ -393,9 +393,9 @@ interface BaseOptions {
   cropRatio?: number;
   /**
    *
-   * Whether to use the geo model.
+   * Whether to use the geomodel.
    */
-  useGeoModel?: boolean;
+  useGeomodel?: boolean;
   /**
    *
    * The location object used for geomodel prediction.
@@ -403,9 +403,9 @@ interface BaseOptions {
   location?: Location;
   /**
    *
-   * The path to the geo model file.
+   * The path to the geomodel file.
    */
-  geoModelPath?: string;
+  geomodelPath?: string;
 }
 
 /**
@@ -485,12 +485,12 @@ export function getPredictionsForImage(
 interface OptionsForLocation {
   // Required
   taxonomyPath: string;
-  geoModelPath: string;
+  geomodelPath: string;
   location: Location;
 }
 
 /**
- * Function to call the geo model with a given location
+ * Function to call the geomodel with a given location
  */
 export function getPredictionsForLocation(
   options: OptionsForLocation

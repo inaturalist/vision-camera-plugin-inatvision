@@ -39,20 +39,20 @@ const testLocationAmerica = {
 
 const modelFilenameAndroid = 'small_inception_tf1.tflite';
 const taxonomyFilenameAndroid = 'small_export_tax.csv';
-const geoModelFilenameAndroid = 'not_implemented';
+const geomodelFilenameAndroid = 'not_implemented';
 const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
 const taxonomyFilenameIOS = 'small_export_tax.json';
-const geoModelFilenameIOS = 'small_geomodel.mlmodelc';
+const geomodelFilenameIOS = 'small_geomodel.mlmodelc';
 const modelVersion = '1.0';
 
 const modelPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
-const geoModelPath =
+const geomodelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${geoModelFilenameIOS}`
-    : `${RNFS.DocumentDirectoryPath}/${geoModelFilenameAndroid}`;
+    ? `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
+    : `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
     ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
@@ -67,7 +67,7 @@ export default function App(): React.JSX.Element {
     undefined | string | null
   >(undefined);
   const [negativeFilter, setNegativeFilter] = useState(false);
-  const [useGeoModel, setUseGeoModel] = useState(false);
+  const [useGeomodel, setUseGeomodel] = useState(false);
 
   enum VIEW_STATUS {
     NONE,
@@ -86,8 +86,8 @@ export default function App(): React.JSX.Element {
     setNegativeFilter(!negativeFilter);
   };
 
-  const toggleUseGeoModel = () => {
-    setUseGeoModel(!useGeoModel);
+  const toggleUseGeomodel = () => {
+    setUseGeomodel(!useGeomodel);
   };
 
   const changeFilterByTaxonId = () => {
@@ -135,14 +135,14 @@ export default function App(): React.JSX.Element {
           console.log(`error moving model file`, error);
         });
       RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${geoModelFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${geoModelFilenameIOS}`
+        `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`,
+        `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
       )
         .then((result) => {
-          console.log(`moved geo model file from`, result);
+          console.log(`moved geomodel file from`, result);
         })
         .catch((error) => {
-          console.log(`error moving geo model file`, error);
+          console.log(`error moving geomodel file`, error);
         });
       RNFS.copyFile(
         `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
@@ -182,6 +182,12 @@ export default function App(): React.JSX.Element {
         try {
           const timeBefore = new Date().getTime();
 
+          const testLocation = {
+            latitude: 54.29,
+            longitude: 18.95,
+            elevation: 15,
+          };
+
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
             modelPath,
@@ -191,9 +197,9 @@ export default function App(): React.JSX.Element {
             negativeFilter,
             numStoredResults: 4,
             cropRatio: 0.9,
-            useGeoModel,
-            geoModelPath,
-            // location: testLocationEurope,
+            useGeomodel,
+            geomodelPath,
+            location: testLocation,
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
@@ -211,7 +217,7 @@ export default function App(): React.JSX.Element {
       filterByTaxonId,
       negativeFilter,
       handleResults,
-      useGeoModel,
+      useGeomodel,
     ]
   );
 
@@ -268,7 +274,7 @@ export default function App(): React.JSX.Element {
     const timeBefore = new Date().getTime();
     InatVision.getPredictionsForLocation({
       taxonomyPath,
-      geoModelPath,
+      geomodelPath,
       location: location2,
     })
       .then((result) => {
@@ -334,13 +340,13 @@ export default function App(): React.JSX.Element {
     } else if (viewStatus === VIEW_STATUS.GALLERY) {
       return renderGalleryView();
     } else if (viewStatus === VIEW_STATUS.GEOMODEL) {
-      return renderGeoModelView();
+      return renderGeomodelView();
     } else {
       return <Text>Something went wrong</Text>;
     }
   };
 
-  const renderGeoModelView = () => (
+  const renderGeomodelView = () => (
     <>
       <Button
         onPress={() => predictLocation(testLocationEurope)}
@@ -416,8 +422,8 @@ export default function App(): React.JSX.Element {
             title="Close"
           />
           <Button
-            onPress={toggleUseGeoModel}
-            title={useGeoModel ? 'Disable Geo Model' : 'Enable Geo Model'}
+            onPress={toggleUseGeomodel}
+            title={useGeomodel ? 'Disable Geomodel' : 'Enable Geomodel'}
           />
         </View>
       </View>

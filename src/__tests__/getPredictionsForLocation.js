@@ -2,7 +2,7 @@ import { getPredictionsForLocation } from '../index';
 
 const correctOptions = {
   taxonomyPath: 'testTaxonomyPath',
-  geoModelPath: 'testGeoModelPath',
+  geomodelPath: 'testGeomodelPath',
   location: {
     latitude: 54,
     longitude: -18,

@@ -1,5 +1,5 @@
 //
-//  VCPGeoModel.h
+//  VCPGeomodel.h
 //  VisionCameraPluginInatVision
 //
 //  Created by Alex Shepard on 10/18/24.
@@ -11,12 +11,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface VCPGeoModel : NSObject
+@interface VCPGeomodel : NSObject
 
 - (instancetype _Nullable)initWithModelPath:(NSString *)modelPath;
 - (MLMultiArray *)predictionsForLat:(float)latitude lng:(float)longitude elevation:(float)elevation;
 
-@property MLModel *geoModel;
+@property MLModel *geomodel;
 @property float locationChangeThreshold;
 
 @end

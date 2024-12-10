@@ -11,13 +11,13 @@
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
-#import "VCPGeoModel.h"
+#import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
 
 + (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
-+ (VCPGeoModel *)geoModelWithModelFile:(NSString *)geoModelPath;
++ (VCPGeomodel *)geomodelWithModelFile:(NSString *)geomodelPath;
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
 
 @end
@@ -32,14 +32,14 @@
     return taxonomy;
 }
 
-+ (VCPGeoModel *)geoModelWithModelFile:(NSString *)modelPath {
-    static VCPGeoModel *geoModel = nil;
++ (VCPGeomodel *)geomodelWithModelFile:(NSString *)modelPath {
+    static VCPGeomodel *geomodel = nil;
 
-    if (geoModel == nil) {
-        geoModel = [[VCPGeoModel alloc] initWithModelPath:modelPath];
+    if (geomodel == nil) {
+        geomodel = [[VCPGeomodel alloc] initWithModelPath:modelPath];
     }
 
-    return geoModel;
+    return geomodel;
 }
 
 + (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
@@ -142,15 +142,15 @@
     NSNumber *longitude = location[@"longitude"];
     // Destructure elevation out of location
     NSNumber *elevation = location[@"elevation"];
-    // Destructure geo model path out of options
-    NSString *geoModelPath = arguments[@"geoModelPath"];
+    // Destructure geomodel path out of options
+    NSString *geomodelPath = arguments[@"geomodelPath"];
 
-    MLMultiArray *geoModelPreds = nil;
-    if ([arguments objectForKey:@"useGeoModel"] &&
-        [[arguments objectForKey:@"useGeoModel"] boolValue])
+    MLMultiArray *geomodelPreds = nil;
+    if ([arguments objectForKey:@"useGeomodel"] &&
+        [[arguments objectForKey:@"useGeomodel"] boolValue])
     {
-        VCPGeoModel *geoModel = [VisionCameraPluginInatVisionPlugin geoModelWithModelFile:geoModelPath];
-        geoModelPreds = [geoModel predictionsForLat:latitude.floatValue
+        VCPGeomodel *geomodel = [VisionCameraPluginInatVisionPlugin geomodelWithModelFile:geomodelPath];
+       geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
     } else {
@@ -166,9 +166,9 @@
 
     MLMultiArray *results = nil;
 
-    if (geoModelPreds != nil) {
+    if (geomodelPreds != nil) {
         NSError *err = nil;
-        results = [self combineVisionScores:visionScores with:geoModelPreds error:&err];
+        results = [self combineVisionScores:visionScores with:geomodelPreds error:&err];
         results = [self normalizeMultiArray:results error:&err];
     } else {
         results = visionScores;

@@ -45,7 +45,7 @@
             self.spatialId = [dict valueForKey:@"spatial_class_id"];
         }
 
-        // Information available when combined with geo model thesholds file,
+        // Information available when combined with geomodel thresholds file,
         // as done in scripts/createTaxonomy.js
         if ([dict valueForKey:@"spatial_threshold"] && [dict valueForKey:@"spatial_threshold"] != [NSNull null]) {
             self.spatialThreshold = [dict valueForKey:@"spatial_threshold"];

@@ -5,7 +5,7 @@ import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
 
-import { lookUpElevation } from './lookUpElevation';
+import { lookUpLocation } from './lookUpLocation';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
@@ -475,8 +475,8 @@ export function getPredictionsForImage(
 ): Promise<ResultForImage> {
   optionsAreValidForImage(options);
   if (options.location && !options.location.elevation) {
-    const elevation = lookUpElevation(options.location);
-    console.log('elevation', elevation);
+    const location = lookUpLocation(options.location);
+    console.log('location', location);
   }
   return VisionCameraPluginInatVision.getPredictionsForImage(options);
 }
@@ -496,8 +496,8 @@ export function getPredictionsForLocation(
 ): Promise<Result> {
   locationIsValid(options.location);
   if (options.location && !options.location.elevation) {
-    const elevation = lookUpElevation(options.location);
-    console.log('elevation', elevation);
+    const location = lookUpLocation(options.location);
+    console.log('location', location);
   }
   return VisionCameraPluginInatVision.getPredictionsForLocation(options);
 }

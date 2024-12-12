@@ -474,11 +474,14 @@ export function getPredictionsForImage(
   options: OptionsForImage
 ): Promise<ResultForImage> {
   optionsAreValidForImage(options);
-  if (options.location && !options.location.elevation) {
-    const location = lookUpLocation(options.location);
-    console.log('location', location);
+  const newOptions = {
+    ...options,
+  };
+  if (options.useGeomodel && options.location) {
+    const locationLookup = lookUpLocation(options.location);
+    newOptions.location = locationLookup;
   }
-  return VisionCameraPluginInatVision.getPredictionsForImage(options);
+  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions);
 }
 
 interface OptionsForLocation {
@@ -495,9 +498,10 @@ export function getPredictionsForLocation(
   options: OptionsForLocation
 ): Promise<Result> {
   locationIsValid(options.location);
-  if (options.location && !options.location.elevation) {
-    const location = lookUpLocation(options.location);
-    console.log('location', location);
-  }
-  return VisionCameraPluginInatVision.getPredictionsForLocation(options);
+  const locationLookup = lookUpLocation(options.location);
+  const newOptions = {
+    ...options,
+    location: locationLookup,
+  };
+  return VisionCameraPluginInatVision.getPredictionsForLocation(newOptions);
 }

@@ -16,11 +16,11 @@ interface LocationLookup {
 }
 
 export function lookUpLocation(location: Location): LocationLookup {
-  // Transform coordinates to h3 index
+  // # lookup the H3 cell this lat lng occurs in
   const h3Index = latLngToCell(location.latitude, location.longitude, 4);
-
   const h3CellCentroid = cellToLatLng(h3Index);
 
+  // # get the average elevation of the above H3 cell
   // Read the elevation from the lookup table return a minus elevation if h3Index is not found
   const elevation = elevationLookupDictTyped[h3Index] || -32768.0;
   const locationLookup = {

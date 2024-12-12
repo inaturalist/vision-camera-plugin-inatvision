@@ -14,7 +14,7 @@ fs.createReadStream(filePath)
     const exported = entries.reduce((acc, row) => {
       // Remove the -32768.0 values
       if (parseFloat(row.elevation) !== -32768.0) {
-        acc[row.h3_04] = parseFloat(row.elevation);
+        acc[row.h3_04] = parseInt(row.elevation, 10);
       }
       return acc;
     }, {});

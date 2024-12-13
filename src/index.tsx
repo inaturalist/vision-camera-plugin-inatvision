@@ -5,7 +5,8 @@ import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
 
-import { lookUpLocation } from './lookUpLocation';
+import { lookUpLocation as lL } from './lookUpLocation';
+import type { LocationLookup } from './lookUpLocation';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
@@ -443,6 +444,10 @@ interface Options extends BaseOptions {
    * and then rotates the frame accordingly before it is used for processing.
    */
   patchedOrientationAndroid?: string;
+}
+
+export function lookUpLocation(location: Location): LocationLookup {
+  return lL(location);
 }
 
 /**

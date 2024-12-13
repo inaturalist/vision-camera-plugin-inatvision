@@ -9,7 +9,7 @@ type ElevationLookupDict = {
 };
 const elevationLookupDictTyped: ElevationLookupDict = elevationLookupDict;
 
-interface LocationLookup {
+export interface LocationLookup {
   latitude: number;
   longitude: number;
   elevation: number;

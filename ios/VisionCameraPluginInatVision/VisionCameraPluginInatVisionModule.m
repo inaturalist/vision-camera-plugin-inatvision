@@ -238,6 +238,15 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             reject(@"invalid_uri", @"Invalid image URI format", nil);
             return;
         }
+
+        // Check if the image format is supported
+        CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)imageURL, NULL);
+        if (!source) {
+            reject(@"invalid_image", @"Image format not supported or file not accessible", nil);
+            return;
+        }
+        CFRelease(source);
+
         MLMultiArray *visionScores = [cvModel visionPredictionsForUrl:imageURL];
 
         // Combine vision scores with geomodel scores

@@ -2,6 +2,8 @@
 @import Photos;
 @import Vision;
 @import CoreML;
+@import Accelerate;
+@import CoreGraphics;
 
 #import "VCPTaxonomy.h"
 #import "VCPPrediction.h"
@@ -52,6 +54,68 @@ RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
     return cvModel;
 }
 
+- (MLMultiArray * _Nullable)combineVisionScores:(MLMultiArray *)visionScores with:(MLMultiArray *)geoScores error:(NSError **)error {
+    // Ensure both arrays have the same shape
+    if (![visionScores.shape isEqualToArray:geoScores.shape]) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Arrays must have the same shape",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:1
+                                 userInfo:userInfo];
+        return nil;
+    }
+
+    // Create a result MLMultiArray with the same shape as the input arrays
+    MLMultiArray *combinedArray = [[MLMultiArray alloc] initWithShape:visionScores.shape
+                                                             dataType:MLMultiArrayDataTypeFloat32
+                                                                error:error];
+    if (!combinedArray) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Failed to make combined array",
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:2
+                                 userInfo:userInfo];
+        return nil;
+    }
+
+    // Get the data pointers
+    float *visionData = (float *)visionScores.dataPointer;
+    float *geoData = (float *)geoScores.dataPointer;
+    float *combinedData = (float *)combinedArray.dataPointer;
+
+    // Get the number of elements
+    NSInteger count = visionScores.count;
+
+    // Perform element-wise multiplication using vDSP_vmul
+    vDSP_vmul(visionData, 1, geoData, 1, combinedData, 1, count);
+
+    return combinedArray;
+}
+
+- (MLMultiArray *)normalizeMultiArray:(MLMultiArray *)mlArray error:(NSError **)error {
+    NSInteger count = mlArray.count;
+    float *mlData = (float *)mlArray.dataPointer;
+
+    float sum = 0.0;
+    vDSP_sve(mlData, 1, &sum, count);
+
+    if (sum != 0) {
+        vDSP_vsdiv(mlData, 1, &sum, mlData, 1, count);
+    } else {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Sum of elements is zero, normalization not possible."
+        };
+        *error = [NSError errorWithDomain:@"MLMultiArrayErrorDomain"
+                                     code:3
+                                 userInfo:userInfo];
+        return nil;
+    }
+
+    return mlArray;
+}
+
 RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
@@ -71,11 +135,33 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSString* taxonomyPath = options[@"taxonomyPath"];
     // Destructure threshold out of options
     NSNumber* confidenceThreshold = options[@"confidenceThreshold"];
+    // Destructure location out of options
+    NSDictionary *location = options[@"location"];
+    // Destructure latitude out of location
+    NSNumber *latitude = location[@"latitude"];
+    // Destructure longitude out of location
+    NSNumber *longitude = location[@"longitude"];
+    // Destructure elevation out of location
+    NSNumber *elevation = location[@"elevation"];
+    // Destructure geomodel path out of options
+    NSString *geomodelPath = options[@"geomodelPath"];
 
     // Setup threshold
     float threshold = 0.70;
     if (confidenceThreshold) {
       threshold = [confidenceThreshold floatValue];
+    }
+
+    MLMultiArray *geomodelPreds = nil;
+    if ([options objectForKey:@"useGeomodel"] &&
+        [[options objectForKey:@"useGeomodel"] boolValue])
+    {
+        VCPGeomodel *geomodel = [AwesomeModule geomodelWithModelFile:geomodelPath];
+        geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
+                                                lng:longitude.floatValue
+                                          elevation:elevation.floatValue];
+    } else {
+        NSLog(@"not doing anything geo related.");
     }
 
     // Setup taxonomy
@@ -106,8 +192,18 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
           MLMultiArray *visionScores = [cvModel visionPredictionsForImageData:imageData orientation:orientation];
 
+          // Combine vision scores with geomodel scores
+          MLMultiArray *results = nil;
+          if (geomodelPreds != nil) {
+              NSError *err = nil;
+              results = [self combineVisionScores:visionScores with:geomodelPreds error:&err];
+              results = [self normalizeMultiArray:results error:&err];
+          } else {
+              results = visionScores;
+          }
+
           NSMutableArray *topBranches = [NSMutableArray array];
-          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:visionScores];
+          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
           // add this to the end of the recent top branches array
           [topBranches addObject:bestBranch];
 
@@ -139,8 +235,18 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     } else {
         MLMultiArray *visionScores = [cvModel visionPredictionsForUrl:[NSURL URLWithString:uri]];
 
+        // Combine vision scores with geomodel scores
+        MLMultiArray *results = nil;
+        if (geomodelPreds != nil) {
+            NSError *err = nil;
+            results = [self combineVisionScores:visionScores with:geomodelPreds error:&err];
+            results = [self normalizeMultiArray:results error:&err];
+        } else {
+            results = visionScores;
+        }
+
         NSMutableArray *topBranches = [NSMutableArray array];
-        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:visionScores];
+        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
         // add this to the end of the recent top branches array
         [topBranches addObject:bestBranch];
 

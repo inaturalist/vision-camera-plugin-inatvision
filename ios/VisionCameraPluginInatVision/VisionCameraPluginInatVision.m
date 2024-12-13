@@ -150,7 +150,7 @@
         [[arguments objectForKey:@"useGeomodel"] boolValue])
     {
         VCPGeomodel *geomodel = [VisionCameraPluginInatVisionPlugin geomodelWithModelFile:geomodelPath];
-       geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
+        geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
     } else {

@@ -303,7 +303,7 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
 
     MLMultiArray *geomodelPreds = nil;
     VCPGeomodel *geomodel = [AwesomeModule geomodelWithModelFile:geomodelPath];
-   geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
+    geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                             lng:longitude.floatValue
                                       elevation:elevation.floatValue];
 

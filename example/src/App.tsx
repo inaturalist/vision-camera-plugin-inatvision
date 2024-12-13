@@ -31,6 +31,11 @@ const testLocationEurope = {
   elevation: 15,
 };
 
+const testLocationEuropeNoElevation = {
+  latitude: 54.29,
+  longitude: 18.95,
+};
+
 const testLocationAmerica = {
   latitude: -124.29,
   longitude: 18.95,
@@ -174,6 +179,10 @@ export default function App(): React.JSX.Element {
     }
   );
 
+  const lookUpLocation = InatVision.lookUpLocation(
+    testLocationEuropeNoElevation
+  );
+
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
@@ -181,12 +190,6 @@ export default function App(): React.JSX.Element {
         'worklet';
         try {
           const timeBefore = new Date().getTime();
-
-          const testLocation = {
-            latitude: 54.29,
-            longitude: 18.95,
-            elevation: 15,
-          };
 
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
@@ -199,7 +202,11 @@ export default function App(): React.JSX.Element {
             cropRatio: 0.9,
             useGeomodel,
             geomodelPath,
-            location: testLocation,
+            location: {
+              latitude: lookUpLocation.latitude,
+              longitude: lookUpLocation.longitude,
+              elevation: lookUpLocation.elevation,
+            },
             patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
@@ -218,6 +225,7 @@ export default function App(): React.JSX.Element {
       negativeFilter,
       handleResults,
       useGeomodel,
+      lookUpLocation,
     ]
   );
 
@@ -257,6 +265,13 @@ export default function App(): React.JSX.Element {
       taxonomyPath,
       confidenceThreshold,
       cropRatio: 0.88,
+      useGeomodel: true,
+      geomodelPath,
+      location: {
+        latitude: lookUpLocation.latitude,
+        longitude: lookUpLocation.longitude,
+        elevation: lookUpLocation.elevation,
+      },
     })
       .then((result) => {
         const timeAfter = new Date().getTime();
@@ -355,6 +370,10 @@ export default function App(): React.JSX.Element {
       <Button
         onPress={() => predictLocation(testLocationAmerica)}
         title="Use geomodel in America"
+      />
+      <Button
+        onPress={() => predictLocation(testLocationEuropeNoElevation)}
+        title="Use geomodel without elevation"
       />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (

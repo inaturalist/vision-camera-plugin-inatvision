@@ -234,6 +234,10 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
       }];
     } else {
         NSURL *imageURL = [NSURL URLWithString:uri];
+        if (!imageURL) {
+            reject(@"invalid_uri", @"Invalid image URI format", nil);
+            return;
+        }
         MLMultiArray *visionScores = [cvModel visionPredictionsForUrl:imageURL];
 
         // Combine vision scores with geomodel scores

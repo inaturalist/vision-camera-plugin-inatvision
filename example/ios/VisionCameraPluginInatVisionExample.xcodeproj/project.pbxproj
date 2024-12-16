@@ -14,9 +14,10 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8F1A11E52A4AF31500A47830 /* small_export_tax.json in Resources */ = {isa = PBXBuildFile; fileRef = 8F1A11E32A4AF31500A47830 /* small_export_tax.json */; };
-		8F1A11E62A4AF31500A47830 /* small_inception_tf1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F1A11E42A4AF31500A47830 /* small_inception_tf1.mlmodel */; };
+		8F1A11E52A4AF31500A47830 /* taxonomy.json in Resources */ = {isa = PBXBuildFile; fileRef = 8F1A11E32A4AF31500A47830 /* taxonomy.json */; };
+		8F1A11E62A4AF31500A47830 /* INatVision_Small_2_fact256_8bit.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8F1A11E42A4AF31500A47830 /* INatVision_Small_2_fact256_8bit.mlmodel */; };
 		8F9BEBC62C21C1DF002A1240 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8F9BEBC52C21C1DF002A1240 /* PrivacyInfo.xcprivacy */; };
+		8FA598B52CEF76F200391B56 /* INatGeomodel_Small_2_8bit.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8FA598B42CEF76F200391B56 /* INatGeomodel_Small_2_8bit.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,9 +47,10 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-VisionCameraPluginInatVisionExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VisionCameraPluginInatVisionExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = VisionCameraPluginInatVisionExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests.release.xcconfig"; path = "Target Support Files/Pods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests/Pods-VisionCameraPluginInatVisionExample-VisionCameraPluginInatVisionExampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		8F1A11E32A4AF31500A47830 /* small_export_tax.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = small_export_tax.json; sourceTree = "<group>"; };
-		8F1A11E42A4AF31500A47830 /* small_inception_tf1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = small_inception_tf1.mlmodel; sourceTree = "<group>"; };
+		8F1A11E32A4AF31500A47830 /* taxonomy.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taxonomy.json; sourceTree = "<group>"; };
+		8F1A11E42A4AF31500A47830 /* INatVision_Small_2_fact256_8bit.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = INatVision_Small_2_fact256_8bit.mlmodel; sourceTree = "<group>"; };
 		8F9BEBC52C21C1DF002A1240 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = VisionCameraPluginInatVisionExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8FA598B42CEF76F200391B56 /* INatGeomodel_Small_2_8bit.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = INatGeomodel_Small_2_8bit.mlmodel; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -92,9 +94,10 @@
 		13B07FAE1A68108700A75B9A /* VisionCameraPluginInatVisionExample */ = {
 			isa = PBXGroup;
 			children = (
+				8FA598B42CEF76F200391B56 /* INatGeomodel_Small_2_8bit.mlmodel */,
 				8F9BEBC52C21C1DF002A1240 /* PrivacyInfo.xcprivacy */,
-				8F1A11E32A4AF31500A47830 /* small_export_tax.json */,
-				8F1A11E42A4AF31500A47830 /* small_inception_tf1.mlmodel */,
+				8F1A11E32A4AF31500A47830 /* taxonomy.json */,
+				8F1A11E42A4AF31500A47830 /* INatVision_Small_2_fact256_8bit.mlmodel */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -251,7 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				8F1A11E52A4AF31500A47830 /* small_export_tax.json in Resources */,
+				8F1A11E52A4AF31500A47830 /* taxonomy.json in Resources */,
 				8F9BEBC62C21C1DF002A1240 /* PrivacyInfo.xcprivacy in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
@@ -405,7 +408,8 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				8F1A11E62A4AF31500A47830 /* small_inception_tf1.mlmodel in Sources */,
+				8FA598B52CEF76F200391B56 /* INatGeomodel_Small_2_8bit.mlmodel in Sources */,
+				8F1A11E62A4AF31500A47830 /* INatVision_Small_2_fact256_8bit.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -201,7 +201,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         GeoClassifier classifier = null;
         try {
-            classifier = new GeoClassifier(geomodelPath, taxonomyPath, "2.4");
+            classifier = new GeoClassifier(geomodelPath, taxonomyPath, "2.13");
         } catch (IOException e) {
             e.printStackTrace();
             promise.reject("E_CLASSIFIER", "Failed to initialize a geomodel mClassifier: " + e.getMessage());

@@ -69,7 +69,7 @@ public class GeoClassifier {
 
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
         if (mTFlite == null) {
-            Timber.tag(TAG).e("Geo model classifier has not been initialized; Skipped.");
+            Timber.tag(TAG).e("Geomodel classifier has not been initialized; Skipped.");
             return null;
         }
         List<Prediction> predictions = null;

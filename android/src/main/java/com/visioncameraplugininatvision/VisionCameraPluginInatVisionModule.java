@@ -218,10 +218,16 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             return;
         }
 
-        List<Prediction> predictions = classifier.classifyLocation(latitude, longitude, elevation);
-
+        List<Prediction> scores = classifier.classifyLocation(latitude, longitude, elevation);
 
         WritableArray cleanedPredictions = Arguments.createArray();
+        for (Prediction prediction : scores) {
+            Map map = Taxonomy.nodeToMap(prediction);
+            if (map == null) continue;
+            // Transform the Map to a ReadableMap
+            ReadableMap readableMap = Arguments.makeNativeMap(map);
+            cleanedPredictions.pushMap(readableMap);
+        }
 
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);

@@ -18,6 +18,8 @@ public class Node {
 
     public String spatialId;
 
+    public String spatialThreshold;
+
     public transient Node parent;
 
     public transient List<Node> children = new ArrayList<>();
@@ -32,7 +34,7 @@ public class Node {
     // Seek model 1.0:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,name
     public Node(String line, String version) {
-        String[] parts = line.trim().split(",", 7);
+        String[] parts = line.trim().split(",", 8);
 
         this.parentKey = parts[0];
         this.key = parts[1];
@@ -41,9 +43,14 @@ public class Node {
         if (version.equals("1.0")) {
             this.name = parts[4];
         } else {
-            this.iconicId = parts[4];
-            this.spatialId = parts[5];
+          this.iconicId = parts[4];
+          this.spatialId = parts[5];
+          if (version.equals("2.3") || version.equals("2.4")) {
             this.name = parts[6];
+          } else {
+            this.spatialThreshold = parts[6];
+            this.name = parts[7];
+          }
         }
     }
 

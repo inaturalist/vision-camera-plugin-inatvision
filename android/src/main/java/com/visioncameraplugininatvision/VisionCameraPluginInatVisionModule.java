@@ -71,7 +71,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
     public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
     public static final String OPTION_CROP_RATIO = "cropRatio";
-    public static final String OPTION_GEO_MODEL_PATH = "geoModelPath";
+    public static final String OPTION_GEO_MODEL_PATH = "geomodelPath";
     public static final String OPTION_LOCATION = "location";
 
     public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
@@ -178,7 +178,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             }
 
         }
-        
+
         long endTime = SystemClock.uptimeMillis();
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);
@@ -191,7 +191,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
   @ReactMethod
   public void getPredictionsForLocation(ReadableMap options, Promise promise) {
         // Destructure the model path from the options map
-        String geoModelPath = options.getString(OPTION_GEO_MODEL_PATH);
+        String geomodelPath = options.getString(OPTION_GEO_MODEL_PATH);
         String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
         ReadableMap location = options.getMap(OPTION_LOCATION);
 
@@ -201,7 +201,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         GeoClassifier classifier = null;
         try {
-            classifier = new GeoClassifier(geoModelPath, taxonomyPath, "2.4");
+            classifier = new GeoClassifier(geomodelPath, taxonomyPath, "2.4");
         } catch (IOException e) {
             e.printStackTrace();
             promise.reject("E_CLASSIFIER", "Failed to initialize a geomodel mClassifier: " + e.getMessage());

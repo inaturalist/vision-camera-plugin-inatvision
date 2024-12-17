@@ -48,7 +48,7 @@ public class GeoClassifier {
     }
 
     /*
-    * iNat geo model input normalization documented here:
+    * iNat geomodel input normalization documented here:
     * https://github.com/inaturalist/inatGeoModelTraining/tree/main#input-normalization
     */
     public float[] normAndEncodeLocation(double latitude, double longitude, double elevation) {

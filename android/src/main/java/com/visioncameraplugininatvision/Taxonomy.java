@@ -177,6 +177,34 @@ public class Taxonomy {
         return bestBranch;
     }
 
+    public List<Prediction> expectedNearbyFromClassification(float[][] results) {
+        List<Prediction> scores = new ArrayList<>();
+        List<Prediction> filteredOutScores = new ArrayList<>();
+
+        for (Node leaf : mLeaves) {
+            // We did not implement batch processing here, so we only have one result
+            float score = results[0][Integer.valueOf(leaf.leafId)];
+            Prediction prediction = new Prediction(leaf, score);
+
+            // If score is higher than spatialThreshold it means the taxon is "expected nearby"
+            if (leaf.spatialThreshold != null && !leaf.spatialThreshold.isEmpty()) {
+                float threshold = Float.parseFloat(leaf.spatialThreshold);
+                if (score >= threshold) {
+                    scores.add(prediction);
+                } else {
+                    filteredOutScores.add(prediction);
+                }
+            } else {
+                scores.add(prediction);
+            }
+        }
+
+        // Log length of scores
+        Timber.tag(TAG).d("Length of scores: " + scores.size());
+        Timber.tag(TAG).d("Length of filteredOutScores: " + filteredOutScores.size());
+
+        return scores;
+    }
 
     /** Aggregates scores for nodes, including non-leaf nodes (so each non-leaf node has a score of the sum of all its dependents) */
     private Map<String, Float> aggregateAndNormalizeScores(float[] results) {

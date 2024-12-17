@@ -89,7 +89,7 @@ public class GeoClassifier {
             // Create a map of outputs as expected by Taxonomy
             Map<Integer, Object> outputs = new HashMap<>();
             outputs.put(0, outputArray);
-            return mTaxonomy.predict(outputs, 0.0);
+            return mTaxonomy.expectedNearbyFromClassification(outputArray);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();

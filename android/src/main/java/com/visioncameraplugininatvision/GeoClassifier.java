@@ -64,7 +64,7 @@ public class GeoClassifier {
         double b = sin(PI * normLat);
         double c = cos(PI * normLng);
         double d = cos(PI * normLat);
-        return new float[] { (float) a, (float) b, (float) c, (float) d };
+        return new float[] { (float) a, (float) b, (float) c, (float) d, (float) normElev };
     }
 
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
@@ -72,8 +72,31 @@ public class GeoClassifier {
             Timber.tag(TAG).e("Geomodel classifier has not been initialized; Skipped.");
             return null;
         }
-        List<Prediction> predictions = null;
-        return predictions;
+
+        // Get normalized inputs
+        float[] normalizedInputs = normAndEncodeLocation(latitude, longitude, elevation);
+
+        // Create input array with shape [1][5] to match iOS MLMultiArray shape @[@1, @5]
+        float[][] inputArray = new float[1][5];
+        inputArray[0] = normalizedInputs;
+
+        // Create output array
+        float[][] outputArray = new float[1][mModelSize];
+
+        // Run inference
+        try {
+            mTFlite.run(inputArray, outputArray);
+            // Create a map of outputs as expected by Taxonomy
+            Map<Integer, Object> outputs = new HashMap<>();
+            outputs.put(0, outputArray);
+            return mTaxonomy.predict(outputs, 0.0);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            return new ArrayList<Prediction>();
+        } catch (OutOfMemoryError exc) {
+            exc.printStackTrace();
+            return new ArrayList<Prediction>();
+        }
     }
 
     /** Closes tflite to release resources. */

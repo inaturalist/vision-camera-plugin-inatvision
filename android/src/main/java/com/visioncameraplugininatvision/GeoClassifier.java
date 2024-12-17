@@ -41,7 +41,7 @@ public class GeoClassifier {
         mTaxonomyFilename = taxonomyPath;
         mModelVersion = version;
         mTFlite = new Interpreter(loadModelFile());
-        Timber.tag(TAG).d("Created a Tensorflow Lite Geo Model Classifier.");
+        Timber.tag(TAG).d("Created a Tensorflow Lite Geomodel Classifier.");
 
         mTaxonomy = new Taxonomy(new FileInputStream(mTaxonomyFilename), mModelVersion);
         mModelSize = mTaxonomy.getModelSize();
@@ -89,7 +89,7 @@ public class GeoClassifier {
     * iNat geo model input normalization documented here:
     * https://github.com/inaturalist/inatGeoModelTraining/tree/main#input-normalization
     */
-    public TensorBuffer normAndEncodeLocation(double latitude, double longitude, double elevation) {
+    public float[] normAndEncodeLocation(double latitude, double longitude, double elevation) {
         double normLat = latitude / 90.0;
         double normLng = longitude / 180.0;
         double normElev = 0.0;
@@ -102,6 +102,7 @@ public class GeoClassifier {
         double b = sin(PI * normLat);
         double c = cos(PI * normLng);
         double d = cos(PI * normLat);
+        return new float[] { (float) a, (float) b, (float) c, (float) d };
     }
 
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {

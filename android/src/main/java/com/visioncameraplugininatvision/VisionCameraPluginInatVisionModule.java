@@ -103,7 +103,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 
         ImageClassifier classifier = null;
-
         try {
             classifier = new ImageClassifier(modelFilename, taxonomyFilename, version);
         } catch (IOException e) {
@@ -160,7 +159,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         Double taxonomyRollupCutoff = 0.0;
         List<Prediction> predictions = classifier.classifyFrame(bitmap, taxonomyRollupCutoff);
         bitmap.recycle();
-
 
         WritableArray cleanedPredictions = Arguments.createArray();
         for (Prediction prediction : predictions) {

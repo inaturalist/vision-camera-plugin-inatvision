@@ -68,6 +68,11 @@ public class GeoClassifier {
     }
 
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
+      float[][] scores = classify(latitude, longitude, elevation);
+      return mTaxonomy.expectedNearbyFromClassification(scores);
+    }
+
+    public float[][] classify(double latitude, double longitude, double elevation) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Geomodel classifier has not been initialized; Skipped.");
             return null;
@@ -86,16 +91,13 @@ public class GeoClassifier {
         // Run inference
         try {
             mTFlite.run(inputArray, outputArray);
-            // Create a map of outputs as expected by Taxonomy
-            Map<Integer, Object> outputs = new HashMap<>();
-            outputs.put(0, outputArray);
-            return mTaxonomy.expectedNearbyFromClassification(outputArray);
+            return outputArray;
         } catch (Exception exc) {
             exc.printStackTrace();
-            return new ArrayList<Prediction>();
+            return new float[1][];
         } catch (OutOfMemoryError exc) {
             exc.printStackTrace();
-            return new ArrayList<Prediction>();
+            return new float[1][];
         }
     }
 

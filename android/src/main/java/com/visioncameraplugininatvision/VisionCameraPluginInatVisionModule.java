@@ -190,6 +190,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
   @ReactMethod
   public void getPredictionsForLocation(ReadableMap options, Promise promise) {
+        long startTime = SystemClock.uptimeMillis();
         // Destructure the model path from the options map
         String geomodelPath = options.getString(OPTION_GEO_MODEL_PATH);
         String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
@@ -229,9 +230,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             cleanedPredictions.pushMap(readableMap);
         }
 
+        long endTime = SystemClock.uptimeMillis();
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);
         resultMap.putMap("options", options);
+        // Time elapsed on the native side; in seconds
+        resultMap.putDouble("timeElapsed", (endTime - startTime) / 1000.0);
         promise.resolve(resultMap);
   }
 }

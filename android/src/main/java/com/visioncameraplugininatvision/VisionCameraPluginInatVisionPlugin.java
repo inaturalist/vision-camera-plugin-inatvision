@@ -106,6 +106,15 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       setCropRatio(cropRatio);
     }
 
+    // Destructure geomodel parameters. Those can be null
+    Boolean useGeomodel = (Boolean)arguments.get("useGeomodel");
+    String geomodelPath = (String)arguments.get("geomodelPath");
+    Map<String, Double> location = (Map<String, Double>)arguments.get("location");
+    if (location != null) {
+      Double latitude = location.get("latitude");
+      Double longitude = location.get("longitude");
+      Double elevation = location.get("elevation");
+    }
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);

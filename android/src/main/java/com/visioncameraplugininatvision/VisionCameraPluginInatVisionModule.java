@@ -157,7 +157,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         // Override the built-in taxonomy cutoff for predictions from file
         Double taxonomyRollupCutoff = 0.0;
-        List<Prediction> predictions = classifier.classifyFrame(bitmap, taxonomyRollupCutoff);
+        List<Prediction> predictions = classifier.classifyBitmap(bitmap, taxonomyRollupCutoff);
         bitmap.recycle();
 
         WritableArray cleanedPredictions = Arguments.createArray();

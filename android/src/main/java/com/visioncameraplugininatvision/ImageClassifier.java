@@ -85,7 +85,7 @@ public class ImageClassifier {
     }
 
     /** Classifies a frame from the preview stream. */
-    public List<Prediction> classifyFrame(Bitmap bitmap, Double taxonomyRollupCutoff) {
+    public List<Prediction> classifyBitmap(Bitmap bitmap, Double taxonomyRollupCutoff) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");
             return null;

@@ -52,6 +52,8 @@ public class ImageClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     private ByteBuffer imgData;
 
+    private float[][] mGeomodelScores;
+
     public void setFilterByTaxonId(Integer taxonId) {
         mTaxonomy.setFilterByTaxonId(taxonId);
     }
@@ -66,6 +68,10 @@ public class ImageClassifier {
 
     public boolean getNegativeFilter() {
         return mTaxonomy.getNegativeFilter();
+    }
+
+    public void setGeomodelScores(float[][] scores) {
+        mGeomodelScores = scores;
     }
 
     /** Initializes an {@code ImageClassifier}. */

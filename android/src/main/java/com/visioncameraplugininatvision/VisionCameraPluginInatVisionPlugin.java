@@ -171,6 +171,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     List<Map> cleanedPredictions = new ArrayList<>();
     if (mImageClassifier != null) {
+      if (geomodelScores != null) {
+        mImageClassifier.setGeomodelScores(geomodelScores);
+      }
       Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       // Crop the center square of the frame
@@ -192,9 +195,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       List<Prediction> predictions = mImageClassifier.classifyBitmap(bmp, taxonomyRollupCutoff);
       bmp.recycle();
       croppedBitmap.recycle();
-      if (geomodelScores != null) {
-        // TODO: combine vision and geomodel scores
-      }
+
       Log.d(TAG, "Predictions: " + predictions.size());
 
       for (Prediction prediction : predictions) {

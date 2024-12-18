@@ -154,7 +154,7 @@
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
     } else {
-        NSLog(@"not doing anything geo related.");
+        NSLog(@"Not using geomodel for this frame.");
     }
 
     CMSampleBufferRef buffer = frame.buffer;

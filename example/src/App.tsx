@@ -43,7 +43,7 @@ const geomodelFilenameAndroid = 'INatGeomodel_Small_2_8bit.tflite';
 const modelFilenameIOS = 'INatVision_Small_2_fact256_8bit.mlmodelc';
 const taxonomyFilenameIOS = 'taxonomy.json';
 const geomodelFilenameIOS = 'INatGeomodel_Small_2_8bit.mlmodelc';
-const modelVersion = '1.0';
+const modelVersion = '2.13';
 
 const modelPath =
   Platform.OS === 'ios'

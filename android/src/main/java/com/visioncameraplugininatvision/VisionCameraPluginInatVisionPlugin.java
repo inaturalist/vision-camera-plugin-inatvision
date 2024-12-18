@@ -30,6 +30,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
   private final static String TAG = "VisionCameraPluginInatVisionPlugin";
 
   private ImageClassifier mImageClassifier = null;
+  private GeoClassifier mGeoClassifier = null;
 
   private Integer mFilterByTaxonId = null; // If null -> no filter by taxon ID defined
   public void setFilterByTaxonId(Integer taxonId) {
@@ -110,11 +111,42 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
     Boolean useGeomodel = (Boolean)arguments.get("useGeomodel");
     String geomodelPath = (String)arguments.get("geomodelPath");
     Map<String, Double> location = (Map<String, Double>)arguments.get("location");
-    if (location != null) {
-      Double latitude = location.get("latitude");
-      Double longitude = location.get("longitude");
-      Double elevation = location.get("elevation");
+
+    // Initialize and use geomodel if requested
+    float[][] geomodelScores = null;
+    if (useGeomodel != null && useGeomodel) {
+        if (geomodelPath == null) {
+          throw new RuntimeException("Geomodel scoring requested but path is null");
+        }
+        if (location == null) {
+          throw new RuntimeException("Geomodel scoring requested but location is null");
+        }
+        Double latitude = location.get("latitude");
+        Double longitude = location.get("longitude");
+        Double elevation = location.get("elevation");
+
+        // Geomodel classifier initialization with model and taxonomy files
+        if (mGeoClassifier == null) {
+          Timber.tag(TAG).d("Initializing geo classifier: " + geomodelPath + " / " + taxonomyPath);
+          try {
+            mGeoClassifier = new GeoClassifier(geomodelPath, taxonomyPath, version);
+          } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize a geomodel classifier: " + e.getMessage());
+          } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            throw new RuntimeException("Out of memory");
+          } catch (Exception e) {
+            e.printStackTrace();
+            Timber.tag(TAG).w("Other type of exception - Device not supported - classifier failed to load - " + e);
+            throw new RuntimeException("Android version is too old - needs to be at least 6.0");
+          }
+        }
+        geomodelScores = mGeoClassifier.classify(latitude, longitude, elevation);
+    } else {
+        Timber.tag(TAG).d("Not using geomodel for this frame.");
     }
+
     // Image classifier initialization with model and taxonomy files
     if (mImageClassifier == null) {
       Timber.tag(TAG).d("Initializing classifier: " + modelPath + " / " + taxonomyPath);
@@ -160,6 +192,9 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       List<Prediction> predictions = mImageClassifier.classifyBitmap(bmp, taxonomyRollupCutoff);
       bmp.recycle();
       croppedBitmap.recycle();
+      if (geomodelScores != null) {
+        // TODO: combine vision and geomodel scores
+      }
       Log.d(TAG, "Predictions: " + predictions.size());
 
       for (Prediction prediction : predictions) {

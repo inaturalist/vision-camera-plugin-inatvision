@@ -114,7 +114,16 @@ public class ImageClassifier {
         List<Prediction> predictions = null;
         try {
             mTFlite.runForMultipleInputsOutputs(input, expectedOutputs);
-            predictions = mTaxonomy.predict(expectedOutputs, taxonomyRollupCutoff);
+            // Get raw vision scores
+            float[] visionScores = ((float[][]) expectedOutputs.get(0))[0];
+            float[] combinedScores = new float[visionScores.length];
+            if (mGeomodelScores != null) {
+              // Combine vision and geo scores
+              combinedScores = combineVisionScores(visionScores, mGeomodelScores[0]);
+            } else {
+              combinedScores = visionScores;
+            }
+            predictions = mTaxonomy.predict(combinedScores, taxonomyRollupCutoff);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();

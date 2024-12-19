@@ -3,8 +3,8 @@ const path = require('path');
 const csv = require('csv-parser');
 
 // Step 1: Define the file path
-const filePathTaxonomy = path.join(__dirname, 'taxonomy.csv');
-const filePathGeoThresholds = path.join(__dirname, 'tf_env_thresh.csv');
+const filePathTaxonomy = path.join(__dirname, 'taxonomy_v2_13.csv');
+const filePathGeoThresholds = path.join(__dirname, 'tf_env_thresh_v2_13.csv');
 
 // Step 2: Read the .csv files and Step 3: Parse the CSV data
 let entriesTaxonomy = [];

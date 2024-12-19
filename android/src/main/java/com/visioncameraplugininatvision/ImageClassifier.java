@@ -52,6 +52,8 @@ public class ImageClassifier {
     /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
     private ByteBuffer imgData;
 
+    private float[][] mGeomodelScores;
+
     public void setFilterByTaxonId(Integer taxonId) {
         mTaxonomy.setFilterByTaxonId(taxonId);
     }
@@ -66,6 +68,10 @@ public class ImageClassifier {
 
     public boolean getNegativeFilter() {
         return mTaxonomy.getNegativeFilter();
+    }
+
+    public void setGeomodelScores(float[][] scores) {
+        mGeomodelScores = scores;
     }
 
     /** Initializes an {@code ImageClassifier}. */
@@ -85,7 +91,7 @@ public class ImageClassifier {
     }
 
     /** Classifies a frame from the preview stream. */
-    public List<Prediction> classifyFrame(Bitmap bitmap, Double taxonomyRollupCutoff) {
+    public List<Prediction> classifyBitmap(Bitmap bitmap, Double taxonomyRollupCutoff) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");
             return null;
@@ -108,7 +114,16 @@ public class ImageClassifier {
         List<Prediction> predictions = null;
         try {
             mTFlite.runForMultipleInputsOutputs(input, expectedOutputs);
-            predictions = mTaxonomy.predict(expectedOutputs, taxonomyRollupCutoff);
+            // Get raw vision scores
+            float[] visionScores = ((float[][]) expectedOutputs.get(0))[0];
+            float[] combinedScores = new float[visionScores.length];
+            if (mGeomodelScores != null) {
+              // Combine vision and geo scores
+              combinedScores = combineVisionScores(visionScores, mGeomodelScores[0]);
+            } else {
+              combinedScores = visionScores;
+            }
+            predictions = mTaxonomy.predict(combinedScores, taxonomyRollupCutoff);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();
@@ -175,6 +190,29 @@ public class ImageClassifier {
         } catch (BufferOverflowException exc) {
             Timber.tag(TAG).w("Exception while converting to byte buffer: " + exc);
         }
+    }
+
+    /** Combines vision and geo model scores */
+    private float[] combineVisionScores(float[] visionScores, float[] geoScores) {
+        float[] combinedScores = new float[visionScores.length];
+        float sum = 0.0f;
+
+        // First multiply the scores
+        for (int i = 0; i < visionScores.length; i++) {
+            float visionScore = visionScores[i];
+            float geoScore = geoScores[i];
+            combinedScores[i] = visionScore * geoScore;
+            sum += combinedScores[i];
+        }
+
+        // Then normalize so they sum to 1.0
+        if (sum > 0) {
+            for (int i = 0; i < combinedScores.length; i++) {
+                combinedScores[i] = combinedScores[i] / sum;
+            }
+        }
+
+        return combinedScores;
     }
 
 }

@@ -51,10 +51,24 @@ fs.createReadStream(filePathTaxonomy)
           entry.spatial_threshold = thresholdDict[entry.taxon_id]
             ? parseFloat(thresholdDict[entry.taxon_id])
             : null;
+          // Delete and add the name so that it is last when written to file
+          const name = entry.name;
+          delete entry.name;
+          entry.name = name;
           return entry;
         });
         // Write json to file
         const json = JSON.stringify(combinedEntries, null, 2);
         fs.writeFileSync('taxonomy.json', json);
+
+        // Also write a new .csv with the threshold data appended to the original rows
+        const csvHeader = Object.keys(combinedEntries[0]).join(',');
+        const csvRows = combinedEntries.map((entry) =>
+          Object.values(entry).join(',')
+        );
+        let csvData = [csvHeader, ...csvRows].join('\n');
+        // Replace all NaN with empty string
+        csvData = csvData.replace(/NaN/g, '');
+        fs.writeFileSync('taxonomy_with_thresholds.csv', csvData);
       });
   });

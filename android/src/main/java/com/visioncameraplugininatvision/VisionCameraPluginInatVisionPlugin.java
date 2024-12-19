@@ -171,9 +171,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
 
     List<Map> cleanedPredictions = new ArrayList<>();
     if (mImageClassifier != null) {
-      if (geomodelScores != null) {
-        mImageClassifier.setGeomodelScores(geomodelScores);
-      }
+      mImageClassifier.setGeomodelScores(geomodelScores);
       Bitmap bmp = BitmapUtils.getBitmap(image, patchedOrientationAndroid);
       Log.d(TAG, "originalBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
       // Crop the center square of the frame

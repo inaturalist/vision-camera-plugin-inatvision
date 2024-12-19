@@ -183,5 +183,20 @@ public class ImageClassifier {
         }
     }
 
+    /** Combines vision and geo model scores */
+    private float[] combineVisionScores(float[] visionScores, float[] geoScores) {
+        float[] combinedScores = new float[visionScores.length];
+
+        for (int i = 0; i < visionScores.length; i++) {
+            float visionScore = visionScores[i];
+            float geoScore = geoScores[i];
+
+            // Combine scores using weighted average
+            combinedScores[i] = visionScore * geoScore;
+        }
+
+        return combinedScores;
+    }
+
 }
 

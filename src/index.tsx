@@ -200,7 +200,7 @@ export interface Result {
   timeElapsed?: number; //iOS only
 }
 
-const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
+const supportedVersions = ['1.0', '2.3', '2.4', '2.13', 'small_2'];
 
 function locationIsValid(location: Location): boolean {
   'worklet';

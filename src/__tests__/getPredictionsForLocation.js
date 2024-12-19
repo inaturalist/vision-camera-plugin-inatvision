@@ -6,7 +6,6 @@ const correctOptions = {
   location: {
     latitude: 54,
     longitude: -18,
-    elevation: 12,
   },
 };
 
@@ -19,6 +18,13 @@ describe('getPredictionsForLocation', () => {
 });
 
 describe('location', () => {
+  it('should not throw an error when elevation which is optional is given', () => {
+    const options = correctOptions;
+    options.location.elevation = 12.123;
+
+    expect(() => getPredictionsForLocation(options)).not.toThrowError();
+  });
+
   it('should throw an error when location is not given', () => {
     const options = {
       ...correctOptions,
@@ -26,7 +32,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude, longitude, and elevation set.'
+      'location must have latitude and longitude set.'
     );
   });
 
@@ -40,7 +46,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude, longitude, and elevation set.'
+      'location must have latitude and longitude set.'
     );
   });
 
@@ -54,21 +60,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude, longitude, and elevation set.'
-    );
-  });
-
-  it('should throw an error when location is missing elevation', () => {
-    const options = {
-      ...correctOptions,
-      location: {
-        latitude: 54,
-        longitude: 12,
-      },
-    };
-
-    expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude, longitude, and elevation set.'
+      'location must have latitude and longitude set.'
     );
   });
 });

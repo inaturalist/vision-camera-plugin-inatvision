@@ -5,6 +5,9 @@ import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
 
+import { lookUpLocation as lL } from './lookUpLocation';
+import type { LocationLookup } from './lookUpLocation';
+
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
 const LINKING_ERROR =
@@ -201,16 +204,9 @@ const supportedVersions = ['1.0', '2.3', '2.4', '2.13'];
 
 function locationIsValid(location: Location): boolean {
   'worklet';
-  if (
-    !location ||
-    !location.latitude ||
-    !location.longitude ||
-    !location.elevation
-  ) {
+  if (!location || !location.latitude || !location.longitude) {
     // have not used INatVisionError here because I can not test it due to issue #36
-    throw new Error(
-      'location must have latitude, longitude, and elevation set.'
-    );
+    throw new Error('location must have latitude and longitude set.');
   }
   return true;
 }
@@ -361,7 +357,7 @@ export interface Location {
    *
    * The elevation of the location.
    */
-  elevation: number;
+  elevation?: number;
 }
 
 interface BaseOptions {
@@ -450,6 +446,10 @@ interface Options extends BaseOptions {
   patchedOrientationAndroid?: string;
 }
 
+export function lookUpLocation(location: Location): LocationLookup {
+  return lL(location);
+}
+
 /**
  * Function to call the computer vision model with a frame from the camera
  * @param frame The frame to predict on.
@@ -479,7 +479,14 @@ export function getPredictionsForImage(
   options: OptionsForImage
 ): Promise<ResultForImage> {
   optionsAreValidForImage(options);
-  return VisionCameraPluginInatVision.getPredictionsForImage(options);
+  const newOptions = {
+    ...options,
+  };
+  if (options.useGeomodel && options.location) {
+    const locationLookup = lookUpLocation(options.location);
+    newOptions.location = locationLookup;
+  }
+  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions);
 }
 
 interface OptionsForLocation {
@@ -496,5 +503,10 @@ export function getPredictionsForLocation(
   options: OptionsForLocation
 ): Promise<Result> {
   locationIsValid(options.location);
-  return VisionCameraPluginInatVision.getPredictionsForLocation(options);
+  const locationLookup = lookUpLocation(options.location);
+  const newOptions = {
+    ...options,
+    location: locationLookup,
+  };
+  return VisionCameraPluginInatVision.getPredictionsForLocation(newOptions);
 }

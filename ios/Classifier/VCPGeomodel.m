@@ -42,7 +42,7 @@
         }
 
         // default location change threshold
-        self.locationChangeThreshold = -0.001;
+        self.locationChangeThreshold = 0.001;
 
     }
 

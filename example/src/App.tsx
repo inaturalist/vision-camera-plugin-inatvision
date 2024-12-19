@@ -37,13 +37,13 @@ const testLocationAmerica = {
   elevation: 15,
 };
 
-const modelFilenameAndroid = 'INatVision_Small_2_fact256_8bit.tflite';
-const taxonomyFilenameAndroid = 'taxonomy.csv';
-const geomodelFilenameAndroid = 'INatGeomodel_Small_2_8bit.tflite';
-const modelFilenameIOS = 'INatVision_Small_2_fact256_8bit.mlmodelc';
-const taxonomyFilenameIOS = 'taxonomy.json';
-const geomodelFilenameIOS = 'INatGeomodel_Small_2_8bit.mlmodelc';
-const modelVersion = '2.13';
+const modelFilenameAndroid = 'small_inception_tf1.tflite';
+const taxonomyFilenameAndroid = 'small_export_tax.csv';
+const geomodelFilenameAndroid = 'not_implemented';
+const modelFilenameIOS = 'small_inception_tf1.mlmodelc';
+const taxonomyFilenameIOS = 'small_export_tax.json';
+const geomodelFilenameIOS = 'small_geomodel.mlmodelc';
+const modelVersion = '1.0';
 
 const modelPath =
   Platform.OS === 'ios'

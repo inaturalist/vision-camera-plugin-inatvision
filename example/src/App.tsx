@@ -261,6 +261,9 @@ export default function App(): React.JSX.Element {
       taxonomyPath,
       confidenceThreshold,
       cropRatio: 0.88,
+      useGeomodel: true,
+      geomodelPath,
+      location: testLocationEurope,
     })
       .then((result) => {
         const timeAfter = new Date().getTime();

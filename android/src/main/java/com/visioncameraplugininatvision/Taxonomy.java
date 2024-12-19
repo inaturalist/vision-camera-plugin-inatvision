@@ -101,12 +101,15 @@ public class Taxonomy {
         // Read the taxonomy CSV file into a list of nodes
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         try {
-            reader.readLine(); // Skip the first line (header line)
+            String headerLine = reader.readLine();
+            // Transform header line to array
+            String[] headers = headerLine.split(",");
+
 
             mNodes = new ArrayList<>();
             mLeaves = new ArrayList<>();
             for (String line; (line = reader.readLine()) != null; ) {
-                Node node = new Node(line, mModelVersion);
+                Node node = new Node(headers, line);
                 mNodes.add(node);
                 if ((node.leafId != null) && (node.leafId.length() > 0)) {
                     mLeaves.add(node);

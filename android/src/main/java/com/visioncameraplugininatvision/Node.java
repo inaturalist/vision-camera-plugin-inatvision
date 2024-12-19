@@ -1,6 +1,7 @@
 package com.visioncameraplugininatvision;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Node {
@@ -33,24 +34,48 @@ public class Node {
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,iconic_class_id,spatial_class_id,name
     // Seek model 1.0:
     // parent_taxon_id,taxon_id,rank_level,leaf_class_id,name
-    public Node(String line, String version) {
-        String[] parts = line.trim().split(",", 8);
+    public Node(String[] headers, String line) {
+        String[] parts = line.trim().split(",", headers.length);
+        List<String> headerList = new ArrayList<>(Arrays.asList(headers));
 
-        this.parentKey = parts[0];
-        this.key = parts[1];
-        this.rank = Float.parseFloat(parts[2]);
-        this.leafId = parts[3];
-        if (version.equals("1.0")) {
-            this.name = parts[4];
-        } else {
-          this.iconicId = parts[4];
-          this.spatialId = parts[5];
-          if (version.equals("2.3") || version.equals("2.4")) {
-            this.name = parts[6];
-          } else {
-            this.spatialThreshold = parts[6];
-            this.name = parts[7];
-          }
+        if (headerList.contains("parent_taxon_id")) {
+          int parentTaxonIdIndex = headerList.indexOf("parent_taxon_id");
+          this.parentKey = parts[parentTaxonIdIndex];
+        }
+
+        if (headerList.contains("taxon_id")) {
+          int taxonIdIndex = headerList.indexOf("taxon_id");
+          this.key = parts[taxonIdIndex];
+        }
+
+        if (headerList.contains("rank_level")) {
+          int rankLevelIndex = headerList.indexOf("rank_level");
+          this.rank = Float.parseFloat(parts[rankLevelIndex]);
+        }
+
+        if (headerList.contains("leaf_class_id")) {
+          int leafClassIdIndex = headerList.indexOf("leaf_class_id");
+          this.leafId = parts[leafClassIdIndex];
+        }
+
+        if (headerList.contains("iconic_class_id")) {
+          int iconicClassIdIndex = headerList.indexOf("iconic_class_id");
+          this.iconicId = parts[iconicClassIdIndex];
+        }
+
+        if (headerList.contains("spatial_class_id")) {
+          int spatialClassIdIndex = headerList.indexOf("spatial_class_id");
+          this.spatialId = parts[spatialClassIdIndex];
+        }
+
+        if (headerList.contains("spatial_threshold")) {
+          int spatialThresholdIndex = headerList.indexOf("spatial_threshold");
+          this.spatialThreshold = parts[spatialThresholdIndex];
+        }
+
+        if (headerList.contains("name")) {
+          int nameIndex = headerList.indexOf("name");
+          this.name = parts[nameIndex];
         }
     }
 

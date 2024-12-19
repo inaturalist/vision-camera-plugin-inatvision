@@ -30,10 +30,16 @@ public class GeoClassifier {
     private final String mTaxonomyFilename;
     private final String mModelVersion;
     private int mModelSize;
-    private final float mLocationChangeThreshold = -0.001f;
+    private final float mLocationChangeThreshold = 0.001f;
 
     /** An instance of the driver class to run model inference with Tensorflow Lite. */
     private Interpreter mTFlite;
+
+    /** Instance variables to cache the geomodel results */
+    private float[][] mCachedGeoResult;
+    private double mCachedLatitude;
+    private double mCachedLongitude;
+    private double mCachedElevation;
 
     /** Initializes an {@code GeoClassifier}. */
     public GeoClassifier(String modelPath, String taxonomyPath, String version) throws IOException {
@@ -67,9 +73,28 @@ public class GeoClassifier {
         return new float[] { (float) a, (float) b, (float) c, (float) d, (float) normElev };
     }
 
+    public float[][] predictionsForLocation(double latitude, double longitude, double elevation) {
+        if (mCachedGeoResult == null ||
+            Math.abs(latitude - mCachedLatitude) > mLocationChangeThreshold ||
+            Math.abs(longitude - mCachedLongitude) > mLocationChangeThreshold ||
+            Math.abs(elevation - mCachedElevation) > mLocationChangeThreshold)
+        {
+            float[][] results = classify(latitude, longitude, elevation);
+            if (results != null && results.length > 0) {
+                mCachedGeoResult = results;
+                mCachedLatitude = latitude;
+                mCachedLongitude = longitude;
+                mCachedElevation = elevation;
+            }
+            return results;
+        }
+
+        return mCachedGeoResult;
+    }
+
     public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
-      float[][] scores = classify(latitude, longitude, elevation);
-      return mTaxonomy.expectedNearbyFromClassification(scores);
+        float[][] scores = predictionsForLocation(latitude, longitude, elevation);
+        return mTaxonomy.expectedNearbyFromClassification(scores);
     }
 
     public float[][] classify(double latitude, double longitude, double elevation) {

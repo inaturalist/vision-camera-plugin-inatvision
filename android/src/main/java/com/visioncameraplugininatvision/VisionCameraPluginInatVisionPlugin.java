@@ -142,7 +142,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
             throw new RuntimeException("Android version is too old - needs to be at least 6.0");
           }
         }
-        geomodelScores = mGeoClassifier.classify(latitude, longitude, elevation);
+        geomodelScores = mGeoClassifier.predictionsForLocation(latitude, longitude, elevation);
     } else {
         Timber.tag(TAG).d("Not using geomodel for this frame.");
     }

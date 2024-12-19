@@ -195,13 +195,21 @@ public class ImageClassifier {
     /** Combines vision and geo model scores */
     private float[] combineVisionScores(float[] visionScores, float[] geoScores) {
         float[] combinedScores = new float[visionScores.length];
+        float sum = 0.0f;
 
+        // First multiply the scores
         for (int i = 0; i < visionScores.length; i++) {
             float visionScore = visionScores[i];
             float geoScore = geoScores[i];
-
-            // Combine scores using weighted average
             combinedScores[i] = visionScore * geoScore;
+            sum += combinedScores[i];
+        }
+
+        // Then normalize so they sum to 1.0
+        if (sum > 0) {
+            for (int i = 0; i < combinedScores.length; i++) {
+                combinedScores[i] = combinedScores[i] / sum;
+            }
         }
 
         return combinedScores;

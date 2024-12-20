@@ -101,12 +101,15 @@ public class Taxonomy {
         // Read the taxonomy CSV file into a list of nodes
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         try {
-            reader.readLine(); // Skip the first line (header line)
+            String headerLine = reader.readLine();
+            // Transform header line to array
+            String[] headers = headerLine.split(",");
+
 
             mNodes = new ArrayList<>();
             mLeaves = new ArrayList<>();
             for (String line; (line = reader.readLine()) != null; ) {
-                Node node = new Node(line, mModelVersion);
+                Node node = new Node(headers, line);
                 mNodes.add(node);
                 if ((node.leafId != null) && (node.leafId.length() > 0)) {
                     mLeaves.add(node);
@@ -152,11 +155,9 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(Map<Integer, Object> outputs, Double taxonomyRollupCutoff) {
-        // Get raw predictions
-        float[] results = ((float[][]) outputs.get(0))[0];
+    public List<Prediction> predict(float[] scores, Double taxonomyRollupCutoff) {
         // Make a copy of results
-        float[] resultsCopy = results.clone();
+        float[] resultsCopy = scores.clone();
         // Make sure results is sorted by score
         Arrays.sort(resultsCopy);
         // Get result with the highest score
@@ -170,13 +171,41 @@ public class Taxonomy {
         }
         resultsCopy = null;
 
-        Map<String, Float> scores = aggregateAndNormalizeScores(results);
-        Timber.tag(TAG).d("Number of nodes in scores: " + scores.size());
-        List<Prediction> bestBranch = buildBestBranchFromScores(scores);
+        Map<String, Float> aggregateScores = aggregateAndNormalizeScores(scores);
+        Timber.tag(TAG).d("Number of nodes in scores: " + aggregateScores.size());
+        List<Prediction> bestBranch = buildBestBranchFromScores(aggregateScores);
 
         return bestBranch;
     }
 
+    public List<Prediction> expectedNearbyFromClassification(float[][] results) {
+        List<Prediction> scores = new ArrayList<>();
+        List<Prediction> filteredOutScores = new ArrayList<>();
+
+        for (Node leaf : mLeaves) {
+            // We did not implement batch processing here, so we only have one result
+            float score = results[0][Integer.valueOf(leaf.leafId)];
+            Prediction prediction = new Prediction(leaf, score);
+
+            // If score is higher than spatialThreshold it means the taxon is "expected nearby"
+            if (leaf.spatialThreshold != null && !leaf.spatialThreshold.isEmpty()) {
+                float threshold = Float.parseFloat(leaf.spatialThreshold);
+                if (score >= threshold) {
+                    scores.add(prediction);
+                } else {
+                    filteredOutScores.add(prediction);
+                }
+            } else {
+                scores.add(prediction);
+            }
+        }
+
+        // Log length of scores
+        Timber.tag(TAG).d("Length of scores: " + scores.size());
+        Timber.tag(TAG).d("Length of filteredOutScores: " + filteredOutScores.size());
+
+        return scores;
+    }
 
     /** Aggregates scores for nodes, including non-leaf nodes (so each non-leaf node has a score of the sum of all its dependents) */
     private Map<String, Float> aggregateAndNormalizeScores(float[] results) {

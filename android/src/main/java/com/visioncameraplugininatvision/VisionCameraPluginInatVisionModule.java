@@ -71,6 +71,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
     public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
     public static final String OPTION_CROP_RATIO = "cropRatio";
+    public static final String OPTION_USE_GEOMODEL = "useGeomodel";
+    public static final String OPTION_GEOMODEL_PATH = "geomodelPath";
+    public static final String OPTION_LOCATION = "location";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String ELEVATION = "elevation";
 
     public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
     private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
@@ -100,8 +106,49 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         }
         double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 
-        ImageClassifier classifier = null;
+        // Destructure geomodel parameters. Those can be null
+        Boolean useGeomodel = options.hasKey(OPTION_USE_GEOMODEL) ? options.getBoolean(OPTION_USE_GEOMODEL) : null;
+        String geomodelPath = options.hasKey(OPTION_GEOMODEL_PATH) ? options.getString(OPTION_GEOMODEL_PATH) : null;
+        ReadableMap location = options.hasKey(OPTION_LOCATION) ? options.getMap(OPTION_LOCATION) : null;
 
+        // Initialize and use geomodel if requested
+        GeoClassifier geoClassifier = null;
+        float[][] geomodelScores = null;
+        if (useGeomodel != null && useGeomodel) {
+            if (geomodelPath == null) {
+              throw new RuntimeException("Geomodel scoring requested but path is null");
+            }
+            if (location == null) {
+              throw new RuntimeException("Geomodel scoring requested but location is null");
+            }
+            Double latitude = location.hasKey(LATITUDE) ? location.getDouble(LATITUDE) : null;
+            Double longitude = location.hasKey(LONGITUDE) ? location.getDouble(LONGITUDE) : null;
+            Double elevation = location.hasKey(ELEVATION) ? location.getDouble(ELEVATION) : null;
+            if (latitude == null || longitude == null || elevation == null) {
+              throw new RuntimeException("Geomodel scoring requested but latitude, longitude, or elevation is null");
+            }
+
+            // Geomodel classifier initialization with model and taxonomy files
+            Timber.tag(TAG).d("Initializing geo classifier: " + geomodelPath + " / " + taxonomyFilename);
+            try {
+              geoClassifier = new GeoClassifier(geomodelPath, taxonomyFilename, version);
+            } catch (IOException e) {
+              e.printStackTrace();
+              throw new RuntimeException("Failed to initialize a geomodel classifier: " + e.getMessage());
+            } catch (OutOfMemoryError e) {
+              e.printStackTrace();
+              throw new RuntimeException("Out of memory");
+            } catch (Exception e) {
+              e.printStackTrace();
+              Timber.tag(TAG).w("Other type of exception - Device not supported - classifier failed to load - " + e);
+              throw new RuntimeException("Android version is too old - needs to be at least 6.0");
+            }
+            geomodelScores = geoClassifier.predictionsForLocation(latitude, longitude, elevation);
+        } else {
+            Timber.tag(TAG).d("Not using geomodel.");
+        }
+
+        ImageClassifier classifier = null;
         try {
             classifier = new ImageClassifier(modelFilename, taxonomyFilename, version);
         } catch (IOException e) {
@@ -154,11 +201,11 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             return;
         }
 
+        classifier.setGeomodelScores(geomodelScores);
         // Override the built-in taxonomy cutoff for predictions from file
         Double taxonomyRollupCutoff = 0.0;
-        List<Prediction> predictions = classifier.classifyFrame(bitmap, taxonomyRollupCutoff);
+        List<Prediction> predictions = classifier.classifyBitmap(bitmap, taxonomyRollupCutoff);
         bitmap.recycle();
-
 
         WritableArray cleanedPredictions = Arguments.createArray();
         for (Prediction prediction : predictions) {
@@ -176,7 +223,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             }
 
         }
-        
+
         long endTime = SystemClock.uptimeMillis();
         WritableMap resultMap = Arguments.createMap();
         resultMap.putArray("predictions", cleanedPredictions);
@@ -185,4 +232,55 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         resultMap.putDouble("timeElapsed", (endTime - startTime) / 1000.0);
         promise.resolve(resultMap);
     }
+
+  @ReactMethod
+  public void getPredictionsForLocation(ReadableMap options, Promise promise) {
+        long startTime = SystemClock.uptimeMillis();
+        // Destructure the model path from the options map
+        String geomodelPath = options.getString(OPTION_GEOMODEL_PATH);
+        String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
+        ReadableMap location = options.getMap(OPTION_LOCATION);
+
+        double latitude = location.getDouble(LATITUDE);
+        double longitude = location.getDouble(LONGITUDE);
+        double elevation = location.getDouble(ELEVATION);
+
+        GeoClassifier classifier = null;
+        try {
+            classifier = new GeoClassifier(geomodelPath, taxonomyPath, "2.13");
+        } catch (IOException e) {
+            e.printStackTrace();
+            promise.reject("E_CLASSIFIER", "Failed to initialize a geomodel mClassifier: " + e.getMessage());
+            return;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            Timber.tag(TAG).w("Out of memory - Device not supported - classifier failed to load - " + e);
+            promise.reject("E_OUT_OF_MEMORY", "Out of memory");
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Timber.tag(TAG).w("Other type of exception - Device not supported - classifier failed to load - " + e);
+            promise.reject("E_UNSUPPORTED_DEVICE", "Android version is too old - needs to be at least 6.0");
+            return;
+        }
+
+        List<Prediction> predictions = classifier.expectedNearby(latitude, longitude, elevation);
+
+        WritableArray cleanedPredictions = Arguments.createArray();
+        for (Prediction prediction : predictions) {
+            Map map = Taxonomy.nodeToMap(prediction);
+            if (map == null) continue;
+            // Transform the Map to a ReadableMap
+            ReadableMap readableMap = Arguments.makeNativeMap(map);
+            cleanedPredictions.pushMap(readableMap);
+        }
+
+        long endTime = SystemClock.uptimeMillis();
+        WritableMap resultMap = Arguments.createMap();
+        resultMap.putArray("predictions", cleanedPredictions);
+        resultMap.putMap("options", options);
+        // Time elapsed on the native side; in seconds
+        resultMap.putDouble("timeElapsed", (endTime - startTime) / 1000.0);
+        promise.resolve(resultMap);
+  }
 }

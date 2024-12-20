@@ -169,6 +169,10 @@ export default function App(): React.JSX.Element {
           taxonomyFilenameAndroid,
           `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`
         );
+        await RNFS.copyFileAssets(
+          geomodelFilenameAndroid,
+          `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`
+        );
       })();
     }
   }, []);

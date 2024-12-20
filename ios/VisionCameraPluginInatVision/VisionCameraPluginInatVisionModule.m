@@ -323,7 +323,6 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
 
     NSArray *leafScores = [taxonomy expectedNearbyFromClassification:geomodelPreds];
 
-    // convert the VCPPredictions in the bestRecentBranch into dicts
     NSMutableArray *predictions = [NSMutableArray array];
     for (VCPPrediction *prediction in leafScores) {
         [predictions addObject:[prediction asDict]];

@@ -12,14 +12,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import timber.log.Timber;
 
-/** Classifies images with Tensorflow Lite. */
+/** Classifies locations (latitude, longitude, elevation) with Tensorflow Lite. */
 public class GeoClassifier {
 
     /** Tag for the {@link Log}. */
@@ -30,18 +27,18 @@ public class GeoClassifier {
     private final String mTaxonomyFilename;
     private final String mModelVersion;
     private int mModelSize;
-    private final float mLocationChangeThreshold = 0.001f;
 
     /** An instance of the driver class to run model inference with Tensorflow Lite. */
     private Interpreter mTFlite;
 
     /** Instance variables to cache the geomodel results */
+    private final float mLocationChangeThreshold = 0.001f;
     private float[][] mCachedGeoResult;
     private double mCachedLatitude;
     private double mCachedLongitude;
     private double mCachedElevation;
 
-    /** Initializes an {@code GeoClassifier}. */
+    /** Initializes a {@code GeoClassifier}. */
     public GeoClassifier(String modelPath, String taxonomyPath, String version) throws IOException {
         mModelFilename = modelPath;
         mTaxonomyFilename = taxonomyPath;
@@ -60,7 +57,7 @@ public class GeoClassifier {
     public float[] normAndEncodeLocation(double latitude, double longitude, double elevation) {
         double normLat = latitude / 90.0;
         double normLng = longitude / 180.0;
-        double normElev = 0.0;
+        double normElev;
         if (elevation > 0) {
             normElev = elevation / 5705.63;
         } else {
@@ -92,7 +89,7 @@ public class GeoClassifier {
         return mCachedGeoResult;
     }
 
-    public List<Prediction> classifyLocation(double latitude, double longitude, double elevation) {
+    public List<Prediction> expectedNearby(double latitude, double longitude, double elevation) {
         float[][] scores = predictionsForLocation(latitude, longitude, elevation);
         return mTaxonomy.expectedNearbyFromClassification(scores);
     }
@@ -106,7 +103,7 @@ public class GeoClassifier {
         // Get normalized inputs
         float[] normalizedInputs = normAndEncodeLocation(latitude, longitude, elevation);
 
-        // Create input array with shape [1][5] to match iOS MLMultiArray shape @[@1, @5]
+        // Create input array with shape [1][5]
         float[][] inputArray = new float[1][5];
         inputArray[0] = normalizedInputs;
 

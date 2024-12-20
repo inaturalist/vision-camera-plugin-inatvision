@@ -74,6 +74,9 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_USE_GEOMODEL = "useGeomodel";
     public static final String OPTION_GEOMODEL_PATH = "geomodelPath";
     public static final String OPTION_LOCATION = "location";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String ELEVATION = "elevation";
 
     public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
     private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
@@ -118,9 +121,12 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             if (location == null) {
               throw new RuntimeException("Geomodel scoring requested but location is null");
             }
-            Double latitude = location.getDouble("latitude");
-            Double longitude = location.getDouble("longitude");
-            Double elevation = location.getDouble("elevation");
+            Double latitude = location.hasKey(LATITUDE) ? location.getDouble(LATITUDE) : null;
+            Double longitude = location.hasKey(LONGITUDE) ? location.getDouble(LONGITUDE) : null;
+            Double elevation = location.hasKey(ELEVATION) ? location.getDouble(ELEVATION) : null;
+            if (latitude == null || longitude == null || elevation == null) {
+              throw new RuntimeException("Geomodel scoring requested but latitude, longitude, or elevation is null");
+            }
 
             // Geomodel classifier initialization with model and taxonomy files
             Timber.tag(TAG).d("Initializing geo classifier: " + geomodelPath + " / " + taxonomyFilename);
@@ -235,9 +241,9 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String taxonomyPath = options.getString(OPTION_TAXONOMY_PATH);
         ReadableMap location = options.getMap(OPTION_LOCATION);
 
-        double latitude = location.getDouble("latitude");
-        double longitude = location.getDouble("longitude");
-        double elevation = location.getDouble("elevation");
+        double latitude = location.getDouble(LATITUDE);
+        double longitude = location.getDouble(LONGITUDE);
+        double elevation = location.getDouble(ELEVATION);
 
         GeoClassifier classifier = null;
         try {

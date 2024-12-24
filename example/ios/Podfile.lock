@@ -1134,7 +1134,7 @@ PODS:
   - VisionCamera/React (4.0.5):
     - React-Core
     - VisionCamera/FrameProcessors
-  - VisionCameraPluginInatVision (4.1.4):
+  - VisionCameraPluginInatVision (4.2.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -1370,49 +1370,49 @@ SPEC CHECKSUMS:
   RCTTypeSafety: 57698bb7fcde424922e201dab377f496a08a63e3
   React: 64c0c83924460a3d34fa5857ca2fd3ed2a69b581
   React-callinvoker: c0129cd7b8babac64b3d3515e72a8b2e743d261e
-  React-Codegen: fea55b35ab6e6091091f84ec7924424c6375a9d0
-  React-Core: 607dac2a3cc5962c3d9612d79907ac28296c3f13
-  React-CoreModules: af9d2eca18c26b319157df21d5ea9eef7d5d4ad2
-  React-cxxreact: 91453f3e345b7c7b9286a9b3a04d01d402f7aa5a
+  React-Codegen: a8069ecb98f0f608cb8b6b25c7580201a12bc062
+  React-Core: df8ae6f929fb71ba3f138d3810eea0078df0c7c9
+  React-CoreModules: 52689fad6e3ee38cda87237c8f8bfb07febd2c48
+  React-cxxreact: a77dc838e2c6f8a3b0253c78dc9eed2224512c00
   React-debug: 9a287572a7a36429da0509664ce3d1931f39f3c3
-  React-Fabric: 528abafe4e58be9ca229b25eac44b2a393432b08
-  React-FabricImage: 42101f6e6fc9b91c2695be0002d2d6568e0067e1
-  React-graphics: 6af7e672af66a9e8b46e4b140a8d28c129ed2758
-  React-hermes: 7155160dabef04a20a41b817fbea764039833de0
-  React-ImageManager: 4b5f59abe72ad1cf721ef1e52e56f5974dc785a9
-  React-jserrorhandler: c89f6315b401eff2ff0b57f2dd5cb1624c740e63
-  React-jsi: da0ebd65e8da907855a7ca4e3dfeb45f5d671886
-  React-jsiexecutor: e0623342677d9c9f18c8b42121a70a9671c2b80b
+  React-Fabric: 31ccf400c1809363c0c1b2b16444c022856b4206
+  React-FabricImage: b277312bedd2a22bb12aa99b05f2e57d4b5b1517
+  React-graphics: db2b875c768cf1b95160be53099214796080d4fb
+  React-hermes: c58baecd72d4cc4138ff8a2c812dbe57394d5568
+  React-ImageManager: 948780228b32f5eeab1151755cee740f32b77437
+  React-jserrorhandler: 6b30172ca169521afdec8e8d968809da0862a5e4
+  React-jsi: 2e3c3efe487bae67b4bd9b0d81efc67f87ae2990
+  React-jsiexecutor: efcdc14052b16e55b029c9179962e1225ccf2601
   React-jsinspector: 1729acf5ffe2d4439d698da25fddf0c75d07d1a1
-  React-logger: 60afd40b183e8e6642bfd0108f1a1ad360cc665e
-  React-Mapbuffer: 672a9342eb75a4d0663306e94d4dfc88aee73b93
-  react-native-cameraroll: 2a198b0eb86c7ccf3303fb57702b2465cc292c94
-  react-native-image-picker: 2381c008bbb09e72395a2d043c147b11bd1523d9
-  react-native-worklets-core: f51430dd07bf5343d4918d28a4bb00fe8f98b982
+  React-logger: 7904abd7e1299754785e356af15ec9d1e9439901
+  React-Mapbuffer: d56122e84907e9a6dad428c83cd2bd0d3dc64f71
+  react-native-cameraroll: 638d2bd176bf069087d9bffaca9149c179c4b5c3
+  react-native-image-picker: e3b9fdaf27763b5ea8d6b4a62c60107f1a4349d3
+  react-native-worklets-core: f730c01db8ea3d580e322617f4a631206f1905fb
   React-nativeconfig: 2e44d0d2dd222b12a5183f4bcaa4a91881497acb
-  React-NativeModulesApple: 8aa032fe6c92c1a3c63e4809d42816284a56a9b0
+  React-NativeModulesApple: b70b38573773f2e9e342a1cf9ca5e36f5db55419
   React-perflogger: f9367428cf475f4606b5965c1d5a71781bb95299
   React-RCTActionSheet: 39b3248276c7f98e455aebb0cdd473a35c6d5082
-  React-RCTAnimation: 10eee15d10e420f56b4014efd4d7fb7f064105fc
-  React-RCTAppDelegate: d58a00ce3178b077984f9cbb90c6191d73c9b3a7
-  React-RCTBlob: 67bd0b38c39f59ec77dcbab01217a7b9dd338446
-  React-RCTFabric: 78b07ebde8adc626b210219bf1a3ab5bafa6b8b7
-  React-RCTImage: e9c7790c25684ec5b64b4c92def4d6b95b225826
-  React-RCTLinking: d3d3ea5596c9f30fa0e8138e356258fca1f2ccaf
-  React-RCTNetwork: b52bcb51f559535612957f20b4ca28ff1438182f
-  React-RCTSettings: 6763f9d5210ce3dae6f892a0546c06738014025b
-  React-RCTText: 6b8365ef043d3fc01848bb8de48ee9e67ba3bc47
-  React-RCTVibration: aa85a228a382b66e8844c2f94cd3e734fa96d07a
-  React-rendererdebug: db3c2ce7c7c239b5b2e2c913acd08dc03666e88f
+  React-RCTAnimation: a8c1773b494690270da2574f238f7c49a35bb09b
+  React-RCTAppDelegate: f00f261751a149e0395890b9780879c67b1dca14
+  React-RCTBlob: 59f8e06cda89868b3a1401c6a19eb5289740a7c8
+  React-RCTFabric: e8a3593890e6c890e253bc1f285cb99fb11e3c5e
+  React-RCTImage: 00d32dcef0eb07336fbf791b4c23d7a2a65c9abe
+  React-RCTLinking: d0d3530def72c304797bde151cb83d97a177e276
+  React-RCTNetwork: e2f7be6fc795210de32f0b296269615c0e176e91
+  React-RCTSettings: c71bfa4a2f9ae331a595090470e394000ba1035c
+  React-RCTText: 13d54d357ece4e63b1c058b8cdc629b3a94e8320
+  React-RCTVibration: 91ce401023cc0c382f25c0de6d41b2ab4599efcf
+  React-rendererdebug: 3f1b4415498f0ad7ad830b13ad59b3f7577725d2
   React-rncore: e4514e3d953d0ad476a3e5dd999e16d68ebae2e4
   React-runtimeexecutor: 1fb11b17da6dcf79da6f301ab54fcb51545bab6e
-  React-runtimescheduler: 1c40cfe98dcc7b06354d96a1cd8ee10cbc4cc797
-  React-utils: 4cc2ba652f5df1c8f0461d4ae9e3ee474c1354ea
-  ReactCommon: 1da3fc14d904883c46327b3322325eebf60a720a
-  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  React-runtimescheduler: 8747bbc38295b83b13bed103c1a236331a279fff
+  React-utils: 1630c10ad6b9fe2bf7bfa82f999f58f99f3807d6
+  ReactCommon: ed4e27a1815f5927b5c807c5818b7c5b4dd4ee97
+  RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  VisionCamera: 4c1d19f1ac09f2f42f758e306fcf642536627357
-  VisionCameraPluginInatVision: 1bec4436cc2d2a952435ddbce2ee5457faa3ac20
+  VisionCamera: f02de0b1b6b1516b327bd8215237a97e7386db8a
+  VisionCameraPluginInatVision: fcf3a3da9272def9014735257e065726c2d66d4f
   Yoga: 2a16e58450c48e110211dae1159fb114bbcdcfc0
 
 PODFILE CHECKSUM: 27b296f60a5c8a0003e66a0a5215108c5f48e3ab

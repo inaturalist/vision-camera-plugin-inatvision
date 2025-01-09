@@ -183,7 +183,7 @@ export default function App(): React.JSX.Element {
     }
   );
 
-  const lookUpLocation = InatVision.lookUpLocation(
+  const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation
   );
 
@@ -207,9 +207,9 @@ export default function App(): React.JSX.Element {
             useGeomodel,
             geomodelPath,
             location: {
-              latitude: lookUpLocation.latitude,
-              longitude: lookUpLocation.longitude,
-              elevation: lookUpLocation.elevation,
+              latitude: geoModelCellLocation.latitude,
+              longitude: geoModelCellLocation.longitude,
+              elevation: geoModelCellLocation.elevation,
             },
             patchedOrientationAndroid: 'portrait',
           });
@@ -229,7 +229,7 @@ export default function App(): React.JSX.Element {
       negativeFilter,
       handleResults,
       useGeomodel,
-      lookUpLocation,
+      geoModelCellLocation,
     ]
   );
 
@@ -272,9 +272,8 @@ export default function App(): React.JSX.Element {
       useGeomodel: true,
       geomodelPath,
       location: {
-        latitude: lookUpLocation.latitude,
-        longitude: lookUpLocation.longitude,
-        elevation: lookUpLocation.elevation,
+        latitude: testLocationEuropeNoElevation.latitude,
+        longitude: testLocationEuropeNoElevation.longitude,
       },
     })
       .then((result) => {

@@ -5,7 +5,7 @@ import type { Frame } from 'react-native-vision-camera';
 import { Worklets } from 'react-native-worklets-core';
 import type { ISharedValue } from 'react-native-worklets-core';
 
-import { lookUpLocation as lL } from './lookUpLocation';
+import { lookUpLocation } from './lookUpLocation';
 import type { LocationLookup } from './lookUpLocation';
 
 const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
@@ -446,8 +446,8 @@ interface Options extends BaseOptions {
   patchedOrientationAndroid?: string;
 }
 
-export function lookUpLocation(location: Location): LocationLookup {
-  return lL(location);
+export function getCellLocation(location: Location): LocationLookup {
+  return lookUpLocation(location);
 }
 
 /**

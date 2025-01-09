@@ -37,8 +37,8 @@ const testLocationEuropeNoElevation = {
 };
 
 const testLocationAmerica = {
-  latitude: -124.29,
-  longitude: 18.95,
+  latitude: 37.87,
+  longitude: -122.25,
   elevation: 15,
 };
 

@@ -360,6 +360,11 @@ export interface Location {
   elevation?: number;
 }
 
+export enum MODE {
+  BEST_BRANCH = 'BEST_BRANCH',
+  COMMON_ANCESTOR = 'COMMON_ANCESTOR',
+}
+
 interface BaseOptions {
   // Required
   /**
@@ -375,6 +380,10 @@ interface BaseOptions {
    */
   taxonomyPath: string;
   // Optional
+  /**
+   * Mode of compiling the results.
+   */
+  mode?: MODE;
   /**
    * The confidence threshold for the predictions.
    */

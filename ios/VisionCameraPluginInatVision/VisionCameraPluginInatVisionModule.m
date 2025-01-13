@@ -145,6 +145,8 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSNumber *elevation = location[@"elevation"];
     // Destructure geomodel path out of options
     NSString *geomodelPath = options[@"geomodelPath"];
+    // Destructure geomodel path out of options
+    NSString *mode = options[@"mode"];
 
     // Setup threshold
     float threshold = 0.70;
@@ -202,30 +204,31 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               results = visionScores;
           }
 
-          NSMutableArray *topBranches = [NSMutableArray array];
-          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
-          // add this to the end of the recent top branches array
-          [topBranches addObject:bestBranch];
-
           // convert the VCPPredictions in the bestBranch into dicts
-          NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-          for (VCPPrediction *prediction in bestBranch) {
-              // only add predictions that are above the threshold
-              if (prediction.score < threshold) {
-                  continue;
-              }
-              [bestBranchAsDict addObject:[prediction asDict]];
+          NSMutableArray *predictions = [NSMutableArray array];
+
+          // Only in mode "COMMON_ANCESTOR"
+          if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
+          } else {
+            NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+            for (VCPPrediction *prediction in bestBranch) {
+                // only add predictions that are above the threshold
+                if (prediction.score < threshold) {
+                    continue;
+                }
+                [predictions addObject:[prediction asDict]];
+            }
           }
 
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
           NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-          // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+          // Create a new dictionary with the predictions under the key "predictions"
           // and the options passed in under the key "options"
           NSDictionary *response = [NSDictionary dictionary];
           response = @{
-            @"predictions": bestBranchAsDict,
+            @"predictions": predictions,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
           };
@@ -259,30 +262,31 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             results = visionScores;
         }
 
-        NSMutableArray *topBranches = [NSMutableArray array];
-        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
-        // add this to the end of the recent top branches array
-        [topBranches addObject:bestBranch];
-
         // convert the VCPPredictions in the bestBranch into dicts
-        NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-        for (VCPPrediction *prediction in bestBranch) {
-            // only add predictions that are above the threshold
-            if (prediction.score < threshold) {
-                continue;
-            }
-            [bestBranchAsDict addObject:[prediction asDict]];
+        NSMutableArray *predictions = [NSMutableArray array];
+
+        // Only in mode "COMMON_ANCESTOR"
+        if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
+        } else {
+          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+          for (VCPPrediction *prediction in bestBranch) {
+              // only add predictions that are above the threshold
+              if (prediction.score < threshold) {
+                  continue;
+              }
+              [predictions addObject:[prediction asDict]];
+          }
         }
 
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-        // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+        // Create a new dictionary with the predictions under the key "predictions"
         // and the options passed in under the key "options"
         NSDictionary *response = [NSDictionary dictionary];
         response = @{
-            @"predictions": bestBranchAsDict,
+            @"predictions": predictions,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
         };

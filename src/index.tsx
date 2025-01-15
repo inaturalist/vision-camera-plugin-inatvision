@@ -498,6 +498,25 @@ export function getPredictionsForImage(
   return new Promise((resolve, reject) => {
     VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
       .then((result: ResultForImage) => {
+        if (options?.mode === MODE.COMMON_ANCESTOR) {
+          // Get the top 15 leaf nodes
+          const top15 = result.predictions
+            .filter((p) => p.leaf_id)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 15);
+          // Get quotient to normalize the top 15 scores
+          const scoreSumOfAllLeaves = result.predictions
+            .filter((p) => p.leaf_id)
+            .reduce((acc, p) => acc + p.score, 0);
+          const scoreSumOfTop15 = top15.reduce((acc, p) => acc + p.score, 0);
+          const quotient = scoreSumOfAllLeaves / scoreSumOfTop15;
+          // Normalize the top 15 scores
+          const normalizedPredictions = result.predictions.map((p) => ({
+            ...p,
+            score: p.score * quotient,
+          }));
+          console.log('normalizedPredictions', normalizedPredictions);
+        }
         resolve(result);
       })
       .catch((error: any) => {

@@ -495,7 +495,15 @@ export function getPredictionsForImage(
     const locationLookup = lookUpLocation(options.location);
     newOptions.location = locationLookup;
   }
-  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions);
+  return new Promise((resolve, reject) => {
+    VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
+      .then((result: ResultForImage) => {
+        resolve(result);
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
 }
 
 interface OptionsForLocation {

@@ -42,8 +42,7 @@ const testLocationAmerica = {
   elevation: 15,
 };
 
-// TODO: these models do not work yet with the current code, what changed?
-// The last model prior to this that has been tested is 2.13
+// TODO: these .tflite models do not work yet, why?
 const modelFilenameAndroid = 'INatVision_Small_2_fact256_8bit.tflite';
 const taxonomyFilenameAndroid = 'taxonomy.csv';
 const geomodelFilenameAndroid = 'INatGeomodel_Small_2_8bit.tflite';

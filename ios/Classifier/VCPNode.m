@@ -75,6 +75,9 @@
                             };
 
     NSMutableDictionary *mutableDict = [dict mutableCopy];
+    if (self.parentTaxonId) {
+        mutableDict[@"parent_taxon_id"] = self.parentTaxonId;
+    }
     if (self.leafId) {
         mutableDict[@"leaf_id"] = self.leafId;
     }

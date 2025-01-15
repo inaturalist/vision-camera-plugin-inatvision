@@ -21,6 +21,7 @@
 - (NSArray *)expectedNearbyFromClassification:(MLMultiArray *)classification;
 - (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification;
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
+- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification;
 - (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
 
 @end

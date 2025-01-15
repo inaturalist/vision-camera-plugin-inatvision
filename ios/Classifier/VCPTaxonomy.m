@@ -142,6 +142,21 @@
     [self setTaxonomyRollupCutoff:cutoff];
 }
 
+- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification {
+    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
+    // Log number of nodes in scores
+    NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
+    NSMutableArray *scoresArray = [NSMutableArray array];
+    for (NSNumber *taxonId in scores.allKeys) {
+        VCPNode *node = self.nodesByTaxonId[taxonId];
+        NSNumber *score = scores[taxonId];
+        VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:node
+                                                                  score:score.floatValue];
+        [scoresArray addObject:prediction];
+    }
+    return [NSArray arrayWithArray:scoresArray];
+}
+
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {
     NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
     // Log number of nodes in scores

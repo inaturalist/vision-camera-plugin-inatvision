@@ -188,6 +188,10 @@
 
     // Only in mode "COMMON_ANCESTOR"
     if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
+      NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results];
+      for (VCPPrediction *prediction in commonAncestor) {
+          [predictions addObject:[prediction asDict]];
+      }
     } else {
       NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
       for (VCPPrediction *prediction in bestBranch) {

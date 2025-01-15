@@ -5,6 +5,8 @@
 //  Created by Alex Shepard on 3/13/19.
 //  Copyright © 2023 iNaturalist. All rights reserved.
 //
+@import Accelerate;
+@import CoreGraphics;
 
 #import "VCPTaxonomy.h"
 #import "VCPNode.h"
@@ -123,6 +125,21 @@
     NSLog(@"Length of filteredOutScores: %lu", (unsigned long)filteredOutScores.count);
 
     return [NSArray arrayWithArray:scores];
+}
+
+- (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification {
+    // Get a pointer to the raw data
+    float *dataPointer = (float *)classification.dataPointer;
+    NSUInteger count = classification.count;
+    // Use vDSP to find the maximum value
+    float topCombinedScore;
+    vDSP_maxv(dataPointer, 1, &topCombinedScore, count);
+    // define some cutoff based on a percentage of the top combined score. Taxa with
+    // scores below the cutoff will be ignored when aggregating scores up the taxonomy
+    float scoreRatioCutoff = 0.001;
+    float cutoff = topCombinedScore * scoreRatioCutoff;
+    // Set the taxonomyRollupCutoff to the cutoff
+    [self setTaxonomyRollupCutoff:cutoff];
 }
 
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {

@@ -19,6 +19,7 @@
 
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
 - (NSArray *)expectedNearbyFromClassification:(MLMultiArray *)classification;
+- (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification;
 - (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
 - (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
 

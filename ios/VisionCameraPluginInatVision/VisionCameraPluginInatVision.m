@@ -176,20 +176,9 @@
         results = visionScores;
     }
 
-    // Get a pointer to the raw data
-    float *dataPointer = (float *)results.dataPointer;
-    NSUInteger count = results.count;
-    // Use vDSP to find the maximum value
-    float topCombinedScore;
-    vDSP_maxv(dataPointer, 1, &topCombinedScore, count);
-    // define some cutoff based on a percentage of the top combined score. Taxa with
-    // scores below the cutoff will be ignored when aggregating scores up the taxonomy
-    float scoreRatioCutoff = 0.001;
-    float cutoff = topCombinedScore * scoreRatioCutoff;
-
     // Setup taxonomy
     VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-    [taxonomy setTaxonomyRollupCutoff:cutoff];
+    [taxonomy deriveTopScoreRatioCutoff:results];
     if (taxonomyRollupCutoff) {
       [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
     }

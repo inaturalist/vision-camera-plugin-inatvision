@@ -204,6 +204,8 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               results = visionScores;
           }
 
+          [taxonomy deriveTopScoreRatioCutoff:results];
+
           // convert the VCPPredictions in the bestBranch into dicts
           NSMutableArray *predictions = [NSMutableArray array];
 
@@ -261,6 +263,8 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
         } else {
             results = visionScores;
         }
+
+        [taxonomy deriveTopScoreRatioCutoff:results];
 
         // convert the VCPPredictions in the bestBranch into dicts
         NSMutableArray *predictions = [NSMutableArray array];

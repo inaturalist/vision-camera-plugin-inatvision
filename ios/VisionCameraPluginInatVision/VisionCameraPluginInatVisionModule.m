@@ -206,10 +206,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
           [taxonomy deriveTopScoreRatioCutoff:results];
 
-          // convert the VCPPredictions in the bestBranch into dicts
           NSMutableArray *predictions = [NSMutableArray array];
-
-          // Only in mode "COMMON_ANCESTOR"
           if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
             NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results];
             for (VCPPrediction *prediction in commonAncestor) {
@@ -222,6 +219,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
                 if (prediction.score < threshold) {
                     continue;
                 }
+                // convert the VCPPredictions in the bestBranch into dicts
                 [predictions addObject:[prediction asDict]];
             }
           }

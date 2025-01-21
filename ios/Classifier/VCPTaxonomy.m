@@ -46,8 +46,6 @@
         NSAssert(taxa, @"failed to get json from %@", taxaFile);
         NSAssert(taxa.count > 0, @"failed to get list of json from %@", taxaFile);
 
-        self.linneanPredictionsOnly = YES;
-
         self.life =  [[VCPNode alloc] init];
         self.life.taxonId = @(48460);
         self.life.rank = @(100);
@@ -162,25 +160,6 @@
     // Log number of nodes in scores
     NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
     return [self buildBestBranchFromScores:scores];
-}
-
-- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold {
-    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
-    NSArray *bestBranch = [self buildBestBranchFromScores:scores];
-
-    for (VCPPrediction *prediction in [bestBranch reverseObjectEnumerator]) {
-        if (self.linneanPredictionsOnly) {
-            // only KPCOFGS ranks qualify as "top" predictions
-            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-            if (prediction.rank % 10 != 0) { continue; }
-        }
-
-        if (prediction.score > threshold) {
-            return prediction;
-        }
-    }
-
-    return nil;
 }
 
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {

@@ -15,7 +15,6 @@
     if (self = [super init]) {
         self.node = node;
         self.score = score;
-        self.rank = node.rank.integerValue;
     }
 
     return self;
@@ -29,7 +28,7 @@
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%ld - %@ - %f",
-            (long)self.rank, self.node.name, self.score];
+            (long)self.node.rank.integerValue, self.node.name, self.score];
 }
 
 @end

@@ -14,8 +14,10 @@
 
 @property VCPNode *node;
 @property double score;
+@property double visionScore;
+@property double geoScore;
 
-- (instancetype)initWithNode:(VCPNode *)node score:(double)score;
+- (instancetype)initWithNode:(VCPNode *)node score:(double)score visionScore:(double)visionScore geoScore:(double)geoScore;
 
 - (NSDictionary *)asDict;
 

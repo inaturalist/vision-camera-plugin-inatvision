@@ -11,10 +11,12 @@
 
 @implementation VCPPrediction
 
-- (instancetype)initWithNode:(VCPNode *)node score:(double)score {
+- (instancetype)initWithNode:(VCPNode *)node score:(double)score visionScore:(double)visionScore geoScore:(double)geoScore {
     if (self = [super init]) {
         self.node = node;
         self.score = score;
+        self.visionScore = visionScore;
+        self.geoScore = geoScore;
     }
 
     return self;
@@ -23,6 +25,8 @@
 - (NSDictionary *)asDict {
     NSMutableDictionary *mutableNodeDict = [[self.node asDict] mutableCopy];
     mutableNodeDict[@"score"] = @(self.score);
+    mutableNodeDict[@"vision_score"] = @(self.visionScore);
+    mutableNodeDict[@"geo_score"] = @(self.geoScore);
     return [NSDictionary dictionaryWithDictionary:mutableNodeDict];
 }
 

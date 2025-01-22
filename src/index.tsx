@@ -189,6 +189,7 @@ export interface ResultForImage {
   options: OptionsForImage;
   predictions: Prediction[];
   timeElapsed?: number; //iOS only
+  commonAncestor?: Prediction;
 }
 
 export interface Result {

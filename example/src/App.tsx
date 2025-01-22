@@ -8,6 +8,7 @@ import {
   Pressable,
   SafeAreaView,
   StyleSheet,
+  Switch,
   Text,
   View,
 } from 'react-native';
@@ -74,6 +75,7 @@ export default function App(): React.JSX.Element {
   >(undefined);
   const [negativeFilter, setNegativeFilter] = useState(false);
   const [useGeomodel, setUseGeomodel] = useState(false);
+  const [useCommonAncestor, setUseCommonAncestor] = useState(false);
 
   enum VIEW_STATUS {
     NONE,
@@ -189,7 +191,9 @@ export default function App(): React.JSX.Element {
             version: modelVersion,
             modelPath,
             taxonomyPath,
-            mode: InatVision.MODE.COMMON_ANCESTOR,
+            mode: useCommonAncestor
+              ? InatVision.MODE.COMMON_ANCESTOR
+              : InatVision.MODE.BEST_BRANCH,
             confidenceThreshold,
             filterByTaxonId,
             negativeFilter,
@@ -221,6 +225,7 @@ export default function App(): React.JSX.Element {
       handleResults,
       useGeomodel,
       geoModelCellLocation,
+      useCommonAncestor,
     ]
   );
 
@@ -258,7 +263,9 @@ export default function App(): React.JSX.Element {
       version: modelVersion,
       modelPath,
       taxonomyPath,
-      mode: InatVision.MODE.COMMON_ANCESTOR,
+      mode: useCommonAncestor
+        ? InatVision.MODE.COMMON_ANCESTOR
+        : InatVision.MODE.BEST_BRANCH,
       confidenceThreshold,
       cropRatio: 0.88,
       useGeomodel: true,
@@ -307,6 +314,20 @@ export default function App(): React.JSX.Element {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
         <View style={styles.center}>
+          {/* A switch between best branch mode and common ancestor mode */}
+          <Text style={styles.text}>Mode:</Text>
+          <View style={styles.row}>
+            <Text style={styles.smallLabel}>Best branch</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={useCommonAncestor ? '#f4f3f4' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setUseCommonAncestor(!useCommonAncestor)}
+              value={useCommonAncestor}
+            />
+            <Text style={styles.smallLabel}>Common ancestor</Text>
+          </View>
+
           <Button
             title="Show camera"
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}

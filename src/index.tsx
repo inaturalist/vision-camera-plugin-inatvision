@@ -173,6 +173,8 @@ export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;
+  vision_score: number;
+  geo_score?: number;
   taxon_id: number;
   // TODO: this is only present in __inatVision iOS (from JS code) and Android, and getPredictionsForImage on Android
   ancestor_ids?: number[];

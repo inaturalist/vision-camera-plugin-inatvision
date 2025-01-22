@@ -208,12 +208,12 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
           NSMutableArray *predictions = [NSMutableArray array];
           if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-            NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results];
+            NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
             for (VCPPrediction *prediction in commonAncestor) {
               [predictions addObject:[prediction asDict]];
             }
           } else {
-            NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+            NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
             for (VCPPrediction *prediction in bestBranch) {
                 // only add predictions that are above the threshold
                 if (prediction.score < threshold) {
@@ -273,12 +273,12 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
         // Only in mode "COMMON_ANCESTOR"
         if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-          NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results];
+          NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
           for (VCPPrediction *prediction in commonAncestor) {
               [predictions addObject:[prediction asDict]];
           }
         } else {
-          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
           for (VCPPrediction *prediction in bestBranch) {
               // only add predictions that are above the threshold
               if (prediction.score < threshold) {

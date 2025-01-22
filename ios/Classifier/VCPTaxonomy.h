@@ -18,7 +18,7 @@
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
 - (NSArray *)expectedNearbyFromClassification:(MLMultiArray *)classification;
 - (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification;
-- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
-- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification;
+- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores;
+- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores;
 
 @end

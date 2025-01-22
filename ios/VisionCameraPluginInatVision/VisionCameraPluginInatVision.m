@@ -188,12 +188,12 @@
 
     // Only in mode "COMMON_ANCESTOR"
     if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-      NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results];
+      NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
       for (VCPPrediction *prediction in commonAncestor) {
           [predictions addObject:[prediction asDict]];
       }
     } else {
-      NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
+      NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
       for (VCPPrediction *prediction in bestBranch) {
           [predictions addObject:[prediction asDict]];
       }

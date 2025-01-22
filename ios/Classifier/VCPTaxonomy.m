@@ -181,13 +181,13 @@
     } else {
         // base case, no children
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
-        NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
-        NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
+        NSNumber *combinedScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
+        NSAssert(combinedScore, @"node with leafId %@ has no score", node.leafId);
 
-        if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
-            aggregatedCombinedScores[node.taxonId] = leafScore;
+        if ([combinedScore floatValue] >= self.taxonomyRollupCutoff) {
+            aggregatedCombinedScores[node.taxonId] = combinedScore;
         } else {
-            self.excludedLeafScoreSum += leafScore.floatValue;
+            self.excludedLeafScoreSum += combinedScore.floatValue;
         }
     }
 

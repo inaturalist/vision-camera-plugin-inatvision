@@ -175,6 +175,7 @@ export interface Prediction {
   score: number;
   vision_score: number;
   geo_score?: number;
+  geo_threshold?: number;
   taxon_id: number;
   // TODO: this is only present in __inatVision iOS (from JS code) and Android, and getPredictionsForImage on Android
   ancestor_ids?: number[];

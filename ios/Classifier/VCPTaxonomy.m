@@ -103,12 +103,14 @@
     NSMutableArray *filteredOutScores = [NSMutableArray array];
 
     for (VCPNode *leaf in self.leaves) {
-        NSNumber *score = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
+        NSNumber *geoScore = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
         VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:leaf
-                                                            score:score.floatValue];
-        // If score is higher than geoThreshold it means the taxon is "expected nearby"
+                                                                  score:0
+                                                                  visionScore:0
+                                                            geoScore:geoScore.floatValue];
+        // If geoScore is higher than geoThreshold it means the taxon is "expected nearby"
         if (leaf.spatialThreshold) {
-          if (score.floatValue >= leaf.spatialThreshold.floatValue) {
+          if (geoScore.floatValue >= leaf.spatialThreshold.floatValue) {
             [scores addObject:prediction];
           } else {
             [filteredOutScores addObject:prediction];

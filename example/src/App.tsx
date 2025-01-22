@@ -53,15 +53,15 @@ const modelVersion = 'small_2';
 
 const modelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${modelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
 const geomodelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App(): React.JSX.Element {
@@ -128,38 +128,27 @@ export default function App(): React.JSX.Element {
     };
   }, []);
 
+  const checkForModelFilesIOS = () => {
+    RNFS.readDir(RNFS.MainBundlePath).then((results) => {
+      const hasModel = results.find((r) => r.name === modelFilenameIOS);
+      const hasTaxonomy = results.find((r) => r.name === taxonomyFilenameIOS);
+      const hasGeomodel = results.find((r) => r.name === geomodelFilenameIOS);
+      if (
+        hasModel !== undefined &&
+        hasTaxonomy !== undefined &&
+        hasGeomodel !== undefined
+      ) {
+        console.log('CV Model, and geomodel, and taxonomy assets found.');
+      } else {
+        console.log('No model asset found to copy into document directory.');
+        Alert.alert('Model file not found');
+      }
+    });
+  };
+
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${modelFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved model file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving model file`, error);
-        });
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved geomodel file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving geomodel file`, error);
-        });
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving file`, error);
-        });
+      checkForModelFilesIOS();
     } else {
       (async () => {
         await RNFS.copyFileAssets(

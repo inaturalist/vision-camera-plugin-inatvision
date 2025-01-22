@@ -14,7 +14,6 @@
 
 @property VCPNode *node;
 @property double score;
-@property NSInteger rank;
 
 - (instancetype)initWithNode:(VCPNode *)node score:(double)score;
 

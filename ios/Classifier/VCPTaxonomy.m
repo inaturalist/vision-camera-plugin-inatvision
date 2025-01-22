@@ -163,7 +163,7 @@
 }
 
 - (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
-    NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
+    NSMutableDictionary *aggregatedCombinedScores = [NSMutableDictionary dictionary];
     if (node.children.count > 0) {
         float thisScore = 0.0f;
         for (VCPNode *child in node.children) {
@@ -171,12 +171,12 @@
             NSNumber *childScore = childScores[child.taxonId];
 
             if ([childScore floatValue] >= self.taxonomyRollupCutoff) {
-                [allScores addEntriesFromDictionary:childScores];
+                [aggregatedCombinedScores addEntriesFromDictionary:childScores];
                 thisScore += [childScore floatValue];
             }
         }
         if (thisScore > 0) {
-          allScores[node.taxonId] = @(thisScore);
+          aggregatedCombinedScores[node.taxonId] = @(thisScore);
         }
     } else {
         // base case, no children
@@ -185,13 +185,13 @@
         NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
 
         if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
-            allScores[node.taxonId] = leafScore;
+            aggregatedCombinedScores[node.taxonId] = leafScore;
         } else {
             self.excludedLeafScoreSum += leafScore.floatValue;
         }
     }
 
-    return [allScores copy];
+    return [aggregatedCombinedScores copy];
 }
 
 - (NSDictionary *)aggregateAndNormalizeScores:(MLMultiArray *)classification {

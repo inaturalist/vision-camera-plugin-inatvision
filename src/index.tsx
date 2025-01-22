@@ -484,6 +484,42 @@ interface OptionsForImage extends BaseOptions {
   uri: string;
 }
 
+function commonAncestorFromAggregatedScores(
+  predictions: Prediction[]
+  // TODO: = ??
+  // disallowHumans?: boolean
+): Prediction | undefined {
+  // As in the vision API:
+  // # if using combined scores to aggregate, and there are taxa expected nearby,
+  // # then add a query filter to only look at nearby taxa as common ancestor candidates
+  const filterForNearby = predictions.some(
+    (prediction) => prediction.geo_score >= prediction.geo_threshold
+  );
+  // Filter and sort candidates
+  const commonAncestorCandidates = predictions
+    .filter(
+      (prediction) =>
+        prediction.score > 0.78 &&
+        prediction.rank_level >= 20 &&
+        prediction.rank_level <= 33 &&
+        (!filterForNearby || prediction.geo_score >= prediction.geo_threshold)
+    )
+    .sort((a, b) => a.rank_level - b.rank_level);
+  const commonAncestor = commonAncestorCandidates[0];
+
+  // TODO: ?
+  // Handle human taxon exclusion
+  // if (
+  //   disallowHumans &&
+  //   taxonomy.humanTaxon &&
+  //   commonAncestor.taxon_id === taxonomy.humanTaxon.parent_taxon_id
+  // ) {
+  //   return null;
+  // }
+
+  return commonAncestor;
+}
+
 /**
  * Function to call the computer vision model with a image from disk
  */
@@ -518,9 +554,12 @@ export function getPredictionsForImage(
             ...p,
             score: p.score * quotient,
           }));
-          console.log('normalizedPredictions', normalizedPredictions);
+          const commonAncestor = commonAncestorFromAggregatedScores(
+            normalizedPredictions
+          );
           const resultWithCommonAncestor = Object.assign({}, result, {
             predictions: top15,
+            commonAncestor,
           });
           resolve(resultWithCommonAncestor);
         } else {

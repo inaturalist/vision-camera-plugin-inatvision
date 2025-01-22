@@ -7,6 +7,7 @@ import {
   Platform,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -70,6 +71,7 @@ export default function App(): React.JSX.Element {
   const location = useLocationPermission();
 
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
+  const [commonAncestor, setCommonAncestor] = useState<InatVision.Prediction>();
   const [filterByTaxonId, setFilterByTaxonId] = useState<
     undefined | string | null
   >(undefined);
@@ -82,6 +84,7 @@ export default function App(): React.JSX.Element {
     CAMERA,
     GALLERY,
     GEOMODEL,
+    RESULT,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
@@ -281,6 +284,8 @@ export default function App(): React.JSX.Element {
         console.log('Result', JSON.stringify(result));
         console.log('result.timeElapsed', result.timeElapsed);
         setResult(result.predictions);
+        setCommonAncestor(result.commonAncestor);
+        setViewStatus(VIEW_STATUS.RESULT);
       })
       .catch((err) => {
         console.log('getPredictionsForImage Error', err);
@@ -372,6 +377,8 @@ export default function App(): React.JSX.Element {
       return renderGalleryView();
     } else if (viewStatus === VIEW_STATUS.GEOMODEL) {
       return renderGeomodelView();
+    } else if (viewStatus === VIEW_STATUS.RESULT) {
+      return renderResult();
     } else {
       return <Text>Something went wrong</Text>;
     }
@@ -398,6 +405,41 @@ export default function App(): React.JSX.Element {
           <Text style={styles.smallLabel}>
             {results.map((r) => r.name).toString()}
           </Text>
+        </View>
+      )}
+    </>
+  );
+
+  const renderResult = () => (
+    <>
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
+      {results && (
+        <View>
+          <Text style={styles.text}>Common ancestor:</Text>
+          <Text style={styles.smallLabel}>
+            {commonAncestor ? commonAncestor.name : 'No common ancestor'}
+          </Text>
+          <Text style={styles.smallLabel}>
+            {commonAncestor
+              ? commonAncestor.score.toPrecision(2)
+              : 'No common ancestor'}
+          </Text>
+          <ScrollView>
+            {results.map((r) => (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                }}
+                key={r.name}
+              >
+                <Text style={styles.smallLabel}>{r.name}</Text>
+                <Text style={styles.smallLabel}>{r.score.toPrecision(2)}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
       )}
     </>
@@ -461,6 +503,24 @@ export default function App(): React.JSX.Element {
             title={useGeomodel ? 'Disable Geomodel' : 'Enable Geomodel'}
           />
         </View>
+        {results &&
+          results.map((result) => (
+            <View key={result.name} style={styles.labels}>
+              <Text style={styles.text}>{result.name}</Text>
+              <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
+              <Text style={styles.smallLabel}>score {result.score}</Text>
+              {!!result.spatial_class_id && (
+                <Text style={styles.smallLabel}>
+                  spatial_class_id {result.spatial_class_id}
+                </Text>
+              )}
+              {!!result.iconic_class_id && (
+                <Text style={styles.smallLabel}>
+                  iconic_class_id {result.iconic_class_id}
+                </Text>
+              )}
+            </View>
+          ))}
       </View>
     ) : (
       <ActivityIndicator size="large" color="white" />
@@ -470,24 +530,6 @@ export default function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>{contentSwitch()}</View>
-      {results &&
-        results.map((result) => (
-          <View key={result.name} style={styles.labels}>
-            <Text style={styles.text}>{result.name}</Text>
-            <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
-            <Text style={styles.smallLabel}>score {result.score}</Text>
-            {!!result.spatial_class_id && (
-              <Text style={styles.smallLabel}>
-                spatial_class_id {result.spatial_class_id}
-              </Text>
-            )}
-            {!!result.iconic_class_id && (
-              <Text style={styles.smallLabel}>
-                iconic_class_id {result.iconic_class_id}
-              </Text>
-            )}
-          </View>
-        ))}
     </SafeAreaView>
   );
 }

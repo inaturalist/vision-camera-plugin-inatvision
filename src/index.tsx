@@ -519,8 +519,13 @@ export function getPredictionsForImage(
             score: p.score * quotient,
           }));
           console.log('normalizedPredictions', normalizedPredictions);
+          const resultWithCommonAncestor = Object.assign({}, result, {
+            predictions: top15,
+          });
+          resolve(resultWithCommonAncestor);
+        } else {
+          resolve(result);
         }
-        resolve(result);
       })
       .catch((error: any) => {
         reject(error);

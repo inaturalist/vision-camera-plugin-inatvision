@@ -46,11 +46,23 @@ fs.createReadStream(filePathTaxonomy)
         entriesGeoThresholds.forEach((entry) => {
           thresholdDict[entry.taxon_id] = entry.thres;
         });
+        function getLowestChildThreshold(taxon_id) {
+          const children = entriesTaxonomy.filter(
+            (entry) => entry.parent_taxon_id === taxon_id
+          );
+          if (children.length === 0) {
+            return thresholdDict[taxon_id];
+          }
+          const thresholds = children.map((child) =>
+            getLowestChildThreshold(child.taxon_id)
+          );
+          return Math.min(...thresholds);
+        }
         const combinedEntries = entriesTaxonomy.map((entry) => {
           // Add the geoThreshold to the entry
           entry.spatial_threshold = thresholdDict[entry.taxon_id]
             ? parseFloat(thresholdDict[entry.taxon_id])
-            : null;
+            : getLowestChildThreshold(entry.taxon_id);
           // Delete and add the name so that it is last when written to file
           const name = entry.name;
           delete entry.name;

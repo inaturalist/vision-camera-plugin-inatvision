@@ -65,7 +65,8 @@ public class Taxonomy {
     private boolean mNegativeFilter = false;
 
     private float mTaxonomyRollupCutoff = 0.0f;
-    private float mExcludedLeafScoreSum = 0.0f;
+    private float mExcludedLeafCombinedScoresSum = 0.0f;
+    private float mExcludedLeafVisionScoresSum = 0.0f;
 
     public void setFilterByTaxonId(Integer taxonId) {
         if (mFilterByTaxonId != taxonId) {
@@ -155,7 +156,7 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(float[] combinedScores, Double taxonomyRollupCutoff) {
+    public List<Prediction> predict(float[] combinedScores, float[] visionScores, float[] geoScores, Double taxonomyRollupCutoff) {
         // Make a copy of results
         float[] cSCopy = combinedScores.clone();
         // Make sure results is sorted by score
@@ -171,9 +172,8 @@ public class Taxonomy {
         }
         cSCopy = null;
 
-        Map<String, Float> aggregateScores = aggregateAndNormalizeScores(combinedScores);
-        Timber.tag(TAG).d("Number of nodes in combinedScores: " + aggregateScores.size());
-        List<Prediction> bestBranch = buildBestBranchFromScores(aggregateScores);
+        Map<String, Map> aggregatedScores = aggregateAndNormalizeScores(combinedScores, visionScores, geoScores);
+        List<Prediction> bestBranch = buildBestBranchFromScores(aggregatedScores);
 
         return bestBranch;
     }
@@ -208,39 +208,61 @@ public class Taxonomy {
     }
 
     /** Aggregates scores for nodes, including non-leaf nodes (so each non-leaf node has a score of the sum of all its dependents) */
-    private Map<String, Float> aggregateAndNormalizeScores(float[] results) {
+    private Map<String, Map> aggregateAndNormalizeScores(float[] combinedScores, float[] visionScores, float[] geoScores) {
         // Reset the sum of removed leaf scores
-        mExcludedLeafScoreSum = 0.0f;
-        Map<String, Float> scores = aggregateScores(results, mLifeNode);
-        // Re-normalize all scores with the sum of all remaining leaf scores
-        for (String key : scores.keySet()) {
-          scores.put(key, scores.get(key) / (1.0f - mExcludedLeafScoreSum));
+        mExcludedLeafCombinedScoresSum = 0.0f;
+        mExcludedLeafVisionScoresSum = 0.0f;
+        Map<String, Map> aggregatedScores = aggregateScores(combinedScores, visionScores, geoScores, mLifeNode);
+        Map<String, Float> aggregatedCombinedScores = aggregatedScores.get("aggregatedCombinedScores");
+        Map<String, Float> aggregatedVisionScores = aggregatedScores.get("aggregatedVisionScores");
+        // Re-normalize combined scores with the sum of all remaining leaf scores
+        for (String key : aggregatedCombinedScores.keySet()) {
+          aggregatedCombinedScores.put(key, aggregatedCombinedScores.get(key) / (1.0f - mExcludedLeafCombinedScoresSum));
         }
+        // Re-normalize vision scores with the sum of all remaining leaf scores
+        for (String key : aggregatedVisionScores.keySet()) {
+          aggregatedVisionScores.put(key, aggregatedVisionScores.get(key) / (1.0f - mExcludedLeafVisionScoresSum));
+        }
+        Map<String, Map> scores = new HashMap<>();
+        scores.put("aggregatedCombinedScores", aggregatedCombinedScores);
+        scores.put("aggregatedVisionScores", aggregatedVisionScores);
+        scores.put("aggregatedGeoScores", aggregatedScores.get("aggregatedGeoScores"));
         return scores;
     }
 
     /** Following: https://github.com/inaturalist/inatVisionAPI/blob/multiclass/inferrers/multi_class_inferrer.py#L136 */
-    private Map<String, Float> aggregateScores(float[] results, Node currentNode) {
+    private Map<String, Map> aggregateScores(float[] combinedScores, float[] visionScores, float[] geoScores, Node currentNode) {
         // we'll populate this and return it
-        Map<String, Float> allScores = new HashMap<>();
+        Map<String, Map> aggregatedScores = new HashMap<>();
+        Map<String, Float> aggregatedCombinedScores = new HashMap<>();
+        Map<String, Float> aggregatedVisionScores = new HashMap<>();
+        Map<String, Float> aggregatedGeoScores = new HashMap<>();
 
         if (currentNode.children.size() > 0) {
             float thisScore = 0.0f;
+            float thisVisionScore = 0.0f;
+            float thisGeoScore = 0.0f;
             for (Node child : currentNode.children) {
-                Map<String, Float> childScores = aggregateScores(results, child);
-                if (childScores.containsKey(child.key)) {
-                  float childScore = childScores.get(child.key);
-                  if (childScore >= mTaxonomyRollupCutoff) {
-                    allScores.putAll(childScores);
-                    thisScore += childScore;
+                Map<String, Map> childScores = aggregateScores(combinedScores, visionScores, geoScores, child);
+                Map<String, Float> aggregatedChildCombinedScores = childScores.get("aggregatedCombinedScores");
+                if (aggregatedChildCombinedScores.containsKey(child.key)) {
+                  float childCombinedScore = aggregatedChildCombinedScores.get(child.key);
+                  if (childCombinedScore >= mTaxonomyRollupCutoff) {
+                    aggregatedCombinedScores.putAll(aggregatedChildCombinedScores);
+                    thisScore += childCombinedScore;
+                    Map<String, Float> aggregatedChildVisionScores = childScores.get("aggregatedVisionScores");
+                    thisVisionScore += aggregatedChildVisionScores.get(child.key);
+                    // Aggregated geo score is the max of descendant geo scores
+                    Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
+                    thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
                   }
-
                 }
             }
             if (thisScore != 0.0f) {
-              allScores.put(currentNode.key, thisScore);
+              aggregatedCombinedScores.put(currentNode.key, thisScore);
+              aggregatedVisionScores.put(currentNode.key, thisVisionScore);
+              aggregatedGeoScores.put(currentNode.key, thisGeoScore);
             }
-
         } else {
             // base case, no children
             boolean filterOut = false;
@@ -255,15 +277,24 @@ public class Taxonomy {
                 filterOut = (containsAncestor && mNegativeFilter) || (!containsAncestor && !mNegativeFilter);
             }
 
-            float leafScore = results[Integer.valueOf(currentNode.leafId)];
-            if (!filterOut && leafScore >= mTaxonomyRollupCutoff) {
-              allScores.put(currentNode.key, leafScore);
+            float combinedScore = combinedScores[Integer.valueOf(currentNode.leafId)];
+            float visionScore = visionScores[Integer.valueOf(currentNode.leafId)];
+            if (!filterOut && combinedScore >= mTaxonomyRollupCutoff) {
+              aggregatedCombinedScores.put(currentNode.key, combinedScore);
+              aggregatedVisionScores.put(currentNode.key, visionScore);
+              float geoScore = geoScores[Integer.valueOf(currentNode.leafId)];
+              aggregatedGeoScores.put(currentNode.key, geoScore);
             } else {
-              mExcludedLeafScoreSum += leafScore;
+              mExcludedLeafCombinedScoresSum += combinedScore;
+              mExcludedLeafVisionScoresSum += visionScore;
             }
         }
 
-        return allScores;
+        // Return a map with the three aggregated scores
+        aggregatedScores.put("aggregatedCombinedScores", aggregatedCombinedScores);
+        aggregatedScores.put("aggregatedVisionScores", aggregatedVisionScores);
+        aggregatedScores.put("aggregatedGeoScores", aggregatedGeoScores);
+        return aggregatedScores;
     }
 
     /** Returns whether or not this taxon node has an ancestor with a specified taxon ID */
@@ -281,14 +312,21 @@ public class Taxonomy {
 
 
     /** Finds the best branch from all result scores */
-    private List<Prediction> buildBestBranchFromScores(Map<String, Float> scores) {
+    private List<Prediction> buildBestBranchFromScores(Map<String, Map> scores) {
         List<Prediction> bestBranch = new ArrayList<>();
+
+        Map<String, Float> combinedScores = scores.get("aggregatedCombinedScores");
+        Map<String, Float> visionScores = scores.get("aggregatedVisionScores");
+        Map<String, Float> geoScores = scores.get("aggregatedGeoScores");
+        Timber.tag(TAG).d("Number of nodes in combinedScores: " + combinedScores.size());
 
         // Start from life
         Node currentNode = mLifeNode;
 
-        float lifeScore = scores.get(currentNode.key);
         Prediction lifePrediction = new Prediction(currentNode, lifeScore);
+        float lifeCombinedScore = combinedScores.get(currentNode.key);
+        float lifeVisionScore = visionScores.get(currentNode.key);
+        float lifeGeoScore = geoScores.get(currentNode.key);
         bestBranch.add(lifePrediction);
 
         List<Node> currentNodeChildren = currentNode.children;
@@ -299,8 +337,8 @@ public class Taxonomy {
             Node bestChild = null;
             float bestChildScore = -1;
             for (Node child : currentNodeChildren) {
-              if (scores.containsKey(child.key)) {
-                float childScore = scores.get(child.key);
+              if (combinedScores.containsKey(child.key)) {
+                float childScore = combinedScores.get(child.key);
                 if (childScore > bestChildScore) {
                   bestChildScore = childScore;
                   bestChild = child;
@@ -310,6 +348,8 @@ public class Taxonomy {
 
             if (bestChild != null) {
                 Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore);
+                float bestChildVisionScore = visionScores.get(bestChild.key);
+                float bestChildGeoScore = geoScores.get(bestChild.key);
                 bestBranch.add(bestChildPrediction);
             }
 

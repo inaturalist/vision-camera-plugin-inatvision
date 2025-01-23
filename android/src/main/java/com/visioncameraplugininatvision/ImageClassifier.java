@@ -117,13 +117,16 @@ public class ImageClassifier {
             // Get raw vision scores
             float[] visionScores = ((float[][]) expectedOutputs.get(0))[0];
             float[] combinedScores = new float[visionScores.length];
+            float[] geoScores;
             if (mGeomodelScores != null) {
               // Combine vision and geo scores
-              combinedScores = combineVisionScores(visionScores, mGeomodelScores[0]);
+              geoScores = mGeomodelScores[0];
+              combinedScores = combineVisionScores(visionScores, geoScores);
             } else {
+              geoScores = null;
               combinedScores = visionScores;
             }
-            predictions = mTaxonomy.predict(combinedScores, taxonomyRollupCutoff);
+            predictions = mTaxonomy.predict(combinedScores, visionScores, geoScores, taxonomyRollupCutoff);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();

@@ -145,7 +145,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSNumber *elevation = location[@"elevation"];
     // Destructure geomodel path out of options
     NSString *geomodelPath = options[@"geomodelPath"];
-    // Destructure geomodel path out of options
+    // Destructure mode out of options
     NSString *mode = options[@"mode"];
 
     // Setup threshold

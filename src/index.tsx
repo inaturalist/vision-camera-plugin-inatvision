@@ -573,7 +573,7 @@ export function getPredictionsForImage(
   return new Promise((resolve, reject) => {
     VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
       .then((result: ResultForImage) => {
-        if (options?.mode === MODE.COMMON_ANCESTOR) {
+        if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
           // From native: s > ts * 0.001, normalized
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = result.predictions

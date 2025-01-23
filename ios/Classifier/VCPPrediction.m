@@ -17,6 +17,15 @@
         self.score = score;
         self.visionScore = visionScore;
         self.geoScore = geoScore;
+        // Walk through all parents of this node and collect their ids until we reach the life node
+        NSMutableArray *ancestorIds = [NSMutableArray array];
+        VCPNode *currentNode = node;
+        while (currentNode.parent != nil) {
+            [ancestorIds addObject:currentNode.parent.taxonId];
+            currentNode = currentNode.parent;
+        }
+        // Reverse the array so that the life node is the first element
+        self.ancestorIds = [[ancestorIds reverseObjectEnumerator] allObjects];
     }
 
     return self;
@@ -27,6 +36,7 @@
     mutableNodeDict[@"score"] = @(self.score);
     mutableNodeDict[@"vision_score"] = @(self.visionScore);
     mutableNodeDict[@"geo_score"] = @(self.geoScore);
+    mutableNodeDict[@"ancestor_ids"] = self.ancestorIds;
     return [NSDictionary dictionaryWithDictionary:mutableNodeDict];
 }
 

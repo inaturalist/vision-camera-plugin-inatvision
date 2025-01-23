@@ -16,6 +16,7 @@
 @property double score;
 @property double visionScore;
 @property double geoScore;
+@property NSArray *ancestorIds;
 
 - (instancetype)initWithNode:(VCPNode *)node score:(double)score visionScore:(double)visionScore geoScore:(double)geoScore;
 

@@ -182,6 +182,8 @@ export interface Prediction {
   rank?: RANK;
   iconic_class_id?: number;
   spatial_class_id?: number;
+  // Only present for models of v2
+  leaf_id?: number;
 }
 
 export interface ResultForImage {

@@ -329,7 +329,7 @@ public class Taxonomy {
         try {
             result.put("taxon_id", Integer.valueOf(prediction.node.key));
             result.put("name", prediction.node.name);
-            result.put("score", prediction.probability);
+            result.put("score", prediction.score);
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {

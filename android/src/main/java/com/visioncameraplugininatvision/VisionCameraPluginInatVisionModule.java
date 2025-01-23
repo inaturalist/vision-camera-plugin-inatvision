@@ -214,7 +214,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             if (prediction.rank % 10 != 0) {
               continue;
             }
-            if (prediction.probability > mConfidenceThreshold) {
+            if (prediction.score > mConfidenceThreshold) {
                 Map map = Taxonomy.nodeToMap(prediction);
                 if (map == null) continue;
                 // Transform the Map to a ReadableMap

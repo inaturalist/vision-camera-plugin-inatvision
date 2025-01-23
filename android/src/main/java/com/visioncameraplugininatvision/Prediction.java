@@ -2,12 +2,12 @@ package com.visioncameraplugininatvision;
 
 public class Prediction {
     public Node node;
-    public Double probability;
+    public Double score;
     public Float rank;
 
     public Prediction(Node n, double p) {
         node = n;
-        probability = p;
+        score = p;
         rank = n.rank;
     }
 }

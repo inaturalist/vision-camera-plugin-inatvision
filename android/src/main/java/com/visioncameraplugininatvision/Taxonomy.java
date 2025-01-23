@@ -184,13 +184,13 @@ public class Taxonomy {
 
         for (Node leaf : mLeaves) {
             // We did not implement batch processing here, so we only have one result
-            float score = results[0][Integer.valueOf(leaf.leafId)];
-            Prediction prediction = new Prediction(leaf, score);
+            float geoScore = results[0][Integer.valueOf(leaf.leafId)];
+            Prediction prediction = new Prediction(leaf, 0, 0, geoScore);
 
-            // If score is higher than spatialThreshold it means the taxon is "expected nearby"
+            // If geoScore is higher than spatialThreshold it means the taxon is "expected nearby"
             if (leaf.spatialThreshold != null && !leaf.spatialThreshold.isEmpty()) {
                 float threshold = Float.parseFloat(leaf.spatialThreshold);
-                if (score >= threshold) {
+                if (geoScore >= threshold) {
                     scores.add(prediction);
                 } else {
                     filteredOutScores.add(prediction);
@@ -323,10 +323,10 @@ public class Taxonomy {
         // Start from life
         Node currentNode = mLifeNode;
 
-        Prediction lifePrediction = new Prediction(currentNode, lifeScore);
         float lifeCombinedScore = combinedScores.get(currentNode.key);
         float lifeVisionScore = visionScores.get(currentNode.key);
         float lifeGeoScore = geoScores.get(currentNode.key);
+        Prediction lifePrediction = new Prediction(currentNode, lifeCombinedScore, lifeVisionScore, lifeGeoScore);
         bestBranch.add(lifePrediction);
 
         List<Node> currentNodeChildren = currentNode.children;
@@ -347,9 +347,9 @@ public class Taxonomy {
             }
 
             if (bestChild != null) {
-                Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore);
                 float bestChildVisionScore = visionScores.get(bestChild.key);
                 float bestChildGeoScore = geoScores.get(bestChild.key);
+                Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore, bestChildVisionScore, bestChildGeoScore);
                 bestBranch.add(bestChildPrediction);
             }
 
@@ -370,6 +370,8 @@ public class Taxonomy {
             result.put("taxon_id", Integer.valueOf(prediction.node.key));
             result.put("name", prediction.node.name);
             result.put("score", prediction.score);
+            result.put("vision_score", prediction.visionScore);
+            result.put("geo_score", prediction.geoScore);
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {

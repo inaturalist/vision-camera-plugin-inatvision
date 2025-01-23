@@ -484,6 +484,42 @@ interface OptionsForImage extends BaseOptions {
   uri: string;
 }
 
+function commonAncestorFromPredictions(
+  predictions: Prediction[]
+): Prediction | undefined {
+  // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
+  // max 15 (s > ts * 0.001), not normalized, leaf only
+  const top15Candidates = predictions
+    .filter((p) => p.leaf_id)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 15);
+  const topCombinedScore = top15Candidates[0]?.score || 0;
+  const top15Cutoff = topCombinedScore * 0.01;
+  // Filter out all leaf nodes with scores lower than top combined score * 0.01
+  const top15Leaves = top15Candidates.filter((p) => p.score >= top15Cutoff);
+  // Get quotient to normalize the top 15 scores
+  // TODO: this is always 1 ??? ->
+  const scoreSumOfAllLeaves = predictions
+    .filter((p) => p.leaf_id)
+    .reduce((acc, p) => acc + p.score, 0);
+  // <-
+  const scoreSumOfTop15 = top15Leaves.reduce((acc, p) => acc + p.score, 0);
+  const quotient = scoreSumOfAllLeaves / scoreSumOfTop15;
+  const parentIds = new Set();
+  top15Leaves.forEach((p) => {
+    p.ancestor_ids.forEach((id) => parentIds.add(id));
+  });
+  const top15Parents = predictions.filter((p) => parentIds.has(p.taxon_id));
+  const top15 = [...top15Leaves, ...top15Parents];
+  // Normalize the top 15 scores
+  // max 15 (s > ts * 0.01), normalized, leafs + parents
+  const normalizedTop15 = top15.map((p) => ({
+    ...p,
+    score: p.score * quotient,
+  }));
+  return commonAncestorFromAggregatedScores(normalizedTop15);
+}
+
 function commonAncestorFromAggregatedScores(
   predictions: Prediction[]
   // TODO: = ??
@@ -538,27 +574,17 @@ export function getPredictionsForImage(
     VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
       .then((result: ResultForImage) => {
         if (options?.mode === MODE.COMMON_ANCESTOR) {
-          // Get the top 15 leaf nodes
-          const top15 = result.predictions
+          // From native: s > ts * 0.001, normalized
+          // max 10 (s > ts * 0.001), not normalized, leaf only
+          const top10 = result.predictions
             .filter((p) => p.leaf_id)
             .sort((a, b) => b.score - a.score)
-            .slice(0, 15);
-          // Get quotient to normalize the top 15 scores
-          const scoreSumOfAllLeaves = result.predictions
-            .filter((p) => p.leaf_id)
-            .reduce((acc, p) => acc + p.score, 0);
-          const scoreSumOfTop15 = top15.reduce((acc, p) => acc + p.score, 0);
-          const quotient = scoreSumOfAllLeaves / scoreSumOfTop15;
-          // Normalize the top 15 scores
-          const normalizedPredictions = result.predictions.map((p) => ({
-            ...p,
-            score: p.score * quotient,
-          }));
-          const commonAncestor = commonAncestorFromAggregatedScores(
-            normalizedPredictions
+            .slice(0, 10);
+          const commonAncestor = commonAncestorFromPredictions(
+            result.predictions
           );
           const resultWithCommonAncestor = Object.assign({}, result, {
-            predictions: top15,
+            predictions: top10,
             commonAncestor,
           });
           resolve(resultWithCommonAncestor);

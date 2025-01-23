@@ -155,13 +155,13 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(float[] scores, Double taxonomyRollupCutoff) {
+    public List<Prediction> predict(float[] combinedScores, Double taxonomyRollupCutoff) {
         // Make a copy of results
-        float[] resultsCopy = scores.clone();
+        float[] cSCopy = combinedScores.clone();
         // Make sure results is sorted by score
-        Arrays.sort(resultsCopy);
+        Arrays.sort(cSCopy);
         // Get result with the highest score
-        float topCombinedScore = resultsCopy[resultsCopy.length - 1];
+        float topCombinedScore = cSCopy[cSCopy.length - 1];
         float scoreRatioCutoff = 0.001f;
         float cutoff = topCombinedScore * scoreRatioCutoff;
         setTaxonomyRollupCutoff(cutoff);
@@ -169,10 +169,10 @@ public class Taxonomy {
         if (taxonomyRollupCutoff != null) {
           setTaxonomyRollupCutoff(taxonomyRollupCutoff.floatValue());
         }
-        resultsCopy = null;
+        cSCopy = null;
 
-        Map<String, Float> aggregateScores = aggregateAndNormalizeScores(scores);
-        Timber.tag(TAG).d("Number of nodes in scores: " + aggregateScores.size());
+        Map<String, Float> aggregateScores = aggregateAndNormalizeScores(combinedScores);
+        Timber.tag(TAG).d("Number of nodes in combinedScores: " + aggregateScores.size());
         List<Prediction> bestBranch = buildBestBranchFromScores(aggregateScores);
 
         return bestBranch;

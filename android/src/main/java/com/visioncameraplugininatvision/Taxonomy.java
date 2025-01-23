@@ -385,6 +385,9 @@ public class Taxonomy {
               if ((prediction.node.spatialId != null) && (prediction.node.spatialId.length() > 0)) {
                 result.put("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
               }
+              if ((prediction.node.leafId != null) && (prediction.node.leafId.length() > 0)) {
+                result.put("leaf_id", Integer.valueOf(prediction.node.leafId));
+              }
             }
         } catch (NumberFormatException exc) {
             // Invalid node key or class ID

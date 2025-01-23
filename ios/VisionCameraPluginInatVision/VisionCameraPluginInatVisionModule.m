@@ -133,8 +133,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSString* modelPath = options[@"modelPath"];
     // Destructure taxonomy path out of options
     NSString* taxonomyPath = options[@"taxonomyPath"];
-    // Destructure threshold out of options
-    NSNumber* confidenceThreshold = options[@"confidenceThreshold"];
     // Destructure location out of options
     NSDictionary *location = options[@"location"];
     // Destructure latitude out of location
@@ -147,12 +145,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSString *geomodelPath = options[@"geomodelPath"];
     // Destructure mode out of options
     NSString *mode = options[@"mode"];
-
-    // Setup threshold
-    float threshold = 0.70;
-    if (confidenceThreshold) {
-      threshold = [confidenceThreshold floatValue];
-    }
 
     MLMultiArray *geomodelPreds = nil;
     if ([options objectForKey:@"useGeomodel"] &&
@@ -215,10 +207,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           } else {
             NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
             for (VCPPrediction *prediction in bestBranch) {
-                // only add predictions that are above the threshold
-                if (prediction.score < threshold) {
-                    continue;
-                }
                 // convert the VCPPredictions in the bestBranch into dicts
                 [predictions addObject:[prediction asDict]];
             }
@@ -280,10 +268,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
         } else {
           NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
           for (VCPPrediction *prediction in bestBranch) {
-              // only add predictions that are above the threshold
-              if (prediction.score < threshold) {
-                  continue;
-              }
               [predictions addObject:[prediction asDict]];
           }
         }

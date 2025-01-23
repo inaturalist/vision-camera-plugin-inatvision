@@ -70,7 +70,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_VERSION = "version";
     public static final String OPTION_MODEL_PATH = "modelPath";
     public static final String OPTION_TAXONOMY_PATH = "taxonomyPath";
-    public static final String OPTION_CONFIDENCE_THRESHOLD = "confidenceThreshold";
     public static final String OPTION_CROP_RATIO = "cropRatio";
     public static final String OPTION_USE_GEOMODEL = "useGeomodel";
     public static final String OPTION_GEOMODEL_PATH = "geomodelPath";
@@ -80,11 +79,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String LONGITUDE = "longitude";
     public static final String ELEVATION = "elevation";
 
-    public static final float DEFAULT_CONFIDENCE_THRESHOLD = 0.7f;
-    private float mConfidenceThreshold = DEFAULT_CONFIDENCE_THRESHOLD;
-    public void setConfidenceThreshold(float confidence) {
-        mConfidenceThreshold = confidence;
-    }
     public static final double DEFAULT_CROP_RATIO = 1.0;
 
     @ReactMethod
@@ -102,11 +96,6 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String taxonomyFilename = options.getString(OPTION_TAXONOMY_PATH);
         String version = options.getString(OPTION_VERSION);
         String mode = options.hasKey(OPTION_MODE) ? options.getString(OPTION_MODE) : null;
-        // Destructure optional parameters and set values
-        if (options.hasKey(OPTION_CONFIDENCE_THRESHOLD)) {
-          Float confidenceThreshold = (float) options.getDouble(OPTION_CONFIDENCE_THRESHOLD);
-          setConfidenceThreshold(confidenceThreshold);
-        }
         double cropRatio = options.hasKey(OPTION_CROP_RATIO) ? options.getDouble(OPTION_CROP_RATIO) : DEFAULT_CROP_RATIO;
 
         // Destructure geomodel parameters. Those can be null
@@ -213,19 +202,11 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
 
         WritableArray cleanedPredictions = Arguments.createArray();
         for (Prediction prediction : predictions) {
-            // only KPCOFGS ranks qualify as "top" predictions
-            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-            if (prediction.rank % 10 != 0) {
-              continue;
-            }
-            if (commonAncestorMode || prediction.score > mConfidenceThreshold) {
-                Map map = Taxonomy.nodeToMap(prediction);
-                if (map == null) continue;
-                // Transform the Map to a ReadableMap
-                ReadableMap readableMap = Arguments.makeNativeMap(map);
-                cleanedPredictions.pushMap(readableMap);
-            }
-
+            Map map = Taxonomy.nodeToMap(prediction);
+            if (map == null) continue;
+            // Transform the Map to a ReadableMap
+            ReadableMap readableMap = Arguments.makeNativeMap(map);
+            cleanedPredictions.pushMap(readableMap);
         }
 
         long endTime = SystemClock.uptimeMillis();

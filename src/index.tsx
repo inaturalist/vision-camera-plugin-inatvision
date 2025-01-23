@@ -589,7 +589,19 @@ export function getPredictionsForImage(
           });
           resolve(resultWithCommonAncestor);
         } else {
-          resolve(result);
+          const predictions = result.predictions
+            // only KPCOFGS ranks qualify as "top" predictions
+            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+            .filter((prediction) => prediction.rank_level % 10 === 0)
+            .filter(
+              (prediction) =>
+                prediction.score > (newOptions.confidenceThreshold || 0.7)
+            );
+          const handledResult = {
+            ...result,
+            predictions,
+          };
+          resolve(handledResult);
         }
       })
       .catch((error: any) => {

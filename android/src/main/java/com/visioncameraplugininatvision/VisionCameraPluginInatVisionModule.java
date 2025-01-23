@@ -24,6 +24,7 @@ import com.facebook.react.module.annotations.ReactModule;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -74,6 +75,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
     public static final String OPTION_USE_GEOMODEL = "useGeomodel";
     public static final String OPTION_GEOMODEL_PATH = "geomodelPath";
     public static final String OPTION_LOCATION = "location";
+    public static final String OPTION_MODE = "mode";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String ELEVATION = "elevation";
@@ -99,6 +101,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         String modelFilename = options.getString(OPTION_MODEL_PATH);
         String taxonomyFilename = options.getString(OPTION_TAXONOMY_PATH);
         String version = options.getString(OPTION_VERSION);
+        String mode = options.hasKey(OPTION_MODE) ? options.getString(OPTION_MODE) : null;
         // Destructure optional parameters and set values
         if (options.hasKey(OPTION_CONFIDENCE_THRESHOLD)) {
           Float confidenceThreshold = (float) options.getDouble(OPTION_CONFIDENCE_THRESHOLD);
@@ -202,9 +205,10 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         }
 
         classifier.setGeomodelScores(geomodelScores);
-        // Override the built-in taxonomy cutoff for predictions from file
-        Double taxonomyRollupCutoff = 0.0;
-        List<Prediction> predictions = classifier.classifyBitmap(bitmap, taxonomyRollupCutoff);
+        // TODO: get from options and support prop down to classifier as second param
+        // Double taxonomyRollupCutoff = 0.0;
+        Boolean commonAncestorMode = Objects.equals(mode, "COMMON_ANCESTOR");
+        List<Prediction> predictions = classifier.classifyBitmap(bitmap, null, commonAncestorMode);
         bitmap.recycle();
 
         WritableArray cleanedPredictions = Arguments.createArray();
@@ -214,7 +218,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
             if (prediction.rank % 10 != 0) {
               continue;
             }
-            if (prediction.score > mConfidenceThreshold) {
+            if (commonAncestorMode || prediction.score > mConfidenceThreshold) {
                 Map map = Taxonomy.nodeToMap(prediction);
                 if (map == null) continue;
                 // Transform the Map to a ReadableMap

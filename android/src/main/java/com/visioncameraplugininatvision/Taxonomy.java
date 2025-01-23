@@ -128,6 +128,7 @@ public class Taxonomy {
         for (Node node: mNodes) {
             mNodeByKey.put(node.key, node);
         }
+        mNodeByKey.put(mLifeNode.key, mLifeNode);
 
         List<Node> lifeList = new ArrayList<Node>();
         lifeList.add(mLifeNode);
@@ -156,7 +157,7 @@ public class Taxonomy {
         return mLeaves.size();
     }
 
-    public List<Prediction> predict(float[] combinedScores, float[] visionScores, float[] geoScores, Double taxonomyRollupCutoff) {
+    public List<Prediction> predict(float[] combinedScores, float[] visionScores, float[] geoScores, Double taxonomyRollupCutoff, Boolean commonAncestorMode) {
         // Make a copy of results
         float[] cSCopy = combinedScores.clone();
         // Make sure results is sorted by score
@@ -173,9 +174,24 @@ public class Taxonomy {
         cSCopy = null;
 
         Map<String, Map> aggregatedScores = aggregateAndNormalizeScores(combinedScores, visionScores, geoScores);
-        List<Prediction> bestBranch = buildBestBranchFromScores(aggregatedScores);
-
-        return bestBranch;
+        if (commonAncestorMode) {
+          Map<String, Float> aggregatedCombinedScores = aggregatedScores.get("aggregatedCombinedScores");
+          Map<String, Float> aggregatedVisionScores = aggregatedScores.get("aggregatedVisionScores");
+          Map<String, Float> aggregatedGeoScores = aggregatedScores.get("aggregatedGeoScores");
+          List<Prediction> predictions = new ArrayList<>();
+          for (String key : aggregatedCombinedScores.keySet()) {
+            float combinedScore = aggregatedCombinedScores.get(key);
+            float visionScore = aggregatedVisionScores.get(key);
+            float geoScore = aggregatedGeoScores.get(key);
+            Node node = mNodeByKey.get(key);
+            Prediction prediction = new Prediction(node, combinedScore, visionScore, geoScore);
+            predictions.add(prediction);
+          }
+          return predictions;
+        } else {
+          List<Prediction> bestBranch = buildBestBranchFromScores(aggregatedScores);
+          return bestBranch;
+        }
     }
 
     public List<Prediction> expectedNearbyFromClassification(float[][] results) {

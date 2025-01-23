@@ -251,9 +251,11 @@ public class Taxonomy {
                     aggregatedCombinedScores.putAll(aggregatedChildCombinedScores);
                     thisScore += childCombinedScore;
                     Map<String, Float> aggregatedChildVisionScores = childScores.get("aggregatedVisionScores");
+                    aggregatedVisionScores.putAll(aggregatedChildVisionScores);
                     thisVisionScore += aggregatedChildVisionScores.get(child.key);
                     // Aggregated geo score is the max of descendant geo scores
                     Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
+                    aggregatedGeoScores.putAll(aggregatedChildGeoScores);
                     thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
                     // TODO: aggregate geo_threshold as well = min of descendant geo_thresholds
                   }

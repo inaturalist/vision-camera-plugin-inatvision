@@ -174,7 +174,7 @@ export interface Prediction {
   rank_level: RANK_LEVEL; // Android has
   score: number;
   vision_score: number;
-  geo_score?: number;
+  geo_score: number;
   geo_threshold?: number;
   taxon_id: number;
   ancestor_ids: number[];

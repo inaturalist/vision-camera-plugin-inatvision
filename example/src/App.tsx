@@ -411,7 +411,7 @@ export default function App(): React.JSX.Element {
   );
 
   const renderResult = () => (
-    <>
+    <View style={{ flex: 1 }}>
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>
@@ -425,24 +425,36 @@ export default function App(): React.JSX.Element {
               : 'No common ancestor'}
           </Text>
           <ScrollView>
+            <View style={styles.dataRow}>
+              <Text style={styles.smallLabel}>name</Text>
+              <Text style={styles.smallLabel}>score</Text>
+              <Text style={styles.smallLabel}>vision_score</Text>
+              <Text style={styles.smallLabel}>geo_score</Text>
+              <Text style={styles.smallLabel}>geo_threshold</Text>
+              <Text style={styles.smallLabel}>Expected nearby</Text>
+            </View>
             {results.map((r) => (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-between',
-                }}
-                key={r.name}
-              >
+              <View style={styles.dataRow} key={r.taxon_id}>
                 <Text style={styles.smallLabel}>{r.name}</Text>
-                <Text style={styles.smallLabel}>{r.score.toPrecision(2)}</Text>
+                <Text style={styles.smallLabel}>{r?.score.toPrecision(2)}</Text>
+                <Text style={styles.smallLabel}>
+                  {r?.vision_score.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {r?.geo_score?.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {r?.geo_threshold?.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {r?.geo_score > r?.geo_threshold ? 'Yes' : 'No'}
+                </Text>
               </View>
             ))}
           </ScrollView>
         </View>
       )}
-    </>
+    </View>
   );
 
   const renderGalleryView = () => (
@@ -596,6 +608,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+  },
+  dataRow: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   photo: {
     width: 74,

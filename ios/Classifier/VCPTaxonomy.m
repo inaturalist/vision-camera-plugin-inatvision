@@ -192,6 +192,7 @@
                 [aggregatedGeoScores addEntriesFromDictionary:aggregatedChildGeoScores];
                 // Aggregated geo score is the max of descendant geo scores
                 thisGeoScore = MAX(thisGeoScore, [aggregatedChildGeoScores[child.taxonId] floatValue]);
+                // TODO: aggregate geo_threshold as well = min of descendant geo_thresholds
             }
         }
         if (thisCombinedScore > 0) {

@@ -255,6 +255,7 @@ public class Taxonomy {
                     // Aggregated geo score is the max of descendant geo scores
                     Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
                     thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
+                    // TODO: aggregate geo_threshold as well = min of descendant geo_thresholds
                   }
                 }
             }
@@ -372,6 +373,7 @@ public class Taxonomy {
             result.put("score", prediction.score);
             result.put("vision_score", prediction.visionScore);
             result.put("geo_score", prediction.geoScore);
+            // TODO: export geo_threshold
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {

@@ -178,6 +178,8 @@ export interface Prediction {
   geo_threshold?: number;
   taxon_id: number;
   ancestor_ids: number[];
+  // Only present on iOS
+  parent_taxon_id?: number;
   // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
   rank?: RANK;
   iconic_class_id?: number;

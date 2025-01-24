@@ -144,8 +144,6 @@
     NSNumber *elevation = location[@"elevation"];
     // Destructure geomodel path out of options
     NSString *geomodelPath = arguments[@"geomodelPath"];
-    // Destructure mode out of options
-    NSString *mode = arguments[@"mode"];
 
     MLMultiArray *geomodelPreds = nil;
     if ([arguments objectForKey:@"useGeomodel"] &&
@@ -185,18 +183,9 @@
 
     // convert the VCPPredictions in the bestRecentBranch into dicts
     NSMutableArray *predictions = [NSMutableArray array];
-
-    // Only in mode "COMMON_ANCESTOR"
-    if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-      NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-      for (VCPPrediction *prediction in commonAncestor) {
-          [predictions addObject:[prediction asDict]];
-      }
-    } else {
-      NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-      for (VCPPrediction *prediction in bestBranch) {
-          [predictions addObject:[prediction asDict]];
-      }
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+    for (VCPPrediction *prediction in bestBranch) {
+        [predictions addObject:[prediction asDict]];
     }
 
     // End timestamp

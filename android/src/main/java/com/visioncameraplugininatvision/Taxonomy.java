@@ -408,7 +408,9 @@ public class Taxonomy {
             result.put("score", prediction.score);
             result.put("vision_score", prediction.visionScore);
             result.put("geo_score", prediction.geoScore);
-            result.put("geo_threshold", Double.valueOf(prediction.node.geoThreshold));
+            if ((prediction.node.geoThreshold != null) && (prediction.node.geoThreshold.length() > 0)) {
+              result.put("geo_threshold", Double.valueOf(prediction.node.geoThreshold));
+            }
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {

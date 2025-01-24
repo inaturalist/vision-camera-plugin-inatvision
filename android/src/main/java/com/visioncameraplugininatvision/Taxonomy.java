@@ -203,9 +203,9 @@ public class Taxonomy {
             float geoScore = results[0][Integer.valueOf(leaf.leafId)];
             Prediction prediction = new Prediction(leaf, 0, 0, geoScore);
 
-            // If geoScore is higher than spatialThreshold it means the taxon is "expected nearby"
-            if (leaf.spatialThreshold != null && !leaf.spatialThreshold.isEmpty()) {
-                float threshold = Float.parseFloat(leaf.spatialThreshold);
+            // If geoScore is higher than geoThreshold it means the taxon is "expected nearby"
+            if (leaf.geoThreshold != null && !leaf.geoThreshold.isEmpty()) {
+                float threshold = Float.parseFloat(leaf.geoThreshold);
                 if (geoScore >= threshold) {
                     scores.add(prediction);
                 } else {

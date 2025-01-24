@@ -19,7 +19,7 @@ public class Node {
 
     public String spatialId;
 
-    public String spatialThreshold;
+    public String geoThreshold;
 
     public transient Node parent;
 
@@ -70,7 +70,7 @@ public class Node {
 
         if (headerList.contains("spatial_threshold")) {
           int spatialThresholdIndex = headerList.indexOf("spatial_threshold");
-          this.spatialThreshold = parts[spatialThresholdIndex];
+          this.geoThreshold = parts[spatialThresholdIndex];
         }
 
         if (headerList.contains("name")) {

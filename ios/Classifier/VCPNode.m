@@ -48,7 +48,7 @@
         // Information available when combined with geomodel thresholds file,
         // as done in scripts/createTaxonomy.js
         if ([dict valueForKey:@"spatial_threshold"] && [dict valueForKey:@"spatial_threshold"] != [NSNull null]) {
-            self.spatialThreshold = [dict valueForKey:@"spatial_threshold"];
+            self.geoThreshold = [dict valueForKey:@"spatial_threshold"];
         }
 
         self.children = [NSMutableArray array];
@@ -90,8 +90,8 @@
     if (self.spatialId) {
         mutableDict[@"spatial_class_id"] = self.spatialId;
     }
-    if (self.spatialThreshold) {
-        mutableDict[@"geo_threshold"] = self.spatialThreshold;
+    if (self.geoThreshold) {
+        mutableDict[@"geo_threshold"] = self.geoThreshold;
     }
 
     return [NSDictionary dictionaryWithDictionary:mutableDict];

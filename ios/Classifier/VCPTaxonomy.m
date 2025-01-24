@@ -110,8 +110,8 @@
                                                                   visionScore:0
                                                             geoScore:geoScore.floatValue];
         // If geoScore is higher than geoThreshold it means the taxon is "expected nearby"
-        if (leaf.spatialThreshold) {
-          if (geoScore.floatValue >= leaf.spatialThreshold.floatValue) {
+        if (leaf.geoThreshold) {
+          if (geoScore.floatValue >= leaf.geoThreshold.floatValue) {
             [scores addObject:prediction];
           } else {
             [filteredOutScores addObject:prediction];

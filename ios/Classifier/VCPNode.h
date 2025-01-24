@@ -18,7 +18,7 @@
 // Information available in model v2.3
 @property NSNumber *iconicId;
 @property NSNumber *spatialId;
-@property NSNumber *spatialThreshold;
+@property NSNumber *geoThreshold;
 
 @property (weak) VCPNode *parent;
 @property NSMutableArray <VCPNode *> *children;

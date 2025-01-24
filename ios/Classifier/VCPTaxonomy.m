@@ -148,6 +148,7 @@
     NSDictionary *combinedScoresDict = aggregatedScores[@"aggregatedCombinedScores"];
     NSDictionary *visionScoresDict = aggregatedScores[@"aggregatedVisionScores"];
     NSDictionary *geoScoresDict = aggregatedScores[@"aggregatedGeoScores"];
+    NSDictionary *geoThresholdsDict = aggregatedScores[@"aggregatedGeoThresholds"];
     // Log number of nodes in combinedScoresDict
     NSLog(@"Number of nodes in combinedScoresDict: %lu", (unsigned long)combinedScoresDict.count);
     NSMutableArray *scoresArray = [NSMutableArray array];
@@ -156,6 +157,8 @@
         NSNumber *combinedScore = combinedScoresDict[taxonId];
         NSNumber *visionScore = visionScoresDict[taxonId];
         NSNumber *geoScore = geoScoresDict[taxonId];
+        NSNumber *geoThreshold = geoThresholdsDict[taxonId];
+        node.geoThreshold = geoThreshold;
         VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:node
                                                                   score:combinedScore.floatValue
                                                                   visionScore:visionScore.floatValue
@@ -174,10 +177,12 @@
     NSMutableDictionary *aggregatedCombinedScores = [NSMutableDictionary dictionary];
     NSMutableDictionary *aggregatedVisionScores = [NSMutableDictionary dictionary];
     NSMutableDictionary *aggregatedGeoScores = [NSMutableDictionary dictionary];
+    NSMutableDictionary *aggregatedGeoThresholds = [NSMutableDictionary dictionary];
     if (node.children.count > 0) {
         float thisCombinedScore = 0.0f;
         float thisVisionScore = 0.0f;
         float thisGeoScore = 0.0f;
+        float thisGeoThreshold = INFINITY;
         for (VCPNode *child in node.children) {
             NSDictionary *childScores = [self aggregateScores:classification visionScores:visionScores geoScores:geoScores currentNode:child];
             NSDictionary *aggregatedChildCombinedScores = childScores[@"aggregatedCombinedScores"];
@@ -192,13 +197,17 @@
                 [aggregatedGeoScores addEntriesFromDictionary:aggregatedChildGeoScores];
                 // Aggregated geo score is the max of descendant geo scores
                 thisGeoScore = MAX(thisGeoScore, [aggregatedChildGeoScores[child.taxonId] floatValue]);
-                // TODO: aggregate geo_threshold as well = min of descendant geo_thresholds
+                NSDictionary *aggregatedChildGeoThresholds = childScores[@"aggregatedGeoThresholds"];
+                [aggregatedGeoThresholds addEntriesFromDictionary:aggregatedChildGeoThresholds];
+                // Aggregated geo_threshold is the min of descendant geo_thresholds
+                thisGeoThreshold = MIN(thisGeoThreshold, [aggregatedChildGeoThresholds[child.taxonId] floatValue]);
             }
         }
         if (thisCombinedScore > 0) {
           aggregatedCombinedScores[node.taxonId] = @(thisCombinedScore);
           aggregatedVisionScores[node.taxonId] = @(thisVisionScore);
           aggregatedGeoScores[node.taxonId] = @(thisGeoScore);
+          aggregatedGeoThresholds[node.taxonId] = @(thisGeoThreshold);
         }
     } else {
         // base case, no children
@@ -212,6 +221,7 @@
             aggregatedVisionScores[node.taxonId] = visionScore;
             NSNumber *geoScore = [geoScores objectAtIndexedSubscript:node.leafId.integerValue];
             aggregatedGeoScores[node.taxonId] = geoScore;
+            aggregatedGeoThresholds[node.taxonId] = node.geoThreshold;
         } else {
             self.excludedLeafCombinedScoresSum += combinedScore.floatValue;
             self.excludedLeafVisionScoresSum += visionScore.floatValue;
@@ -220,7 +230,8 @@
     return @{
       @"aggregatedCombinedScores": [aggregatedCombinedScores copy],
       @"aggregatedVisionScores": [aggregatedVisionScores copy],
-      @"aggregatedGeoScores": [aggregatedGeoScores copy]
+      @"aggregatedGeoScores": [aggregatedGeoScores copy],
+      @"aggregatedGeoThresholds": [aggregatedGeoThresholds copy]
     };
 }
 
@@ -247,7 +258,8 @@
     return @{
       @"aggregatedCombinedScores": [normalizedCombinedScores copy],
       @"aggregatedVisionScores": [normalizedVisionScores copy],
-      @"aggregatedGeoScores": aggregatedScores[@"aggregatedGeoScores"]
+      @"aggregatedGeoScores": aggregatedScores[@"aggregatedGeoScores"],
+      @"aggregatedGeoThresholds": aggregatedScores[@"aggregatedGeoThresholds"]
     };
 }
 
@@ -257,6 +269,7 @@
     NSDictionary *combinedScores = allScoresDict[@"aggregatedCombinedScores"];
     NSDictionary *visionScores = allScoresDict[@"aggregatedVisionScores"];
     NSDictionary *geoScores = allScoresDict[@"aggregatedGeoScores"];
+    NSDictionary *geoThresholds = allScoresDict[@"aggregatedGeoThresholds"];
     // Log number of nodes in combinedScores
     NSLog(@"Number of nodes in combinedScores: %lu", (unsigned long)combinedScores.count);
 
@@ -265,6 +278,8 @@
     NSNumber *lifeCombinedScore = combinedScores[currentNode.taxonId];
     NSNumber *lifeVisionScore = visionScores[currentNode.taxonId];
     NSNumber *lifeGeoScore = geoScores[currentNode.taxonId];
+    NSNumber *lifeGeoThreshold = geoThresholds[currentNode.taxonId];
+    currentNode.geoThreshold = lifeGeoThreshold;
     VCPPrediction *lifePrediction = [[VCPPrediction alloc] initWithNode:currentNode
                                                                   score:lifeCombinedScore.floatValue
                                                                   visionScore:lifeVisionScore.floatValue
@@ -288,6 +303,8 @@
         if (bestChild) {
             NSNumber *bestChildVisionScore = visionScores[bestChild.taxonId];
             NSNumber *bestChildGeoScore = geoScores[bestChild.taxonId];
+            NSNumber *bestChildGeoThreshold = geoThresholds[bestChild.taxonId];
+            bestChild.geoThreshold = bestChildGeoThreshold;
             VCPPrediction *bestChildPrediction = [[VCPPrediction alloc] initWithNode:bestChild
                                                                                score:bestChildScore
                                                                                visionScore:bestChildVisionScore.floatValue

@@ -178,12 +178,15 @@ public class Taxonomy {
           Map<String, Float> aggregatedCombinedScores = aggregatedScores.get("aggregatedCombinedScores");
           Map<String, Float> aggregatedVisionScores = aggregatedScores.get("aggregatedVisionScores");
           Map<String, Float> aggregatedGeoScores = aggregatedScores.get("aggregatedGeoScores");
+          Map<String, Float> aggregatedGeoThresholds = aggregatedScores.get("aggregatedGeoThresholds");
           List<Prediction> predictions = new ArrayList<>();
           for (String key : aggregatedCombinedScores.keySet()) {
             float combinedScore = aggregatedCombinedScores.get(key);
             float visionScore = aggregatedVisionScores.get(key);
             float geoScore = aggregatedGeoScores.get(key);
+            float geoThreshold = aggregatedGeoThresholds.get(key);
             Node node = mNodeByKey.get(key);
+            node.geoThreshold = String.valueOf(geoThreshold);
             Prediction prediction = new Prediction(node, combinedScore, visionScore, geoScore);
             predictions.add(prediction);
           }
@@ -243,6 +246,7 @@ public class Taxonomy {
         scores.put("aggregatedCombinedScores", aggregatedCombinedScores);
         scores.put("aggregatedVisionScores", aggregatedVisionScores);
         scores.put("aggregatedGeoScores", aggregatedScores.get("aggregatedGeoScores"));
+        scores.put("aggregatedGeoThresholds", aggregatedScores.get("aggregatedGeoThresholds"));
         return scores;
     }
 
@@ -253,11 +257,13 @@ public class Taxonomy {
         Map<String, Float> aggregatedCombinedScores = new HashMap<>();
         Map<String, Float> aggregatedVisionScores = new HashMap<>();
         Map<String, Float> aggregatedGeoScores = new HashMap<>();
+        Map<String, Float> aggregatedGeoThresholds = new HashMap<>();
 
         if (currentNode.children.size() > 0) {
             float thisScore = 0.0f;
             float thisVisionScore = 0.0f;
             float thisGeoScore = 0.0f;
+            float thisGeoThreshold = Float.POSITIVE_INFINITY;
             for (Node child : currentNode.children) {
                 Map<String, Map> childScores = aggregateScores(combinedScores, visionScores, geoScores, child);
                 Map<String, Float> aggregatedChildCombinedScores = childScores.get("aggregatedCombinedScores");
@@ -273,7 +279,10 @@ public class Taxonomy {
                     Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
                     aggregatedGeoScores.putAll(aggregatedChildGeoScores);
                     thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
-                    // TODO: aggregate geo_threshold as well = min of descendant geo_thresholds
+                    // Aggregated geo_threshold is the min of descendant geo_thresholds
+                    Map<String, Float> aggregatedChildGeoThresholds = childScores.get("aggregatedGeoThresholds");
+                    aggregatedGeoThresholds.putAll(aggregatedChildGeoThresholds);
+                    thisGeoThreshold = Math.min(thisGeoThreshold, aggregatedChildGeoThresholds.get(child.key));
                   }
                 }
             }
@@ -281,6 +290,7 @@ public class Taxonomy {
               aggregatedCombinedScores.put(currentNode.key, thisScore);
               aggregatedVisionScores.put(currentNode.key, thisVisionScore);
               aggregatedGeoScores.put(currentNode.key, thisGeoScore);
+              aggregatedGeoThresholds.put(currentNode.key, thisGeoThreshold);
             }
         } else {
             // base case, no children
@@ -303,6 +313,7 @@ public class Taxonomy {
               aggregatedVisionScores.put(currentNode.key, visionScore);
               float geoScore = geoScores[Integer.valueOf(currentNode.leafId)];
               aggregatedGeoScores.put(currentNode.key, geoScore);
+              aggregatedGeoThresholds.put(currentNode.key, Float.parseFloat(currentNode.geoThreshold));
             } else {
               mExcludedLeafCombinedScoresSum += combinedScore;
               mExcludedLeafVisionScoresSum += visionScore;
@@ -313,6 +324,7 @@ public class Taxonomy {
         aggregatedScores.put("aggregatedCombinedScores", aggregatedCombinedScores);
         aggregatedScores.put("aggregatedVisionScores", aggregatedVisionScores);
         aggregatedScores.put("aggregatedGeoScores", aggregatedGeoScores);
+        aggregatedScores.put("aggregatedGeoThresholds", aggregatedGeoThresholds);
         return aggregatedScores;
     }
 
@@ -337,6 +349,7 @@ public class Taxonomy {
         Map<String, Float> combinedScores = scores.get("aggregatedCombinedScores");
         Map<String, Float> visionScores = scores.get("aggregatedVisionScores");
         Map<String, Float> geoScores = scores.get("aggregatedGeoScores");
+        Map<String, Float> geoThresholds = scores.get("aggregatedGeoThresholds");
         Timber.tag(TAG).d("Number of nodes in combinedScores: " + combinedScores.size());
 
         // Start from life
@@ -345,6 +358,8 @@ public class Taxonomy {
         float lifeCombinedScore = combinedScores.get(currentNode.key);
         float lifeVisionScore = visionScores.get(currentNode.key);
         float lifeGeoScore = geoScores.get(currentNode.key);
+        float lifeGeoThreshold = geoThresholds.get(currentNode.key);
+        currentNode.geoThreshold = String.valueOf(lifeGeoThreshold);
         Prediction lifePrediction = new Prediction(currentNode, lifeCombinedScore, lifeVisionScore, lifeGeoScore);
         bestBranch.add(lifePrediction);
 
@@ -368,6 +383,8 @@ public class Taxonomy {
             if (bestChild != null) {
                 float bestChildVisionScore = visionScores.get(bestChild.key);
                 float bestChildGeoScore = geoScores.get(bestChild.key);
+                float bestChildGeoThreshold = geoThresholds.get(bestChild.key);
+                bestChild.geoThreshold = String.valueOf(bestChildGeoThreshold);
                 Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore, bestChildVisionScore, bestChildGeoScore);
                 bestBranch.add(bestChildPrediction);
             }
@@ -391,7 +408,7 @@ public class Taxonomy {
             result.put("score", prediction.score);
             result.put("vision_score", prediction.visionScore);
             result.put("geo_score", prediction.geoScore);
-            // TODO: export geo_threshold
+            result.put("geo_threshold", Double.valueOf(prediction.node.geoThreshold));
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {

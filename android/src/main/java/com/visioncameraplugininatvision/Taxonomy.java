@@ -256,6 +256,7 @@ public class Taxonomy {
         Map<String, Map> aggregatedScores = new HashMap<>();
         Map<String, Float> aggregatedCombinedScores = new HashMap<>();
         Map<String, Float> aggregatedVisionScores = new HashMap<>();
+        boolean hasGeoScores = geoScores != null;
         Map<String, Float> aggregatedGeoScores = new HashMap<>();
         Map<String, Double> aggregatedGeoThresholds = new HashMap<>();
 
@@ -275,10 +276,12 @@ public class Taxonomy {
                     Map<String, Float> aggregatedChildVisionScores = childScores.get("aggregatedVisionScores");
                     aggregatedVisionScores.putAll(aggregatedChildVisionScores);
                     thisVisionScore += aggregatedChildVisionScores.get(child.key);
-                    // Aggregated geo score is the max of descendant geo scores
-                    Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
-                    aggregatedGeoScores.putAll(aggregatedChildGeoScores);
-                    thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
+                    if (hasGeoScores) {
+                      // Aggregated geo score is the max of descendant geo scores
+                      Map<String, Float> aggregatedChildGeoScores = childScores.get("aggregatedGeoScores");
+                      aggregatedGeoScores.putAll(aggregatedChildGeoScores);
+                      thisGeoScore = Math.max(thisGeoScore, aggregatedChildGeoScores.get(child.key));
+                    }
                     // Aggregated geo_threshold is the min of descendant geo_thresholds
                     Map<String, Double> aggregatedChildGeoThresholds = childScores.get("aggregatedGeoThresholds");
                     aggregatedGeoThresholds.putAll(aggregatedChildGeoThresholds);
@@ -293,7 +296,11 @@ public class Taxonomy {
             if (thisScore != 0.0f) {
               aggregatedCombinedScores.put(currentNode.key, thisScore);
               aggregatedVisionScores.put(currentNode.key, thisVisionScore);
-              aggregatedGeoScores.put(currentNode.key, thisGeoScore);
+              if (hasGeoScores) {
+                aggregatedGeoScores.put(currentNode.key, thisGeoScore);
+              } else {
+                aggregatedGeoScores.put(currentNode.key, null);
+              }
               if (thisGeoThreshold != Double.POSITIVE_INFINITY) {
                 aggregatedGeoThresholds.put(currentNode.key, thisGeoThreshold);
               } else {
@@ -319,8 +326,12 @@ public class Taxonomy {
             if (!filterOut && combinedScore >= mTaxonomyRollupCutoff) {
               aggregatedCombinedScores.put(currentNode.key, combinedScore);
               aggregatedVisionScores.put(currentNode.key, visionScore);
-              float geoScore = geoScores[Integer.valueOf(currentNode.leafId)];
-              aggregatedGeoScores.put(currentNode.key, geoScore);
+              if (hasGeoScores) {
+                float geoScore = geoScores[Integer.parseInt(currentNode.leafId)];
+                aggregatedGeoScores.put(currentNode.key, geoScore);
+              } else {
+                aggregatedGeoScores.put(currentNode.key, null);
+              }
               aggregatedGeoThresholds.put(currentNode.key, currentNode.geoThreshold);
             } else {
               mExcludedLeafCombinedScoresSum += combinedScore;

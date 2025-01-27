@@ -178,15 +178,15 @@ public class Taxonomy {
           Map<String, Float> aggregatedCombinedScores = aggregatedScores.get("aggregatedCombinedScores");
           Map<String, Float> aggregatedVisionScores = aggregatedScores.get("aggregatedVisionScores");
           Map<String, Float> aggregatedGeoScores = aggregatedScores.get("aggregatedGeoScores");
-          Map<String, Float> aggregatedGeoThresholds = aggregatedScores.get("aggregatedGeoThresholds");
+          Map<String, Double> aggregatedGeoThresholds = aggregatedScores.get("aggregatedGeoThresholds");
           List<Prediction> predictions = new ArrayList<>();
           for (String key : aggregatedCombinedScores.keySet()) {
             float combinedScore = aggregatedCombinedScores.get(key);
             float visionScore = aggregatedVisionScores.get(key);
             float geoScore = aggregatedGeoScores.get(key);
-            float geoThreshold = aggregatedGeoThresholds.get(key);
+            Double geoThreshold = aggregatedGeoThresholds.get(key);
             Node node = mNodeByKey.get(key);
-            node.geoThreshold = String.valueOf(geoThreshold);
+            node.geoThreshold = geoThreshold;
             Prediction prediction = new Prediction(node, combinedScore, visionScore, geoScore);
             predictions.add(prediction);
           }
@@ -207,8 +207,8 @@ public class Taxonomy {
             Prediction prediction = new Prediction(leaf, 0, 0, geoScore);
 
             // If geoScore is higher than geoThreshold it means the taxon is "expected nearby"
-            if (leaf.geoThreshold != null && !leaf.geoThreshold.isEmpty()) {
-                float threshold = Float.parseFloat(leaf.geoThreshold);
+            if (leaf.geoThreshold != null) {
+                Double threshold = leaf.geoThreshold;
                 if (geoScore >= threshold) {
                     scores.add(prediction);
                 } else {
@@ -357,7 +357,7 @@ public class Taxonomy {
         Map<String, Float> combinedScores = scores.get("aggregatedCombinedScores");
         Map<String, Float> visionScores = scores.get("aggregatedVisionScores");
         Map<String, Float> geoScores = scores.get("aggregatedGeoScores");
-        Map<String, Float> geoThresholds = scores.get("aggregatedGeoThresholds");
+        Map<String, Double> geoThresholds = scores.get("aggregatedGeoThresholds");
         Timber.tag(TAG).d("Number of nodes in combinedScores: " + combinedScores.size());
 
         // Start from life
@@ -366,8 +366,7 @@ public class Taxonomy {
         float lifeCombinedScore = combinedScores.get(currentNode.key);
         float lifeVisionScore = visionScores.get(currentNode.key);
         float lifeGeoScore = geoScores.get(currentNode.key);
-        float lifeGeoThreshold = geoThresholds.get(currentNode.key);
-        currentNode.geoThreshold = String.valueOf(lifeGeoThreshold);
+        currentNode.geoThreshold = geoThresholds.get(currentNode.key);
         Prediction lifePrediction = new Prediction(currentNode, lifeCombinedScore, lifeVisionScore, lifeGeoScore);
         bestBranch.add(lifePrediction);
 
@@ -392,7 +391,7 @@ public class Taxonomy {
                 float bestChildVisionScore = visionScores.get(bestChild.key);
                 float bestChildGeoScore = geoScores.get(bestChild.key);
                 float bestChildGeoThreshold = geoThresholds.get(bestChild.key);
-                bestChild.geoThreshold = String.valueOf(bestChildGeoThreshold);
+                bestChild.geoThreshold = bestChildGeoThreshold;
                 Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore, bestChildVisionScore, bestChildGeoScore);
                 bestBranch.add(bestChildPrediction);
             }
@@ -416,8 +415,8 @@ public class Taxonomy {
             result.put("score", prediction.score);
             result.put("vision_score", prediction.visionScore);
             result.put("geo_score", prediction.geoScore);
-            if ((prediction.node.geoThreshold != null) && (prediction.node.geoThreshold.length() > 0)) {
-              result.put("geo_threshold", Double.valueOf(prediction.node.geoThreshold));
+            if ((prediction.node.geoThreshold != null)) {
+              result.put("geo_threshold", prediction.node.geoThreshold);
             }
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));

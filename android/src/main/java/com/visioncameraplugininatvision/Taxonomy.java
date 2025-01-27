@@ -390,7 +390,7 @@ public class Taxonomy {
             if (bestChild != null) {
                 float bestChildVisionScore = visionScores.get(bestChild.key);
                 float bestChildGeoScore = geoScores.get(bestChild.key);
-                float bestChildGeoThreshold = geoThresholds.get(bestChild.key);
+                Double bestChildGeoThreshold = geoThresholds.get(bestChild.key);
                 bestChild.geoThreshold = bestChildGeoThreshold;
                 Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore, bestChildVisionScore, bestChildGeoScore);
                 bestBranch.add(bestChildPrediction);

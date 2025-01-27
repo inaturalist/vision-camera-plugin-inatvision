@@ -299,12 +299,14 @@ export default function App(): React.JSX.Element {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('result.timeElapsed', result.timeElapsed);
-        // predictLocation sneds back a prediction for each leaf node in the taxonomy
-        // we filter out the ones with a score below 0.095, this is arbitrary
-        const filteredResults = result.predictions.filter(
-          (p) => p.score > 0.095
-        );
+        // If you try predictLocation with a taxonomy file without geo_thresholds the plugin will
+        // send back a prediction for each leaf node in the taxonomy we filter out the lowers scores
+        // to make the result more readable
+        const filteredResults = result.predictions
+          .sort((a, b) => b.geo_score - a.geo_score)
+          .slice(0, 100);
         setResult(filteredResults);
+        setViewStatus(VIEW_STATUS.RESULT);
       })
       .catch((err) => {
         console.log('getPredictionsForLocation Error', err);
@@ -408,14 +410,6 @@ export default function App(): React.JSX.Element {
         title="Use geomodel without elevation"
       />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
-      {results && (
-        <View>
-          <Text style={styles.text}>Leaf taxa expected nearby:</Text>
-          <Text style={styles.smallLabel}>
-            {results.map((r) => r.name).toString()}
-          </Text>
-        </View>
-      )}
     </>
   );
 
@@ -424,15 +418,24 @@ export default function App(): React.JSX.Element {
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>
-          <Text style={styles.text}>Common ancestor:</Text>
+          <Text style={styles.smallLabel}>useGeomodel: {`${useGeomodel}`}</Text>
           <Text style={styles.smallLabel}>
-            {commonAncestor ? commonAncestor.name : 'No common ancestor'}
+            useCommonAncestor: {`${useCommonAncestor}`}
           </Text>
-          <Text style={styles.smallLabel}>
-            {commonAncestor
-              ? commonAncestor.score.toPrecision(2)
-              : 'No common ancestor'}
-          </Text>
+          {useCommonAncestor && (
+            <>
+              <Text style={styles.text}>Common ancestor:</Text>
+              <Text style={styles.smallLabel}>
+                {commonAncestor ? commonAncestor.name : 'No common ancestor'}
+              </Text>
+              <Text style={styles.smallLabel}>
+                {commonAncestor
+                  ? commonAncestor.score.toPrecision(2)
+                  : 'No common ancestor'}
+              </Text>
+            </>
+          )}
+          <Text style={styles.text}>Results:</Text>
           <ScrollView>
             <View style={styles.dataRow}>
               <Text style={styles.smallLabel}>name</Text>
@@ -519,10 +522,6 @@ export default function App(): React.JSX.Element {
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />
-          <Button
-            onPress={toggleUseGeomodel}
-            title={useGeomodel ? 'Disable Geomodel' : 'Enable Geomodel'}
-          />
         </View>
         {results &&
           results.map((result) => (
@@ -530,6 +529,15 @@ export default function App(): React.JSX.Element {
               <Text style={styles.text}>{result.name}</Text>
               <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
               <Text style={styles.smallLabel}>score {result.score}</Text>
+              <Text style={styles.smallLabel}>
+                vision_score {result.vision_score}
+              </Text>
+              <Text style={styles.smallLabel}>
+                geo_score {result.geo_score}
+              </Text>
+              <Text style={styles.smallLabel}>
+                geo_threshold {result.geo_threshold}
+              </Text>
               {!!result.spatial_class_id && (
                 <Text style={styles.smallLabel}>
                   spatial_class_id {result.spatial_class_id}

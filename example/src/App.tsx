@@ -97,10 +97,6 @@ export default function App(): React.JSX.Element {
     setNegativeFilter(!negativeFilter);
   };
 
-  const toggleUseGeomodel = () => {
-    setUseGeomodel(!useGeomodel);
-  };
-
   const changeFilterByTaxonId = () => {
     if (!filterByTaxonId) {
       setFilterByTaxonId('47126');
@@ -331,6 +327,19 @@ export default function App(): React.JSX.Element {
               value={useCommonAncestor}
             />
             <Text style={styles.smallLabel}>Common ancestor</Text>
+          </View>
+          {/* A switch to useGeomodel */}
+          <Text style={styles.text}>Use Geomdel:</Text>
+          <View style={styles.row}>
+            <Text style={styles.smallLabel}>False</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={useGeomodel ? '#f4f3f4' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setUseGeomodel(!useGeomodel)}
+              value={useGeomodel}
+            />
+            <Text style={styles.smallLabel}>True</Text>
           </View>
 
           <Button

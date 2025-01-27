@@ -7,11 +7,13 @@ public class Prediction {
     public Double geoScore;
     public Float rank;
 
-    public Prediction(Node n, double p, double vS, double gS) {
+    public Prediction(Node n, float p, float vS, Float gS) {
         node = n;
-        score = p;
-        visionScore = vS;
-        geoScore = gS;
+        score = (double) p;
+        visionScore = (double) vS;
+        if (gS != null) {
+          geoScore = Double.valueOf(gS);
+        }
         rank = n.rank;
     }
 }

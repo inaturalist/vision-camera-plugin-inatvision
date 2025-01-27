@@ -183,7 +183,7 @@ public class Taxonomy {
           for (String key : aggregatedCombinedScores.keySet()) {
             float combinedScore = aggregatedCombinedScores.get(key);
             float visionScore = aggregatedVisionScores.get(key);
-            float geoScore = aggregatedGeoScores.get(key);
+            Float geoScore = aggregatedGeoScores.get(key);
             Double geoThreshold = aggregatedGeoThresholds.get(key);
             Node node = mNodeByKey.get(key);
             node.geoThreshold = geoThreshold;
@@ -365,7 +365,7 @@ public class Taxonomy {
 
         float lifeCombinedScore = combinedScores.get(currentNode.key);
         float lifeVisionScore = visionScores.get(currentNode.key);
-        float lifeGeoScore = geoScores.get(currentNode.key);
+        Float lifeGeoScore = geoScores.get(currentNode.key);
         currentNode.geoThreshold = geoThresholds.get(currentNode.key);
         Prediction lifePrediction = new Prediction(currentNode, lifeCombinedScore, lifeVisionScore, lifeGeoScore);
         bestBranch.add(lifePrediction);
@@ -389,9 +389,8 @@ public class Taxonomy {
 
             if (bestChild != null) {
                 float bestChildVisionScore = visionScores.get(bestChild.key);
-                float bestChildGeoScore = geoScores.get(bestChild.key);
-                Double bestChildGeoThreshold = geoThresholds.get(bestChild.key);
-                bestChild.geoThreshold = bestChildGeoThreshold;
+                Float bestChildGeoScore = geoScores.get(bestChild.key);
+                bestChild.geoThreshold = geoThresholds.get(bestChild.key);
                 Prediction bestChildPrediction = new Prediction(bestChild, bestChildScore, bestChildVisionScore, bestChildGeoScore);
                 bestBranch.add(bestChildPrediction);
             }

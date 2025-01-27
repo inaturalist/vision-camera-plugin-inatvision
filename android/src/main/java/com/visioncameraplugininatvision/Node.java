@@ -70,7 +70,10 @@ public class Node {
 
         if (headerList.contains("spatial_threshold")) {
           int spatialThresholdIndex = headerList.indexOf("spatial_threshold");
-          this.geoThreshold = Double.valueOf(parts[spatialThresholdIndex]);
+          String spatialThreshold = parts[spatialThresholdIndex];
+          if (spatialThreshold.length() > 0) {
+            this.geoThreshold = Double.valueOf(parts[spatialThresholdIndex]);
+          }
         }
 
         if (headerList.contains("name")) {

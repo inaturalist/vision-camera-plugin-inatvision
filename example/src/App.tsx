@@ -267,7 +267,7 @@ export default function App(): React.JSX.Element {
         : InatVision.MODE.BEST_BRANCH,
       confidenceThreshold,
       cropRatio: 0.88,
-      useGeomodel: true,
+      useGeomodel,
       geomodelPath,
       location: {
         latitude: testLocationEuropeNoElevation.latitude,

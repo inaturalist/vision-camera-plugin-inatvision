@@ -35,7 +35,7 @@
     NSMutableDictionary *mutableNodeDict = [[self.node asDict] mutableCopy];
     mutableNodeDict[@"score"] = @(self.score);
     mutableNodeDict[@"vision_score"] = @(self.visionScore);
-    mutableNodeDict[@"geo_score"] = @(self.geoScore);
+    mutableNodeDict[@"geo_score"] = (self.geoScore ? @(self.geoScore) : [NSNull null]);
     mutableNodeDict[@"ancestor_ids"] = self.ancestorIds;
     return [NSDictionary dictionaryWithDictionary:mutableNodeDict];
 }

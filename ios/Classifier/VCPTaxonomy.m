@@ -178,6 +178,7 @@
     NSMutableDictionary *aggregatedVisionScores = [NSMutableDictionary dictionary];
     NSMutableDictionary *aggregatedGeoScores = [NSMutableDictionary dictionary];
     NSMutableDictionary *aggregatedGeoThresholds = [NSMutableDictionary dictionary];
+    bool hasGeoScores = geoScores != nil;
     if (node.children.count > 0) {
         float thisCombinedScore = 0.0f;
         float thisVisionScore = 0.0f;
@@ -193,21 +194,34 @@
                 NSDictionary *aggregatedChildVisionScores = childScores[@"aggregatedVisionScores"];
                 [aggregatedVisionScores addEntriesFromDictionary:aggregatedChildVisionScores];
                 thisVisionScore += [aggregatedChildVisionScores[child.taxonId] floatValue];
-                NSDictionary *aggregatedChildGeoScores = childScores[@"aggregatedGeoScores"];
-                [aggregatedGeoScores addEntriesFromDictionary:aggregatedChildGeoScores];
-                // Aggregated geo score is the max of descendant geo scores
-                thisGeoScore = MAX(thisGeoScore, [aggregatedChildGeoScores[child.taxonId] floatValue]);
+                if (hasGeoScores) {
+                  NSDictionary *aggregatedChildGeoScores = childScores[@"aggregatedGeoScores"];
+                  [aggregatedGeoScores addEntriesFromDictionary:aggregatedChildGeoScores];
+                  // Aggregated geo score is the max of descendant geo scores
+                  thisGeoScore = MAX(thisGeoScore, [aggregatedChildGeoScores[child.taxonId] floatValue]);
+                }
                 NSDictionary *aggregatedChildGeoThresholds = childScores[@"aggregatedGeoThresholds"];
                 [aggregatedGeoThresholds addEntriesFromDictionary:aggregatedChildGeoThresholds];
-                // Aggregated geo_threshold is the min of descendant geo_thresholds
-                thisGeoThreshold = MIN(thisGeoThreshold, [aggregatedChildGeoThresholds[child.taxonId] floatValue]);
+                NSNumber *childGeoThreshold = aggregatedChildGeoThresholds[child.taxonId];
+                if (childGeoThreshold != nil) {
+                  // Aggregated geo_threshold is the min of descendant geo_thresholds
+                  thisGeoThreshold = MIN(thisGeoThreshold, [childGeoThreshold floatValue]);
+                }
             }
         }
         if (thisCombinedScore > 0) {
           aggregatedCombinedScores[node.taxonId] = @(thisCombinedScore);
           aggregatedVisionScores[node.taxonId] = @(thisVisionScore);
-          aggregatedGeoScores[node.taxonId] = @(thisGeoScore);
-          aggregatedGeoThresholds[node.taxonId] = @(thisGeoThreshold);
+          if (hasGeoScores) {
+            aggregatedGeoScores[node.taxonId] = @(thisGeoScore);
+          } else {
+            aggregatedGeoScores[node.taxonId] = nil;
+          }
+          if (thisGeoThreshold != INFINITY) {
+            aggregatedGeoThresholds[node.taxonId] = @(thisGeoThreshold);
+          } else {
+            aggregatedGeoThresholds[node.taxonId] = nil;
+          }
         }
     } else {
         // base case, no children
@@ -219,8 +233,12 @@
         if ([combinedScore floatValue] >= self.taxonomyRollupCutoff) {
             aggregatedCombinedScores[node.taxonId] = combinedScore;
             aggregatedVisionScores[node.taxonId] = visionScore;
-            NSNumber *geoScore = [geoScores objectAtIndexedSubscript:node.leafId.integerValue];
-            aggregatedGeoScores[node.taxonId] = geoScore;
+            if (hasGeoScores) {
+              NSNumber *geoScore = [geoScores objectAtIndexedSubscript:node.leafId.integerValue];
+              aggregatedGeoScores[node.taxonId] = geoScore;
+            } else {
+              aggregatedGeoScores[node.taxonId] = nil;
+            }
             aggregatedGeoThresholds[node.taxonId] = node.geoThreshold;
         } else {
             self.excludedLeafCombinedScoresSum += combinedScore.floatValue;

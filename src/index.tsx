@@ -526,8 +526,6 @@ function commonAncestorFromPredictions(
 
 function commonAncestorFromAggregatedScores(
   predictions: Prediction[]
-  // TODO: = ??
-  // disallowHumans?: boolean
 ): Prediction | undefined {
   // As in the vision API:
   // # if using combined scores to aggregate, and there are taxa expected nearby,
@@ -546,17 +544,6 @@ function commonAncestorFromAggregatedScores(
     )
     .sort((a, b) => a.rank_level - b.rank_level);
   const commonAncestor = commonAncestorCandidates[0];
-
-  // TODO: ?
-  // Handle human taxon exclusion
-  // if (
-  //   disallowHumans &&
-  //   taxonomy.humanTaxon &&
-  //   commonAncestor.taxon_id === taxonomy.humanTaxon.parent_taxon_id
-  // ) {
-  //   return null;
-  // }
-
   return commonAncestor;
 }
 

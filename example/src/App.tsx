@@ -331,7 +331,7 @@ export default function App(): React.JSX.Element {
             <Text style={styles.smallLabel}>Common ancestor</Text>
           </View>
           {/* A switch to useGeomodel */}
-          <Text style={styles.text}>Use Geomdel:</Text>
+          <Text style={styles.text}>Use Geomodel:</Text>
           <View style={styles.row}>
             <Text style={styles.smallLabel}>False</Text>
             <Switch

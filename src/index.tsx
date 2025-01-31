@@ -496,6 +496,7 @@ function limitLeafPredictionsThatIncludeHumans(
 
 function commonAncestorFromPredictions(
   predictions: Prediction[],
+  sumLeafScores: number
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   // max 15 (s > ts * 0.001), not normalized, leaf only
@@ -508,11 +509,8 @@ function commonAncestorFromPredictions(
   // Filter out all leaf nodes with scores lower than top combined score * 0.01
   const top15Leaves = top15Candidates.filter((p) => p.score >= top15Cutoff);
   // Get quotient to normalize the top 15 scores
-  const scoreSumOfAllLeaves = predictions
-    .filter((p) => p.leaf_id)
-    .reduce((acc, p) => acc + p.score, 0);
   const scoreSumOfTop15 = top15Leaves.reduce((acc, p) => acc + p.score, 0);
-  const quotient = scoreSumOfAllLeaves / scoreSumOfTop15;
+  const quotient = sumLeafScores / scoreSumOfTop15;
   const parentIds = new Set();
   top15Leaves.forEach((p) => {
     p.ancestor_ids.forEach((id) => parentIds.add(id));
@@ -569,15 +567,25 @@ export function getPredictionsForImage(
     VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
       .then((result: ResultForImage) => {
         if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
-          // From native: s > ts * 0.001, normalized
-          // max 10 (s > ts * 0.001), not normalized, leaf only
-          const top10 = result.predictions
+          // From native we get all predictions (leaves and ancestors) that have
+          // score > top score * 0.001, score & vision score is normalized
+          const leafPredictions = result.predictions
             .filter((p) => p.leaf_id)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 10);
-          const commonAncestor = commonAncestorFromPredictions(
-            result.predictions
+            .sort((a, b) => b.score - a.score);
+          const sumLeafScores = leafPredictions.reduce(
+            (acc, p) => acc + p.score,
+            0
           );
+
+          // max 100 (s > ts * 0.001), not normalized, leaf only
+          const top100Leaves = leafPredictions.slice(0, 100);
+          const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
+          const commonAncestor = commonAncestorFromPredictions(
+            result.predictions,
+            sumLeafScores
+          );
+          // max 10 (s > ts * 0.001), not normalized, leaf only
+          const top10 = top100.slice(0, 10);
           const resultWithCommonAncestor = Object.assign({}, result, {
             predictions: top10,
             commonAncestor,

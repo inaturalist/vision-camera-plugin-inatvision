@@ -562,7 +562,10 @@ function commonAncestorFromAggregatedScores(
   // # if using combined scores to aggregate, and there are taxa expected nearby,
   // # then add a query filter to only look at nearby taxa as common ancestor candidates
   const filterForNearby = predictions.some(
-    (prediction) => prediction.geo_score >= prediction.geo_threshold
+    (prediction) =>
+      prediction.geo_score &&
+      prediction.geo_threshold &&
+      prediction.geo_score >= prediction.geo_threshold
   );
   // Filter and sort candidates
   const commonAncestorCandidates = predictions
@@ -571,7 +574,10 @@ function commonAncestorFromAggregatedScores(
         prediction.score > 0.78 &&
         prediction.rank_level >= 20 &&
         prediction.rank_level <= 33 &&
-        (!filterForNearby || prediction.geo_score >= prediction.geo_threshold)
+        (!filterForNearby ||
+          (prediction.geo_score &&
+            prediction.geo_threshold &&
+            prediction.geo_score >= prediction.geo_threshold))
     )
     .sort((a, b) => a.rank_level - b.rank_level);
   const commonAncestor = commonAncestorCandidates[0];

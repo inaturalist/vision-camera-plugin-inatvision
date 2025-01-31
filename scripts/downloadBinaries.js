@@ -15,6 +15,7 @@ const iosCV = `${binariesBaseDir}/${cvModelFilename}.${iosExt}`;
 const androidGeo = `${binariesBaseDir}/${geomodelFilename}.${androidExt}`;
 const iosGeo = `${binariesBaseDir}/${geomodelFilename}.${iosExt}`;
 const taxonomyCSV = `${binariesBaseDir}/taxonomy.csv`;
+const taxonomyJSON = `${binariesBaseDir}/taxonomy.json`;
 
 const androidDestination = path.join(
   __dirname,
@@ -48,7 +49,9 @@ const iosModel = path.join(iosDestination, `${cvModelFilename}.${iosExt}`);
     return;
   }
 
-  console.log(`Model files missing, downloading from '${binariesBaseDir}'...`);
+  console.log(
+    `Android model files missing, downloading from '${binariesBaseDir}'...`
+  );
 
   await download(androidCV, androidDestination);
   await download(androidGeo, androidDestination);
@@ -70,10 +73,12 @@ const iosModel = path.join(iosDestination, `${cvModelFilename}.${iosExt}`);
     return;
   }
 
-  console.log(`Model files missing, downloading from '${binariesBaseDir}'...`);
+  console.log(
+    `iOS Model files missing, downloading from '${binariesBaseDir}'...`
+  );
 
   await download(iosCV, iosDestination);
   await download(iosGeo, iosDestination);
-  await download(taxonomyCSV, __dirname);
+  await download(taxonomyJSON, iosDestination);
   console.log('Done!');
 })();

@@ -502,6 +502,7 @@ function limitLeafPredictionsThatIncludeHumans(
     (p) => p.taxon_id === HUMAN_TAXON_ID
   );
   // If no humans, return original array
+  // (also returns here if predictions is an empty array)
   if (humanIndex === -1) {
     return predictions;
   }
@@ -510,8 +511,12 @@ function limitLeafPredictionsThatIncludeHumans(
   // If humans is first and has substantially higher score than next prediction
   // return only humans
   if (humanIndex === 0) {
-    const humanPrediction = predictions[0];
+    // TS complains about the object possibly being undefined, but we know it's not
+    // @ts-ignore
+    const humanPrediction: Prediction = predictions[0];
     const humanScore = humanPrediction.score;
+    // TS complains about the object possibly being undefined, but we know it's not
+    // @ts-ignore
     const nextScore = predictions[1].score;
     const humanScoreMargin = humanScore / nextScore;
 

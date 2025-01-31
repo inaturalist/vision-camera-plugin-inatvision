@@ -194,9 +194,8 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
         }
 
         classifier.setGeomodelScores(geomodelScores);
-        // TODO: get from options and support prop down to classifier as second param
-        // Double taxonomyRollupCutoff = 0.0;
         Boolean commonAncestorMode = Objects.equals(mode, "COMMON_ANCESTOR");
+        // Does not set a taxonomyRollupCutoff here, i.e. uses the default value (top score * 0.001)
         List<Prediction> predictions = classifier.classifyBitmap(bitmap, null, commonAncestorMode);
         bitmap.recycle();
 

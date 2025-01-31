@@ -130,10 +130,10 @@ export default function App(): React.JSX.Element {
   }, []);
 
   const checkForModelFilesIOS = () => {
-    RNFS.readDir(RNFS.MainBundlePath).then((results) => {
-      const hasModel = results.find((r) => r.name === modelFilenameIOS);
-      const hasTaxonomy = results.find((r) => r.name === taxonomyFilenameIOS);
-      const hasGeomodel = results.find((r) => r.name === geomodelFilenameIOS);
+    RNFS.readDir(RNFS.MainBundlePath).then((files) => {
+      const hasModel = files.find((r) => r.name === modelFilenameIOS);
+      const hasTaxonomy = files.find((r) => r.name === taxonomyFilenameIOS);
+      const hasGeomodel = files.find((r) => r.name === geomodelFilenameIOS);
       if (
         hasModel !== undefined &&
         hasTaxonomy !== undefined &&
@@ -410,7 +410,7 @@ export default function App(): React.JSX.Element {
   );
 
   const renderResult = () => (
-    <View style={{ flex: 1 }}>
+    <View style={styles.flex}>
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>
@@ -494,7 +494,7 @@ export default function App(): React.JSX.Element {
     return device != null && hasPermission ? (
       <View style={styles.cameraContainer}>
         <Camera
-          style={styles.camera}
+          style={styles.flex}
           device={device}
           isActive={true}
           frameProcessor={frameProcessor}
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  camera: {
+  flex: {
     flex: 1,
   },
   labels: {

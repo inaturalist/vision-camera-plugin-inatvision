@@ -488,8 +488,14 @@ interface OptionsForImage extends BaseOptions {
   uri: string;
 }
 
-function commonAncestorFromPredictions(
+function limitLeafPredictionsThatIncludeHumans(
   predictions: Prediction[]
+): Prediction[] {
+  return predictions;
+}
+
+function commonAncestorFromPredictions(
+  predictions: Prediction[],
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   // max 15 (s > ts * 0.001), not normalized, leaf only

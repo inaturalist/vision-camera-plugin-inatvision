@@ -160,7 +160,7 @@ public class ImageClassifier {
         for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
                 int pixel = bitmap.getPixel(x, y);
-                if (mModelVersion.equals("1.0") || mModelVersion.equals("small_2")) {
+                if (mModelVersion.equals("1.0")) {
                   // Normalize channel values to [0.0, 1.0] for version 1.0
                   input[0][x][y][0] = Color.red(pixel) / 255.0f;
                   input[0][x][y][1] = Color.green(pixel) / 255.0f;

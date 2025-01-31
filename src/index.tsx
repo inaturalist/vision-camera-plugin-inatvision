@@ -488,10 +488,39 @@ interface OptionsForImage extends BaseOptions {
   uri: string;
 }
 
+const HUMAN_TAXON_ID = 43584;
 function limitLeafPredictionsThatIncludeHumans(
   predictions: Prediction[]
 ): Prediction[] {
-  return predictions;
+  // If only one prediction, return original array
+  if (predictions.length === 1) {
+    return predictions;
+  }
+  // Find human prediction
+  const humanIndex = predictions.findIndex(
+    (p) => p.taxon_id === HUMAN_TAXON_ID
+  );
+  // If no humans, return original array
+  if (humanIndex === -1) {
+    return predictions;
+  }
+
+  // At this point there are multiple results and humans is one of them
+  // If humans is first and has substantially higher score than next prediction
+  // return only humans
+  if (humanIndex === 0) {
+    const humanPrediction = predictions[0];
+    const humanScore = humanPrediction.score;
+    const nextScore = predictions[1].score;
+    const humanScoreMargin = humanScore / nextScore;
+
+    if (humanScoreMargin > 1.5) {
+      return [humanPrediction];
+    }
+  }
+
+  // Otherwise return empty array
+  return [];
 }
 
 function commonAncestorFromPredictions(

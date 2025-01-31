@@ -190,9 +190,6 @@ export default function App(): React.JSX.Element {
             version: modelVersion,
             modelPath,
             taxonomyPath,
-            mode: useCommonAncestor
-              ? InatVision.MODE.COMMON_ANCESTOR
-              : InatVision.MODE.BEST_BRANCH,
             confidenceThreshold,
             filterByTaxonId,
             negativeFilter,
@@ -224,7 +221,6 @@ export default function App(): React.JSX.Element {
       handleResults,
       useGeomodel,
       geoModelCellLocation,
-      useCommonAncestor,
     ]
   );
 

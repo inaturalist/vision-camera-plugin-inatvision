@@ -496,27 +496,26 @@ function limitLeafPredictionsThatIncludeHumans(
 
 function commonAncestorFromPredictions(
   predictions: Prediction[],
+  top15Leaves: Prediction[],
   sumLeafScores: number
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
-  // max 15 (s > ts * 0.001), not normalized, leaf only
-  const top15Candidates = predictions
-    .filter((p) => p.leaf_id)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 15);
-  const topCombinedScore = top15Candidates[0]?.score || 0;
+  const topCombinedScore = top15Leaves[0]?.score || 0;
   const top15Cutoff = topCombinedScore * 0.01;
   // Filter out all leaf nodes with scores lower than top combined score * 0.01
-  const top15Leaves = top15Candidates.filter((p) => p.score >= top15Cutoff);
+  const top15FilteredLeaves = top15Leaves.filter((p) => p.score >= top15Cutoff);
   // Get quotient to normalize the top 15 scores
-  const scoreSumOfTop15 = top15Leaves.reduce((acc, p) => acc + p.score, 0);
+  const scoreSumOfTop15 = top15FilteredLeaves.reduce(
+    (acc, p) => acc + p.score,
+    0
+  );
   const quotient = sumLeafScores / scoreSumOfTop15;
   const parentIds = new Set();
-  top15Leaves.forEach((p) => {
+  top15FilteredLeaves.forEach((p) => {
     p.ancestor_ids.forEach((id) => parentIds.add(id));
   });
   const top15Parents = predictions.filter((p) => parentIds.has(p.taxon_id));
-  const top15 = [...top15Leaves, ...top15Parents];
+  const top15 = [...top15FilteredLeaves, ...top15Parents];
   // Normalize the top 15 scores
   // max 15 (s > ts * 0.01), normalized, leafs + parents
   const normalizedTop15 = top15.map((p) => ({
@@ -579,9 +578,12 @@ export function getPredictionsForImage(
 
           // max 100 (s > ts * 0.001), not normalized, leaf only
           const top100Leaves = leafPredictions.slice(0, 100);
+          // max 15 (s > ts * 0.001), not normalized, leaf only
+          const top15Leaves = top100Leaves.slice(0, 15);
           const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
           const commonAncestor = commonAncestorFromPredictions(
             result.predictions,
+            top15Leaves,
             sumLeafScores
           );
           // max 10 (s > ts * 0.001), not normalized, leaf only

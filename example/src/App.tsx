@@ -299,6 +299,8 @@ export default function App(): React.JSX.Element {
         // send back a prediction for each leaf node in the taxonomy we filter out the lowers scores
         // to make the result more readable
         const filteredResults = result.predictions
+          // TS complains about the geo_score possibly being null but it is not
+          // @ts-ignore
           .sort((a, b) => b.geo_score - a.geo_score)
           .slice(0, 100);
         setResult(filteredResults);
@@ -455,7 +457,10 @@ export default function App(): React.JSX.Element {
                   {r?.geo_threshold?.toPrecision(2)}
                 </Text>
                 <Text style={styles.smallLabel}>
-                  {r?.geo_score > r?.geo_threshold ? 'Yes' : 'No'}
+                  {
+                    // @ts-ignore
+                    r?.geo_score > r?.geo_threshold ? 'Yes' : 'No'
+                  }
                 </Text>
               </View>
             ))}

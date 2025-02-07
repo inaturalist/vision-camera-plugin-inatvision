@@ -513,6 +513,9 @@ export default function App(): React.JSX.Element {
           }
           onPreviewStarted={() => console.log('Preview started!')}
           onPreviewStopped={() => console.log('Preview stopped!')}
+          onUIRotationChanged={(degrees) =>
+            console.log(`UI Rotation changed: ${degrees}°`)
+          }
         />
         <View style={styles.row}>
           <Button

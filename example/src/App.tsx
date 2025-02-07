@@ -502,6 +502,7 @@ export default function App(): React.JSX.Element {
           enableFpsGraph={true}
           photoQualityBalance="quality"
           enableLocation={location.hasPermission}
+          outputOrientation="device"
         />
         <View style={styles.row}>
           <Button

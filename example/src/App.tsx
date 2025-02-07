@@ -431,6 +431,14 @@ export default function App(): React.JSX.Element {
           photoQualityBalance="quality"
           enableLocation={location.hasPermission}
           outputOrientation="device"
+          onStarted={() => console.log('Camera started!')}
+          onStopped={() => console.log('Camera stopped!')}
+          onOutputOrientationChanged={(o) =>
+            console.log(`Output orientation changed to ${o}!`)
+          }
+          onPreviewOrientationChanged={(o) =>
+            console.log(`Preview orientation changed to ${o}!`)
+          }
         />
         <View style={styles.row}>
           <Button

@@ -5947,10 +5947,10 @@ react-native-image-picker@7.0.3:
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.0.3.tgz#3d0ab6965a6150e724e3c66cac8fe397097e26e7"
   integrity sha512-mFbu8AzZ8tysO7xHsQ+TmxYYJYaBCL66s4AujjgCBEAyTufm2nhjhVOw2uq1zvMDVtGoyekzCJfH3JqVmXK/3w==
 
-react-native-vision-camera@4.4.3:
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.4.3.tgz#3d3a1b638855eff15061e177ac4f18c9cbdd9e5c"
-  integrity sha512-sCkmvqq6/xIVQugRZxm0llOLZCyja8kGlV3qtZHQJFUHz9bvl57yKu+WmHEiCJ8AI8SHdgTGw9kVPdw6Grp0Lw==
+react-native-vision-camera@4.5.3:
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.5.3.tgz#9ee05b78ac575cdbd80b34ea37f584ffcf8c95ec"
+  integrity sha512-wulpS6ZY6SwuYMDD8csIFMFJ6lXeQq4bJvaAhwEnr0R9cZ53jDUs0/SFZva6UFEPIw64h0IdrrzuVTEufhDSgQ==
 
 react-native-worklets-core@1.3.3:
   version "1.3.3"

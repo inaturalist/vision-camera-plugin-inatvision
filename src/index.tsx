@@ -610,7 +610,7 @@ export function getPredictionsForImage(
           // From native we get all predictions (leaves and ancestors) that have
           // score > top score * 0.001, score & vision score is normalized
           const leafPredictions = result.predictions
-            .filter((p) => p.leaf_id)
+            .filter((p) => p?.leaf_id !== undefined)
             .sort((a, b) => b.score - a.score);
           const sumLeafScores = leafPredictions.reduce(
             (acc, p) => acc + p.score,

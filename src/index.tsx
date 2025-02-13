@@ -548,13 +548,36 @@ function commonAncestorFromPredictions(
     p.ancestor_ids.forEach((id) => parentIds.add(id));
   });
   const top15Parents = predictions.filter((p) => parentIds.has(p.taxon_id));
-  const top15 = [...top15FilteredLeaves, ...top15Parents];
   // Normalize the top 15 scores
-  // max 15 (s > ts * 0.01), normalized, leafs + parents
-  const normalizedTop15 = top15.map((p) => ({
+  // max 15 (s > ts * 0.01), normalized, leafs
+  const top15FilteredLeavesNormalized = top15FilteredLeaves.map((p) => ({
     ...p,
     score: p.score / scoreSumOfTop15,
   }));
+  // Normalize the top 15's parents by reaggregating the scores of their children
+  // Map to store newly aggregated scores of parent nodes
+  const aggregatedScores: {
+    [key: number]: number;
+  } = {};
+  top15Parents.map((p) => {
+    aggregatedScores[p.taxon_id] = 0;
+  });
+  // Re-aggregate the sum of scores for non-leaf nodes by summing the scores of their children
+  top15FilteredLeavesNormalized.forEach((leaf) => {
+    leaf.ancestor_ids.forEach((ancestorId) => {
+      // @ts-ignore
+      aggregatedScores[ancestorId] = aggregatedScores[ancestorId] + leaf.score;
+    });
+  });
+  const top15ParentsNormalized = top15Parents.map((p) => ({
+    ...p,
+    score: aggregatedScores[p.taxon_id] || 0,
+  }));
+  // max 15 (s > ts * 0.01), normalized, leafs + parents
+  const normalizedTop15 = [
+    ...top15FilteredLeavesNormalized,
+    ...top15ParentsNormalized,
+  ];
   return commonAncestorFromAggregatedScores(normalizedTop15);
 }
 

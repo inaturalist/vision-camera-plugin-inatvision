@@ -619,9 +619,9 @@ export function getPredictionsForImage(
 
           // max 100 (s > ts * 0.001), not normalized, leaf only
           const top100Leaves = leafPredictions.slice(0, 100);
-          // max 15 (s > ts * 0.001), not normalized, leaf only
-          const top15Leaves = top100Leaves.slice(0, 15);
           const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
+          // max 15 (s > ts * 0.001), not normalized, leaf only
+          const top15Leaves = top100.slice(0, 15);
           const commonAncestor = commonAncestorFromPredictions(
             result.predictions,
             top15Leaves,

@@ -531,8 +531,7 @@ function limitLeafPredictionsThatIncludeHumans(
 
 function commonAncestorFromPredictions(
   predictions: Prediction[],
-  top15Leaves: Prediction[],
-  sumLeafScores: number
+  top15Leaves: Prediction[]
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   const topCombinedScore = top15Leaves[0]?.score || 0;
@@ -544,7 +543,6 @@ function commonAncestorFromPredictions(
     (acc, p) => acc + p.score,
     0
   );
-  const quotient = sumLeafScores / scoreSumOfTop15;
   const parentIds = new Set();
   top15FilteredLeaves.forEach((p) => {
     p.ancestor_ids.forEach((id) => parentIds.add(id));
@@ -555,7 +553,7 @@ function commonAncestorFromPredictions(
   // max 15 (s > ts * 0.01), normalized, leafs + parents
   const normalizedTop15 = top15.map((p) => ({
     ...p,
-    score: p.score * quotient,
+    score: p.score / scoreSumOfTop15,
   }));
   return commonAncestorFromAggregatedScores(normalizedTop15);
 }
@@ -612,11 +610,6 @@ export function getPredictionsForImage(
           const leafPredictions = result.predictions
             .filter((p) => p?.leaf_id !== undefined)
             .sort((a, b) => b.score - a.score);
-          const sumLeafScores = leafPredictions.reduce(
-            (acc, p) => acc + p.score,
-            0
-          );
-
           // max 100 (s > ts * 0.001), not normalized, leaf only
           const top100Leaves = leafPredictions.slice(0, 100);
           const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
@@ -624,8 +617,7 @@ export function getPredictionsForImage(
           const top15Leaves = top100.slice(0, 15);
           const commonAncestor = commonAncestorFromPredictions(
             result.predictions,
-            top15Leaves,
-            sumLeafScores
+            top15Leaves
           );
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = top100.slice(0, 10);

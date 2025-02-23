@@ -68,8 +68,8 @@ public class Node {
           this.spatialId = parts[spatialClassIdIndex];
         }
 
-        if (headerList.contains("spatial_threshold")) {
-          int spatialThresholdIndex = headerList.indexOf("spatial_threshold");
+        if (headerList.contains("geo_threshold")) {
+          int spatialThresholdIndex = headerList.indexOf("geo_threshold");
           String spatialThreshold = parts[spatialThresholdIndex];
           if (spatialThreshold.length() > 0) {
             this.geoThreshold = Double.valueOf(parts[spatialThresholdIndex]);

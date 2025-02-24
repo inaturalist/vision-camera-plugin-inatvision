@@ -581,6 +581,9 @@ function commonAncestorFromPredictions(
   return commonAncestorFromAggregatedScores(normalizedTop15);
 }
 
+const commonAncestorScoreThreshold = 0.78;
+const commonAncestorRankLevelMin = 20;
+const commonAncestorRankLevelMax = 33;
 function commonAncestorFromAggregatedScores(
   predictions: Prediction[]
 ): Prediction | undefined {
@@ -597,9 +600,9 @@ function commonAncestorFromAggregatedScores(
   const commonAncestorCandidates = predictions
     .filter(
       (prediction) =>
-        prediction.score > 0.78 &&
-        prediction.rank_level >= 20 &&
-        prediction.rank_level <= 33 &&
+        prediction.score > commonAncestorScoreThreshold &&
+        prediction.rank_level >= commonAncestorRankLevelMin &&
+        prediction.rank_level <= commonAncestorRankLevelMax &&
         (!filterForNearby ||
           (prediction.geo_score &&
             prediction.geo_threshold &&

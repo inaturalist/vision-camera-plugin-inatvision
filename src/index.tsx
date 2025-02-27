@@ -480,6 +480,11 @@ export enum MODE {
   COMMON_ANCESTOR = 'COMMON_ANCESTOR',
 }
 
+export enum COMMON_ANCESTOR_RANK_TYPE {
+  MAJOR = 'major',
+  UNRESTRICTED = 'unrestricted',
+}
+
 interface OptionsForImage extends BaseOptions {
   /**
    * The uri of the image to predict on.
@@ -489,6 +494,11 @@ interface OptionsForImage extends BaseOptions {
    * Mode of compiling the results.
    */
   mode?: MODE;
+  /**
+   * Experimental: The type of common ancestor rank to return.
+   * Only used when mode is set to COMMON_ANCESTOR.
+   */
+  commonAncestorRankType?: COMMON_ANCESTOR_RANK_TYPE;
 }
 
 const HUMAN_TAXON_ID = 43584;
@@ -533,7 +543,8 @@ function limitLeafPredictionsThatIncludeHumans(
 
 function commonAncestorFromPredictions(
   predictions: Prediction[],
-  top15Leaves: Prediction[]
+  top15Leaves: Prediction[],
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   const topCombinedScore = top15Leaves[0]?.score || 0;
@@ -580,14 +591,18 @@ function commonAncestorFromPredictions(
     ...top15FilteredLeavesNormalized,
     ...top15ParentsNormalized,
   ];
-  return commonAncestorFromAggregatedScores(normalizedTop15);
+  return commonAncestorFromAggregatedScores(
+    normalizedTop15,
+    commonAncestorRankType
+  );
 }
 
 const commonAncestorScoreThreshold = 0.78;
 const commonAncestorRankLevelMin = 20;
 const commonAncestorRankLevelMax = 33;
 function commonAncestorFromAggregatedScores(
-  predictions: Prediction[]
+  predictions: Prediction[],
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE
 ): Prediction | undefined {
   // As in the vision API:
   // # if using combined scores to aggregate, and there are taxa expected nearby,
@@ -604,7 +619,11 @@ function commonAncestorFromAggregatedScores(
       (prediction) =>
         prediction.score > commonAncestorScoreThreshold &&
         prediction.rank_level >= commonAncestorRankLevelMin &&
-        prediction.rank_level <= commonAncestorRankLevelMax &&
+        (commonAncestorRankType === COMMON_ANCESTOR_RANK_TYPE.MAJOR
+          ? prediction.rank_level % 10 === 0
+          : commonAncestorRankType !== COMMON_ANCESTOR_RANK_TYPE.UNRESTRICTED
+          ? prediction.rank_level <= commonAncestorRankLevelMax
+          : true) &&
         (!filterForNearby ||
           (prediction.geo_score &&
             prediction.geo_threshold &&
@@ -645,7 +664,8 @@ export function getPredictionsForImage(
           const top15Leaves = top100.slice(0, 15);
           const commonAncestor = commonAncestorFromPredictions(
             result.predictions,
-            top15Leaves
+            top15Leaves,
+            newOptions.commonAncestorRankType
           );
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = top100.slice(0, 10);

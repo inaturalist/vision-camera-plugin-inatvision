@@ -544,7 +544,7 @@ function limitLeafPredictionsThatIncludeHumans(
 function commonAncestorFromPredictions(
   predictions: Prediction[],
   top15Leaves: Prediction[],
-  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   const topCombinedScore = top15Leaves[0]?.score || 0;
@@ -602,7 +602,7 @@ const commonAncestorRankLevelMin = 20;
 const commonAncestorRankLevelMax = 33;
 function commonAncestorFromAggregatedScores(
   predictions: Prediction[],
-  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined
 ): Prediction | undefined {
   // As in the vision API:
   // # if using combined scores to aggregate, and there are taxa expected nearby,

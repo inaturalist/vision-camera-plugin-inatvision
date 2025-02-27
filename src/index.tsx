@@ -173,19 +173,27 @@ export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;
+  vision_score: number;
+  geo_score: number | null;
+  // Only present if taxonomy files have geo_thresholds
+  geo_threshold?: number;
   taxon_id: number;
-  // TODO: this is only present in __inatVision iOS (from JS code) and Android, and getPredictionsForImage on Android
-  ancestor_ids?: number[];
+  ancestor_ids: number[];
   // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
   rank?: RANK;
+  // Only present for models of v2
   iconic_class_id?: number;
+  // Only present for models of v2
   spatial_class_id?: number;
+  // Only present in leaf predictions
+  leaf_id?: number;
 }
 
 export interface ResultForImage {
   options: OptionsForImage;
   predictions: Prediction[];
   timeElapsed?: number; //iOS only
+  commonAncestor?: Prediction;
 }
 
 export interface Result {
@@ -360,6 +368,11 @@ export interface Location {
   elevation?: number;
 }
 
+export enum MODE {
+  BEST_BRANCH = 'BEST_BRANCH',
+  COMMON_ANCESTOR = 'COMMON_ANCESTOR',
+}
+
 interface BaseOptions {
   // Required
   /**
@@ -375,6 +388,10 @@ interface BaseOptions {
    */
   taxonomyPath: string;
   // Optional
+  /**
+   * Mode of compiling the results.
+   */
+  mode?: MODE;
   /**
    * The confidence threshold for the predictions.
    */
@@ -472,6 +489,130 @@ interface OptionsForImage extends BaseOptions {
   uri: string;
 }
 
+const HUMAN_TAXON_ID = 43584;
+function limitLeafPredictionsThatIncludeHumans(
+  predictions: Prediction[]
+): Prediction[] {
+  // If only one prediction, return original array
+  if (predictions.length === 1) {
+    return predictions;
+  }
+  // Find human prediction
+  const humanIndex = predictions.findIndex(
+    (p) => p.taxon_id === HUMAN_TAXON_ID
+  );
+  // If no humans, return original array
+  // (also returns here if predictions is an empty array)
+  if (humanIndex === -1) {
+    return predictions;
+  }
+
+  // At this point there are multiple results and humans is one of them
+  // If humans is first and has substantially higher score than next prediction
+  // return only humans
+  if (humanIndex === 0) {
+    // TS complains about the object possibly being undefined, but we know it's not
+    // @ts-ignore
+    const humanPrediction: Prediction = predictions[0];
+    const humanScore = humanPrediction.score;
+    // TS complains about the object possibly being undefined, but we know it's not
+    // @ts-ignore
+    const nextScore = predictions[1].score;
+    const humanScoreMargin = humanScore / nextScore;
+
+    if (humanScoreMargin > 1.5) {
+      return [humanPrediction];
+    }
+  }
+
+  // Otherwise return empty array
+  return [];
+}
+
+function commonAncestorFromPredictions(
+  predictions: Prediction[],
+  top15Leaves: Prediction[]
+): Prediction | undefined {
+  // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
+  const topCombinedScore = top15Leaves[0]?.score || 0;
+  const top15Cutoff = topCombinedScore * 0.01;
+  // Filter out all leaf nodes with scores lower than top combined score * 0.01
+  const top15FilteredLeaves = top15Leaves.filter((p) => p.score >= top15Cutoff);
+  // Get quotient to normalize the top 15 scores
+  const scoreSumOfTop15 = top15FilteredLeaves.reduce(
+    (acc, p) => acc + p.score,
+    0
+  );
+  const parentIds = new Set();
+  top15FilteredLeaves.forEach((p) => {
+    p.ancestor_ids.forEach((id) => parentIds.add(id));
+  });
+  const top15Parents = predictions.filter((p) => parentIds.has(p.taxon_id));
+  // Normalize the top 15 scores
+  // max 15 (s > ts * 0.01), normalized, leafs
+  const top15FilteredLeavesNormalized = top15FilteredLeaves.map((p) => ({
+    ...p,
+    score: p.score / scoreSumOfTop15,
+  }));
+  // Normalize the top 15's parents by reaggregating the scores of their children
+  // Map to store newly aggregated scores of parent nodes
+  const aggregatedScores: {
+    [key: number]: number;
+  } = {};
+  top15Parents.map((p) => {
+    aggregatedScores[p.taxon_id] = 0;
+  });
+  // Re-aggregate the sum of scores for non-leaf nodes by summing the scores of their children
+  top15FilteredLeavesNormalized.forEach((leaf) => {
+    leaf.ancestor_ids.forEach((ancestorId) => {
+      // @ts-ignore
+      aggregatedScores[ancestorId] = aggregatedScores[ancestorId] + leaf.score;
+    });
+  });
+  const top15ParentsNormalized = top15Parents.map((p) => ({
+    ...p,
+    score: aggregatedScores[p.taxon_id] || 0,
+  }));
+  // max 15 (s > ts * 0.01), normalized, leafs + parents
+  const normalizedTop15 = [
+    ...top15FilteredLeavesNormalized,
+    ...top15ParentsNormalized,
+  ];
+  return commonAncestorFromAggregatedScores(normalizedTop15);
+}
+
+const commonAncestorScoreThreshold = 0.78;
+const commonAncestorRankLevelMin = 20;
+const commonAncestorRankLevelMax = 33;
+function commonAncestorFromAggregatedScores(
+  predictions: Prediction[]
+): Prediction | undefined {
+  // As in the vision API:
+  // # if using combined scores to aggregate, and there are taxa expected nearby,
+  // # then add a query filter to only look at nearby taxa as common ancestor candidates
+  const filterForNearby = predictions.some(
+    (prediction) =>
+      prediction.geo_score &&
+      prediction.geo_threshold &&
+      prediction.geo_score >= prediction.geo_threshold
+  );
+  // Filter and sort candidates
+  const commonAncestorCandidates = predictions
+    .filter(
+      (prediction) =>
+        prediction.score > commonAncestorScoreThreshold &&
+        prediction.rank_level >= commonAncestorRankLevelMin &&
+        prediction.rank_level <= commonAncestorRankLevelMax &&
+        (!filterForNearby ||
+          (prediction.geo_score &&
+            prediction.geo_threshold &&
+            prediction.geo_score >= prediction.geo_threshold))
+    )
+    .sort((a, b) => a.rank_level - b.rank_level);
+  const commonAncestor = commonAncestorCandidates[0];
+  return commonAncestor;
+}
+
 /**
  * Function to call the computer vision model with a image from disk
  */
@@ -486,7 +627,51 @@ export function getPredictionsForImage(
     const locationLookup = lookUpLocation(options.location);
     newOptions.location = locationLookup;
   }
-  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions);
+  return new Promise((resolve, reject) => {
+    VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
+      .then((result: ResultForImage) => {
+        if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
+          // From native we get all predictions (leaves and ancestors) that have
+          // score > top score * 0.001, score & vision score is normalized
+          const leafPredictions = result.predictions
+            .filter((p) => p?.leaf_id !== undefined)
+            .sort((a, b) => b.score - a.score);
+          // max 100 (s > ts * 0.001), not normalized, leaf only
+          const top100Leaves = leafPredictions.slice(0, 100);
+          const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
+          // max 15 (s > ts * 0.001), not normalized, leaf only
+          const top15Leaves = top100.slice(0, 15);
+          const commonAncestor = commonAncestorFromPredictions(
+            result.predictions,
+            top15Leaves
+          );
+          // max 10 (s > ts * 0.001), not normalized, leaf only
+          const top10 = top100.slice(0, 10);
+          const resultWithCommonAncestor = Object.assign({}, result, {
+            predictions: top10,
+            commonAncestor,
+          });
+          resolve(resultWithCommonAncestor);
+        } else {
+          const predictions = result.predictions
+            // only KPCOFGS ranks qualify as "top" predictions
+            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+            .filter((prediction) => prediction.rank_level % 10 === 0)
+            .filter(
+              (prediction) =>
+                prediction.score > (newOptions.confidenceThreshold || 0.7)
+            );
+          const handledResult = {
+            ...result,
+            predictions,
+          };
+          resolve(handledResult);
+        }
+      })
+      .catch((error: any) => {
+        reject(error);
+      });
+  });
 }
 
 interface OptionsForLocation {

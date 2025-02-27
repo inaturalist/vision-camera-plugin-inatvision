@@ -19,7 +19,7 @@ public class Node {
 
     public String spatialId;
 
-    public String spatialThreshold;
+    public Double geoThreshold;
 
     public transient Node parent;
 
@@ -68,9 +68,12 @@ public class Node {
           this.spatialId = parts[spatialClassIdIndex];
         }
 
-        if (headerList.contains("spatial_threshold")) {
-          int spatialThresholdIndex = headerList.indexOf("spatial_threshold");
-          this.spatialThreshold = parts[spatialThresholdIndex];
+        if (headerList.contains("geo_threshold")) {
+          int spatialThresholdIndex = headerList.indexOf("geo_threshold");
+          String spatialThreshold = parts[spatialThresholdIndex];
+          if (spatialThreshold.length() > 0) {
+            this.geoThreshold = Double.valueOf(parts[spatialThresholdIndex]);
+          }
         }
 
         if (headerList.contains("name")) {

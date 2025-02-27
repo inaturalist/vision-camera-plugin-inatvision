@@ -133,8 +133,6 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSString* modelPath = options[@"modelPath"];
     // Destructure taxonomy path out of options
     NSString* taxonomyPath = options[@"taxonomyPath"];
-    // Destructure threshold out of options
-    NSNumber* confidenceThreshold = options[@"confidenceThreshold"];
     // Destructure location out of options
     NSDictionary *location = options[@"location"];
     // Destructure latitude out of location
@@ -145,12 +143,8 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     NSNumber *elevation = location[@"elevation"];
     // Destructure geomodel path out of options
     NSString *geomodelPath = options[@"geomodelPath"];
-
-    // Setup threshold
-    float threshold = 0.70;
-    if (confidenceThreshold) {
-      threshold = [confidenceThreshold floatValue];
-    }
+    // Destructure mode out of options
+    NSString *mode = options[@"mode"];
 
     MLMultiArray *geomodelPreds = nil;
     if ([options objectForKey:@"useGeomodel"] &&
@@ -202,30 +196,31 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
               results = visionScores;
           }
 
-          NSMutableArray *topBranches = [NSMutableArray array];
-          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
-          // add this to the end of the recent top branches array
-          [topBranches addObject:bestBranch];
+          [taxonomy deriveTopScoreRatioCutoff:results];
 
-          // convert the VCPPredictions in the bestBranch into dicts
-          NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-          for (VCPPrediction *prediction in bestBranch) {
-              // only add predictions that are above the threshold
-              if (prediction.score < threshold) {
-                  continue;
-              }
-              [bestBranchAsDict addObject:[prediction asDict]];
+          NSMutableArray *predictions = [NSMutableArray array];
+          if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
+            NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+            for (VCPPrediction *prediction in commonAncestor) {
+              [predictions addObject:[prediction asDict]];
+            }
+          } else {
+            NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+            for (VCPPrediction *prediction in bestBranch) {
+                // convert the VCPPredictions in the bestBranch into dicts
+                [predictions addObject:[prediction asDict]];
+            }
           }
 
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
           NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-          // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+          // Create a new dictionary with the predictions under the key "predictions"
           // and the options passed in under the key "options"
           NSDictionary *response = [NSDictionary dictionary];
           response = @{
-            @"predictions": bestBranchAsDict,
+            @"predictions": predictions,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
           };
@@ -259,30 +254,33 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
             results = visionScores;
         }
 
-        NSMutableArray *topBranches = [NSMutableArray array];
-        NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
-        // add this to the end of the recent top branches array
-        [topBranches addObject:bestBranch];
+        [taxonomy deriveTopScoreRatioCutoff:results];
 
         // convert the VCPPredictions in the bestBranch into dicts
-        NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-        for (VCPPrediction *prediction in bestBranch) {
-            // only add predictions that are above the threshold
-            if (prediction.score < threshold) {
-                continue;
-            }
-            [bestBranchAsDict addObject:[prediction asDict]];
+        NSMutableArray *predictions = [NSMutableArray array];
+
+        // Only in mode "COMMON_ANCESTOR"
+        if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
+          NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+          for (VCPPrediction *prediction in commonAncestor) {
+              [predictions addObject:[prediction asDict]];
+          }
+        } else {
+          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+          for (VCPPrediction *prediction in bestBranch) {
+              [predictions addObject:[prediction asDict]];
+          }
         }
 
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
         NSLog(@"getPredictionsForImage took %f seconds", timeElapsed);
 
-        // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+        // Create a new dictionary with the predictions under the key "predictions"
         // and the options passed in under the key "options"
         NSDictionary *response = [NSDictionary dictionary];
         response = @{
-            @"predictions": bestBranchAsDict,
+            @"predictions": predictions,
             @"options": options,
             @"timeElapsed": @(timeElapsed),
         };

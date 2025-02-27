@@ -48,7 +48,7 @@ fs.createReadStream(filePathTaxonomy)
         });
         const combinedEntries = entriesTaxonomy.map((entry) => {
           // Add the geoThreshold to the entry
-          entry.spatial_threshold = thresholdDict[entry.taxon_id]
+          entry.geo_threshold = thresholdDict[entry.taxon_id]
             ? parseFloat(thresholdDict[entry.taxon_id])
             : null;
           // Delete and add the name so that it is last when written to file

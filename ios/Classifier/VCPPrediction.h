@@ -14,9 +14,11 @@
 
 @property VCPNode *node;
 @property double score;
-@property NSInteger rank;
+@property double visionScore;
+@property double geoScore;
+@property NSArray *ancestorIds;
 
-- (instancetype)initWithNode:(VCPNode *)node score:(double)score;
+- (instancetype)initWithNode:(VCPNode *)node score:(double)score visionScore:(double)visionScore geoScore:(double)geoScore;
 
 - (NSDictionary *)asDict;
 

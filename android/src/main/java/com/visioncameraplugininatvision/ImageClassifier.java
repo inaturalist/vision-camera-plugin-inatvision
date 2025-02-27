@@ -91,7 +91,7 @@ public class ImageClassifier {
     }
 
     /** Classifies a frame from the preview stream. */
-    public List<Prediction> classifyBitmap(Bitmap bitmap, Double taxonomyRollupCutoff) {
+    public List<Prediction> classifyBitmap(Bitmap bitmap, Double taxonomyRollupCutoff, Boolean commonAncestorMode) {
         if (mTFlite == null) {
             Timber.tag(TAG).e("Image classifier has not been initialized; Skipped.");
             return null;
@@ -117,13 +117,16 @@ public class ImageClassifier {
             // Get raw vision scores
             float[] visionScores = ((float[][]) expectedOutputs.get(0))[0];
             float[] combinedScores = new float[visionScores.length];
+            float[] geoScores;
             if (mGeomodelScores != null) {
               // Combine vision and geo scores
-              combinedScores = combineVisionScores(visionScores, mGeomodelScores[0]);
+              geoScores = mGeomodelScores[0];
+              combinedScores = combineVisionScores(visionScores, geoScores);
             } else {
+              geoScores = null;
               combinedScores = visionScores;
             }
-            predictions = mTaxonomy.predict(combinedScores, taxonomyRollupCutoff);
+            predictions = mTaxonomy.predict(combinedScores, visionScores, geoScores, taxonomyRollupCutoff, commonAncestorMode);
         } catch (Exception exc) {
             exc.printStackTrace();
             return new ArrayList<Prediction>();

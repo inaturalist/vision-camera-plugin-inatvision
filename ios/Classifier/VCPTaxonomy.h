@@ -13,13 +13,12 @@
 
 @interface VCPTaxonomy : NSObject
 
-@property BOOL linneanPredictionsOnly;
-
 @property float taxonomyRollupCutoff;
 
 - (instancetype)initWithTaxonomyFile:(NSString *)taxaFile;
 - (NSArray *)expectedNearbyFromClassification:(MLMultiArray *)classification;
-- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification;
-- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold;
+- (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification;
+- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores;
+- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores;
 
 @end

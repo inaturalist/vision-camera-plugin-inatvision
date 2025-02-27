@@ -174,43 +174,28 @@
         results = visionScores;
     }
 
-    // Get a pointer to the raw data
-    float *dataPointer = (float *)results.dataPointer;
-    NSUInteger count = results.count;
-    // Use vDSP to find the maximum value
-    float topCombinedScore;
-    vDSP_maxv(dataPointer, 1, &topCombinedScore, count);
-    // define some cutoff based on a percentage of the top combined score. Taxa with
-    // scores below the cutoff will be ignored when aggregating scores up the taxonomy
-    float scoreRatioCutoff = 0.001;
-    float cutoff = topCombinedScore * scoreRatioCutoff;
-
     // Setup taxonomy
     VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-    [taxonomy setTaxonomyRollupCutoff:cutoff];
+    [taxonomy deriveTopScoreRatioCutoff:results];
     if (taxonomyRollupCutoff) {
       [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
     }
 
-    NSMutableArray *topBranches = [NSMutableArray array];
-    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results];
-    // add this to the end of the recent top branches array
-    [topBranches addObject:bestBranch];
-
     // convert the VCPPredictions in the bestRecentBranch into dicts
-    NSMutableArray *bestBranchAsDict = [NSMutableArray array];
-    for (VCPPrediction *prediction in topBranches.firstObject) {
-        [bestBranchAsDict addObject:[prediction asDict]];
+    NSMutableArray *predictions = [NSMutableArray array];
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+    for (VCPPrediction *prediction in bestBranch) {
+        [predictions addObject:[prediction asDict]];
     }
 
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
     NSLog(@"inatVision took %f seconds", timeElapsed);
 
-    // Create a new dictionary with the bestBranchAsDict under the key "predictions"
+    // Create a new dictionary with the predictions under the key "predictions"
     NSDictionary *response = [NSDictionary dictionary];
     response = @{
-        @"predictions": bestBranchAsDict,
+        @"predictions": predictions,
         @"timeElapsed": @(timeElapsed),
     };
 

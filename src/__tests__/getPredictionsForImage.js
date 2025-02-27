@@ -17,6 +17,22 @@ describe('getPredictionsForImage', () => {
   });
 });
 
+describe('common ancestor mode', () => {
+  it('should not throw an error when options are valid', () => {
+    const options = { ...correctOptions, mode: 'COMMON_ANCESTOR' };
+
+    expect(() => getPredictionsForImage(options)).not.toThrowError();
+  });
+});
+
+describe('best branch mode', () => {
+  it('should not throw an error when options are valid', () => {
+    const options = { ...correctOptions, mode: 'BEST_BRANCH' };
+
+    expect(() => getPredictionsForImage(options)).not.toThrowError();
+  });
+});
+
 describe('confidenceThreshold', () => {
   it('should throw an error when confidenceThreshold is not a number', () => {
     const options = {

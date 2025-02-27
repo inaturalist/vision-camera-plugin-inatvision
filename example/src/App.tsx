@@ -7,7 +7,9 @@ import {
   Platform,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
+  Switch,
   Text,
   View,
 } from 'react-native';
@@ -53,15 +55,15 @@ const modelVersion = 'small_2';
 
 const modelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${modelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
 const geomodelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
-    ? `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
+    ? `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`
     : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App(): React.JSX.Element {
@@ -69,17 +71,20 @@ export default function App(): React.JSX.Element {
   const location = useLocationPermission();
 
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
+  const [commonAncestor, setCommonAncestor] = useState<InatVision.Prediction>();
   const [filterByTaxonId, setFilterByTaxonId] = useState<
     undefined | string | null
   >(undefined);
   const [negativeFilter, setNegativeFilter] = useState(false);
   const [useGeomodel, setUseGeomodel] = useState(false);
+  const [useCommonAncestor, setUseCommonAncestor] = useState(false);
 
   enum VIEW_STATUS {
     NONE,
     CAMERA,
     GALLERY,
     GEOMODEL,
+    RESULT,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
@@ -90,10 +95,6 @@ export default function App(): React.JSX.Element {
 
   const toggleNegativeFilter = () => {
     setNegativeFilter(!negativeFilter);
-  };
-
-  const toggleUseGeomodel = () => {
-    setUseGeomodel(!useGeomodel);
   };
 
   const changeFilterByTaxonId = () => {
@@ -128,38 +129,27 @@ export default function App(): React.JSX.Element {
     };
   }, []);
 
+  const checkForModelFilesIOS = () => {
+    RNFS.readDir(RNFS.MainBundlePath).then((files) => {
+      const hasModel = files.find((r) => r.name === modelFilenameIOS);
+      const hasTaxonomy = files.find((r) => r.name === taxonomyFilenameIOS);
+      const hasGeomodel = files.find((r) => r.name === geomodelFilenameIOS);
+      if (
+        hasModel !== undefined &&
+        hasTaxonomy !== undefined &&
+        hasGeomodel !== undefined
+      ) {
+        console.log('CV Model, and geomodel, and taxonomy assets found.');
+      } else {
+        console.log('No model asset found to copy into document directory.');
+        Alert.alert('Model file not found');
+      }
+    });
+  };
+
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${modelFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${modelFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved model file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving model file`, error);
-        });
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${geomodelFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved geomodel file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving geomodel file`, error);
-        });
-      RNFS.copyFile(
-        `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`,
-        `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameIOS}`
-      )
-        .then((result) => {
-          console.log(`moved file from`, result);
-        })
-        .catch((error) => {
-          console.log(`error moving file`, error);
-        });
+      checkForModelFilesIOS();
     } else {
       (async () => {
         await RNFS.copyFileAssets(
@@ -268,9 +258,12 @@ export default function App(): React.JSX.Element {
       version: modelVersion,
       modelPath,
       taxonomyPath,
+      mode: useCommonAncestor
+        ? InatVision.MODE.COMMON_ANCESTOR
+        : InatVision.MODE.BEST_BRANCH,
       confidenceThreshold,
       cropRatio: 0.88,
-      useGeomodel: true,
+      useGeomodel,
       geomodelPath,
       location: {
         latitude: testLocationEuropeNoElevation.latitude,
@@ -283,6 +276,8 @@ export default function App(): React.JSX.Element {
         console.log('Result', JSON.stringify(result));
         console.log('result.timeElapsed', result.timeElapsed);
         setResult(result.predictions);
+        setCommonAncestor(result.commonAncestor);
+        setViewStatus(VIEW_STATUS.RESULT);
       })
       .catch((err) => {
         console.log('getPredictionsForImage Error', err);
@@ -300,12 +295,16 @@ export default function App(): React.JSX.Element {
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
         console.log('result.timeElapsed', result.timeElapsed);
-        // predictLocation sneds back a prediction for each leaf node in the taxonomy
-        // we filter out the ones with a score below 0.095, this is arbitrary
-        const filteredResults = result.predictions.filter(
-          (p) => p.score > 0.095
-        );
+        // If you try predictLocation with a taxonomy file without geo_thresholds the plugin will
+        // send back a prediction for each leaf node in the taxonomy we filter out the lowers scores
+        // to make the result more readable
+        const filteredResults = result.predictions
+          // TS complains about the geo_score possibly being null but it is not
+          // @ts-ignore
+          .sort((a, b) => b.geo_score - a.geo_score)
+          .slice(0, 100);
         setResult(filteredResults);
+        setViewStatus(VIEW_STATUS.RESULT);
       })
       .catch((err) => {
         console.log('getPredictionsForLocation Error', err);
@@ -316,6 +315,33 @@ export default function App(): React.JSX.Element {
     if (viewStatus === VIEW_STATUS.NONE) {
       return (
         <View style={styles.center}>
+          {/* A switch between best branch mode and common ancestor mode */}
+          <Text style={styles.text}>Mode:</Text>
+          <View style={styles.row}>
+            <Text style={styles.smallLabel}>Best branch</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={useCommonAncestor ? '#f4f3f4' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setUseCommonAncestor(!useCommonAncestor)}
+              value={useCommonAncestor}
+            />
+            <Text style={styles.smallLabel}>Common ancestor</Text>
+          </View>
+          {/* A switch to useGeomodel */}
+          <Text style={styles.text}>Use Geomodel:</Text>
+          <View style={styles.row}>
+            <Text style={styles.smallLabel}>False</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={useGeomodel ? '#f4f3f4' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setUseGeomodel(!useGeomodel)}
+              value={useGeomodel}
+            />
+            <Text style={styles.smallLabel}>True</Text>
+          </View>
+
           <Button
             title="Show camera"
             onPress={() => setViewStatus(VIEW_STATUS.CAMERA)}
@@ -360,6 +386,8 @@ export default function App(): React.JSX.Element {
       return renderGalleryView();
     } else if (viewStatus === VIEW_STATUS.GEOMODEL) {
       return renderGeomodelView();
+    } else if (viewStatus === VIEW_STATUS.RESULT) {
+      return renderResult();
     } else {
       return <Text>Something went wrong</Text>;
     }
@@ -380,15 +408,66 @@ export default function App(): React.JSX.Element {
         title="Use geomodel without elevation"
       />
       <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
+    </>
+  );
+
+  const renderResult = () => (
+    <View style={styles.flex}>
+      <Button onPress={() => setViewStatus(VIEW_STATUS.NONE)} title="Close" />
       {results && (
         <View>
-          <Text style={styles.text}>Leaf taxa expected nearby:</Text>
+          <Text style={styles.smallLabel}>useGeomodel: {`${useGeomodel}`}</Text>
           <Text style={styles.smallLabel}>
-            {results.map((r) => r.name).toString()}
+            useCommonAncestor: {`${useCommonAncestor}`}
           </Text>
+          {useCommonAncestor && (
+            <>
+              <Text style={styles.text}>Common ancestor:</Text>
+              <Text style={styles.smallLabel}>
+                {commonAncestor ? commonAncestor.name : 'No common ancestor'}
+              </Text>
+              <Text style={styles.smallLabel}>
+                {commonAncestor
+                  ? commonAncestor.score.toPrecision(2)
+                  : 'No common ancestor'}
+              </Text>
+            </>
+          )}
+          <Text style={styles.text}>Results:</Text>
+          <ScrollView>
+            <View style={styles.dataRow}>
+              <Text style={styles.smallLabel}>name</Text>
+              <Text style={styles.smallLabel}>score</Text>
+              <Text style={styles.smallLabel}>vision_score</Text>
+              <Text style={styles.smallLabel}>geo_score</Text>
+              <Text style={styles.smallLabel}>geo_threshold</Text>
+              <Text style={styles.smallLabel}>Expected nearby</Text>
+            </View>
+            {results.map((r) => (
+              <View style={styles.dataRow} key={r.taxon_id}>
+                <Text style={styles.smallLabel}>{r.name}</Text>
+                <Text style={styles.smallLabel}>{r?.score.toPrecision(2)}</Text>
+                <Text style={styles.smallLabel}>
+                  {r?.vision_score.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {r?.geo_score?.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {r?.geo_threshold?.toPrecision(2)}
+                </Text>
+                <Text style={styles.smallLabel}>
+                  {
+                    // @ts-ignore
+                    r?.geo_score > r?.geo_threshold ? 'Yes' : 'No'
+                  }
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
       )}
-    </>
+    </View>
   );
 
   const renderGalleryView = () => (
@@ -420,7 +499,7 @@ export default function App(): React.JSX.Element {
     return device != null && hasPermission ? (
       <View style={styles.cameraContainer}>
         <Camera
-          style={styles.camera}
+          style={styles.flex}
           device={device}
           isActive={true}
           frameProcessor={frameProcessor}
@@ -444,11 +523,34 @@ export default function App(): React.JSX.Element {
             onPress={() => setViewStatus(VIEW_STATUS.NONE)}
             title="Close"
           />
-          <Button
-            onPress={toggleUseGeomodel}
-            title={useGeomodel ? 'Disable Geomodel' : 'Enable Geomodel'}
-          />
         </View>
+        {results &&
+          results.map((result) => (
+            <View key={result.name} style={styles.labels}>
+              <Text style={styles.text}>{result.name}</Text>
+              <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
+              <Text style={styles.smallLabel}>score {result.score}</Text>
+              <Text style={styles.smallLabel}>
+                vision_score {result.vision_score}
+              </Text>
+              <Text style={styles.smallLabel}>
+                geo_score {result.geo_score}
+              </Text>
+              <Text style={styles.smallLabel}>
+                geo_threshold {result.geo_threshold}
+              </Text>
+              {!!result.spatial_class_id && (
+                <Text style={styles.smallLabel}>
+                  spatial_class_id {result.spatial_class_id}
+                </Text>
+              )}
+              {!!result.iconic_class_id && (
+                <Text style={styles.smallLabel}>
+                  iconic_class_id {result.iconic_class_id}
+                </Text>
+              )}
+            </View>
+          ))}
       </View>
     ) : (
       <ActivityIndicator size="large" color="white" />
@@ -458,24 +560,6 @@ export default function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>{contentSwitch()}</View>
-      {results &&
-        results.map((result) => (
-          <View key={result.name} style={styles.labels}>
-            <Text style={styles.text}>{result.name}</Text>
-            <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
-            <Text style={styles.smallLabel}>score {result.score}</Text>
-            {!!result.spatial_class_id && (
-              <Text style={styles.smallLabel}>
-                spatial_class_id {result.spatial_class_id}
-              </Text>
-            )}
-            {!!result.iconic_class_id && (
-              <Text style={styles.smallLabel}>
-                iconic_class_id {result.iconic_class_id}
-              </Text>
-            )}
-          </View>
-        ))}
     </SafeAreaView>
   );
 }
@@ -497,7 +581,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  camera: {
+  flex: {
     flex: 1,
   },
   labels: {
@@ -542,6 +626,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+  },
+  dataRow: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   photo: {
     width: 74,

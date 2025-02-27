@@ -190,7 +190,7 @@ public class VisionCameraPluginInatVisionPlugin extends FrameProcessorPlugin {
       bmp.recycle();
       bmp = rescaledBitmap;
       Log.d(TAG, "rescaledBitmap: " + bmp + ": " + bmp.getWidth() + " x " + bmp.getHeight());
-      List<Prediction> predictions = mImageClassifier.classifyBitmap(bmp, taxonomyRollupCutoff);
+      List<Prediction> predictions = mImageClassifier.classifyBitmap(bmp, taxonomyRollupCutoff, false);
       bmp.recycle();
       croppedBitmap.recycle();
 

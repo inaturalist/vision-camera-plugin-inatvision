@@ -5,6 +5,8 @@
 //  Created by Alex Shepard on 3/13/19.
 //  Copyright © 2023 iNaturalist. All rights reserved.
 //
+@import Accelerate;
+@import CoreGraphics;
 
 #import "VCPTaxonomy.h"
 #import "VCPNode.h"
@@ -16,7 +18,8 @@
 // this is a convenience array for testing
 @property NSArray *leaves;
 @property VCPNode *life;
-@property float excludedLeafScoreSum;
+@property float excludedLeafCombinedScoresSum;
+@property float excludedLeafVisionScoresSum;
 @end
 
 @implementation VCPTaxonomy
@@ -43,8 +46,6 @@
         NSAssert(jsonError == nil, @"error getting json from %@: %@", taxaFile, jsonError.localizedDescription);
         NSAssert(taxa, @"failed to get json from %@", taxaFile);
         NSAssert(taxa.count > 0, @"failed to get list of json from %@", taxaFile);
-
-        self.linneanPredictionsOnly = YES;
 
         self.life =  [[VCPNode alloc] init];
         self.life.taxonId = @(48460);
@@ -103,12 +104,14 @@
     NSMutableArray *filteredOutScores = [NSMutableArray array];
 
     for (VCPNode *leaf in self.leaves) {
-        NSNumber *score = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
+        NSNumber *geoScore = [classification objectAtIndexedSubscript:leaf.leafId.integerValue];
         VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:leaf
-                                                            score:score.floatValue];
-        // If score is higher than geoThreshold it means the taxon is "expected nearby"
-        if (leaf.spatialThreshold) {
-          if (score.floatValue >= leaf.spatialThreshold.floatValue) {
+                                                                  score:0
+                                                                  visionScore:0
+                                                            geoScore:geoScore.floatValue];
+        // If geoScore is higher than geoThreshold it means the taxon is "expected nearby"
+        if (leaf.geoThreshold) {
+          if (geoScore.floatValue >= leaf.geoThreshold.floatValue) {
             [scores addObject:prediction];
           } else {
             [filteredOutScores addObject:prediction];
@@ -125,86 +128,180 @@
     return [NSArray arrayWithArray:scores];
 }
 
-- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification {
-    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
-    // Log number of nodes in scores
-    NSLog(@"Number of nodes in scores: %lu", (unsigned long)scores.count);
-    return [self buildBestBranchFromScores:scores];
+- (void)deriveTopScoreRatioCutoff:(MLMultiArray *)classification {
+    // Get a pointer to the raw data
+    float *dataPointer = (float *)classification.dataPointer;
+    NSUInteger count = classification.count;
+    // Use vDSP to find the maximum value
+    float topCombinedScore;
+    vDSP_maxv(dataPointer, 1, &topCombinedScore, count);
+    // define some cutoff based on a percentage of the top combined score. Taxa with
+    // scores below the cutoff will be ignored when aggregating scores up the taxonomy
+    float scoreRatioCutoff = 0.001;
+    float cutoff = topCombinedScore * scoreRatioCutoff;
+    // Set the taxonomyRollupCutoff to the cutoff
+    [self setTaxonomyRollupCutoff:cutoff];
 }
 
-- (VCPPrediction *)inflateTopPredictionFromClassification:(MLMultiArray *)classification confidenceThreshold:(float)threshold {
-    NSDictionary *scores = [self aggregateAndNormalizeScores:classification];
-    NSArray *bestBranch = [self buildBestBranchFromScores:scores];
-
-    for (VCPPrediction *prediction in [bestBranch reverseObjectEnumerator]) {
-        if (self.linneanPredictionsOnly) {
-            // only KPCOFGS ranks qualify as "top" predictions
-            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-            if (prediction.rank % 10 != 0) { continue; }
-        }
-
-        if (prediction.score > threshold) {
-            return prediction;
-        }
+- (NSArray *)inflateCommonAncestorFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores {
+    NSDictionary *aggregatedScores = [self aggregateAndNormalizeScores:classification visionScores:visionScores geoScores:geoScores];
+    NSDictionary *combinedScoresDict = aggregatedScores[@"aggregatedCombinedScores"];
+    NSDictionary *visionScoresDict = aggregatedScores[@"aggregatedVisionScores"];
+    NSDictionary *geoScoresDict = aggregatedScores[@"aggregatedGeoScores"];
+    NSDictionary *geoThresholdsDict = aggregatedScores[@"aggregatedGeoThresholds"];
+    // Log number of nodes in combinedScoresDict
+    NSLog(@"Number of nodes in combinedScoresDict: %lu", (unsigned long)combinedScoresDict.count);
+    NSMutableArray *scoresArray = [NSMutableArray array];
+    for (NSNumber *taxonId in combinedScoresDict.allKeys) {
+        VCPNode *node = self.nodesByTaxonId[taxonId];
+        NSNumber *combinedScore = combinedScoresDict[taxonId];
+        NSNumber *visionScore = visionScoresDict[taxonId];
+        NSNumber *geoScore = geoScoresDict[taxonId];
+        NSNumber *geoThreshold = geoThresholdsDict[taxonId];
+        node.geoThreshold = geoThreshold;
+        VCPPrediction *prediction = [[VCPPrediction alloc] initWithNode:node
+                                                                  score:combinedScore.floatValue
+                                                                  visionScore:visionScore.floatValue
+                                                                  geoScore:geoScore.floatValue];
+        [scoresArray addObject:prediction];
     }
-
-    return nil;
+    return [NSArray arrayWithArray:scoresArray];
 }
 
-- (NSDictionary *)aggregateScores:(MLMultiArray *)classification currentNode:(VCPNode *)node {
-    NSMutableDictionary *allScores = [NSMutableDictionary dictionary];
-    if (node.children.count > 0) {
-        float thisScore = 0.0f;
-        for (VCPNode *child in node.children) {
-            NSDictionary *childScores = [self aggregateScores:classification currentNode:child];
-            NSNumber *childScore = childScores[child.taxonId];
+- (NSArray *)inflateTopBranchFromClassification:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores {
+    NSDictionary *aggregatedScores = [self aggregateAndNormalizeScores:classification visionScores:visionScores geoScores:geoScores];
+    return [self buildBestBranchFromScores:aggregatedScores];
+}
 
-            if ([childScore floatValue] >= self.taxonomyRollupCutoff) {
-                [allScores addEntriesFromDictionary:childScores];
-                thisScore += [childScore floatValue];
+- (NSDictionary *)aggregateScores:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores currentNode:(VCPNode *)node {
+    NSMutableDictionary *aggregatedCombinedScores = [NSMutableDictionary dictionary];
+    NSMutableDictionary *aggregatedVisionScores = [NSMutableDictionary dictionary];
+    NSMutableDictionary *aggregatedGeoScores = [NSMutableDictionary dictionary];
+    NSMutableDictionary *aggregatedGeoThresholds = [NSMutableDictionary dictionary];
+    bool hasGeoScores = geoScores != nil;
+    if (node.children.count > 0) {
+        float thisCombinedScore = 0.0f;
+        float thisVisionScore = 0.0f;
+        float thisGeoScore = 0.0f;
+        float thisGeoThreshold = INFINITY;
+        for (VCPNode *child in node.children) {
+            NSDictionary *childScores = [self aggregateScores:classification visionScores:visionScores geoScores:geoScores currentNode:child];
+            NSDictionary *aggregatedChildCombinedScores = childScores[@"aggregatedCombinedScores"];
+            NSNumber *childCombinedScore = aggregatedChildCombinedScores[child.taxonId];
+            if ([childCombinedScore floatValue] >= self.taxonomyRollupCutoff) {
+                [aggregatedCombinedScores addEntriesFromDictionary:aggregatedChildCombinedScores];
+                thisCombinedScore += [childCombinedScore floatValue];
+                NSDictionary *aggregatedChildVisionScores = childScores[@"aggregatedVisionScores"];
+                [aggregatedVisionScores addEntriesFromDictionary:aggregatedChildVisionScores];
+                thisVisionScore += [aggregatedChildVisionScores[child.taxonId] floatValue];
+                if (hasGeoScores) {
+                  NSDictionary *aggregatedChildGeoScores = childScores[@"aggregatedGeoScores"];
+                  [aggregatedGeoScores addEntriesFromDictionary:aggregatedChildGeoScores];
+                  // Aggregated geo score is the max of descendant geo scores
+                  thisGeoScore = MAX(thisGeoScore, [aggregatedChildGeoScores[child.taxonId] floatValue]);
+                }
+                NSDictionary *aggregatedChildGeoThresholds = childScores[@"aggregatedGeoThresholds"];
+                [aggregatedGeoThresholds addEntriesFromDictionary:aggregatedChildGeoThresholds];
+                NSNumber *childGeoThreshold = aggregatedChildGeoThresholds[child.taxonId];
+                if (childGeoThreshold != nil) {
+                  // Aggregated geo_threshold is the min of descendant geo_thresholds
+                  thisGeoThreshold = MIN(thisGeoThreshold, [childGeoThreshold floatValue]);
+                }
             }
         }
-        if (thisScore > 0) {
-          allScores[node.taxonId] = @(thisScore);
+        if (thisCombinedScore > 0) {
+          aggregatedCombinedScores[node.taxonId] = @(thisCombinedScore);
+          aggregatedVisionScores[node.taxonId] = @(thisVisionScore);
+          if (hasGeoScores) {
+            aggregatedGeoScores[node.taxonId] = @(thisGeoScore);
+          } else {
+            aggregatedGeoScores[node.taxonId] = nil;
+          }
+          if (thisGeoThreshold != INFINITY) {
+            aggregatedGeoThresholds[node.taxonId] = @(thisGeoThreshold);
+          } else {
+            aggregatedGeoThresholds[node.taxonId] = nil;
+          }
         }
     } else {
         // base case, no children
         NSAssert(node.leafId, @"node with taxonId %@ has no children but also has no leafId", node.taxonId);
-        NSNumber *leafScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
-        NSAssert(leafScore, @"node with leafId %@ has no score", node.leafId);
+        NSNumber *combinedScore = [classification objectAtIndexedSubscript:node.leafId.integerValue];
+        NSNumber *visionScore = [visionScores objectAtIndexedSubscript:node.leafId.integerValue];
+        NSAssert(combinedScore, @"node with leafId %@ has no score", node.leafId);
 
-        if ([leafScore floatValue] >= self.taxonomyRollupCutoff) {
-            allScores[node.taxonId] = leafScore;
+        if ([combinedScore floatValue] >= self.taxonomyRollupCutoff) {
+            aggregatedCombinedScores[node.taxonId] = combinedScore;
+            aggregatedVisionScores[node.taxonId] = visionScore;
+            if (hasGeoScores) {
+              NSNumber *geoScore = [geoScores objectAtIndexedSubscript:node.leafId.integerValue];
+              aggregatedGeoScores[node.taxonId] = geoScore;
+            } else {
+              aggregatedGeoScores[node.taxonId] = nil;
+            }
+            aggregatedGeoThresholds[node.taxonId] = node.geoThreshold;
         } else {
-            self.excludedLeafScoreSum += leafScore.floatValue;
+            self.excludedLeafCombinedScoresSum += combinedScore.floatValue;
+            self.excludedLeafVisionScoresSum += visionScore.floatValue;
         }
     }
-
-    return [allScores copy];
+    return @{
+      @"aggregatedCombinedScores": [aggregatedCombinedScores copy],
+      @"aggregatedVisionScores": [aggregatedVisionScores copy],
+      @"aggregatedGeoScores": [aggregatedGeoScores copy],
+      @"aggregatedGeoThresholds": [aggregatedGeoThresholds copy]
+    };
 }
 
-- (NSDictionary *)aggregateAndNormalizeScores:(MLMultiArray *)classification {
+- (NSDictionary *)aggregateAndNormalizeScores:(MLMultiArray *)classification visionScores:(MLMultiArray *)visionScores geoScores:(MLMultiArray *)geoScores {
     // Reset the sum of removed leaf scores
-    self.excludedLeafScoreSum = 0.0;
-    NSDictionary *scores = [self aggregateScores:classification currentNode:self.life];
-    // Re-normalize scores with the sum of the remaining leaf scores
-    NSMutableDictionary *normalizedScores = [NSMutableDictionary dictionaryWithCapacity:scores.count];
-    for (NSNumber *taxonId in scores.allKeys) {
-        NSNumber *score = scores[taxonId];
-        normalizedScores[taxonId] = @(score.floatValue / (1.0 - self.excludedLeafScoreSum));
+    self.excludedLeafCombinedScoresSum = 0.0;
+    self.excludedLeafVisionScoresSum = 0.0;
+    NSDictionary *aggregatedScores = [self aggregateScores:classification visionScores:visionScores geoScores:geoScores currentNode:self.life];
+    NSDictionary *aggregatedCombinedScores = aggregatedScores[@"aggregatedCombinedScores"];
+    NSDictionary *aggregatedVisionScores = aggregatedScores[@"aggregatedVisionScores"];
+    // Re-normalize combined scores with the sum of the remaining leaf scores
+    NSMutableDictionary *normalizedCombinedScores = [NSMutableDictionary dictionaryWithCapacity:aggregatedCombinedScores.count];
+    for (NSNumber *taxonId in aggregatedCombinedScores.allKeys) {
+        NSNumber *score = aggregatedCombinedScores[taxonId];
+        normalizedCombinedScores[taxonId] = @(score.floatValue / (1.0 - self.excludedLeafCombinedScoresSum));
+    }
+    // Re-normalize vision scores with the sum of the remaining leaf scores
+    NSMutableDictionary *normalizedVisionScores = [NSMutableDictionary dictionaryWithCapacity:aggregatedVisionScores.count];
+    for (NSNumber *taxonId in aggregatedVisionScores.allKeys) {
+        NSNumber *score = aggregatedVisionScores[taxonId];
+        normalizedVisionScores[taxonId] = @(score.floatValue / (1.0 - self.excludedLeafVisionScoresSum));
     }
 
-    return [normalizedScores copy];
+    return @{
+      @"aggregatedCombinedScores": [normalizedCombinedScores copy],
+      @"aggregatedVisionScores": [normalizedVisionScores copy],
+      @"aggregatedGeoScores": aggregatedScores[@"aggregatedGeoScores"],
+      @"aggregatedGeoThresholds": aggregatedScores[@"aggregatedGeoThresholds"]
+    };
 }
 
 - (NSArray *)buildBestBranchFromScores:(NSDictionary *)allScoresDict {
     NSMutableArray *bestBranch = [NSMutableArray array];
 
+    NSDictionary *combinedScores = allScoresDict[@"aggregatedCombinedScores"];
+    NSDictionary *visionScores = allScoresDict[@"aggregatedVisionScores"];
+    NSDictionary *geoScores = allScoresDict[@"aggregatedGeoScores"];
+    NSDictionary *geoThresholds = allScoresDict[@"aggregatedGeoThresholds"];
+    // Log number of nodes in combinedScores
+    NSLog(@"Number of nodes in combinedScores: %lu", (unsigned long)combinedScores.count);
+
     // start from life
     VCPNode *currentNode = self.life;
-    NSNumber *lifeScore = allScoresDict[currentNode.taxonId];
+    NSNumber *lifeCombinedScore = combinedScores[currentNode.taxonId];
+    NSNumber *lifeVisionScore = visionScores[currentNode.taxonId];
+    NSNumber *lifeGeoScore = geoScores[currentNode.taxonId];
+    NSNumber *lifeGeoThreshold = geoThresholds[currentNode.taxonId];
+    currentNode.geoThreshold = lifeGeoThreshold;
     VCPPrediction *lifePrediction = [[VCPPrediction alloc] initWithNode:currentNode
-                                                                  score:lifeScore.floatValue];
+                                                                  score:lifeCombinedScore.floatValue
+                                                                  visionScore:lifeVisionScore.floatValue
+                                                                  geoScore:lifeGeoScore.floatValue];
     [bestBranch addObject:lifePrediction];
 
     NSArray *currentNodeChildren = currentNode.children;
@@ -214,7 +311,7 @@
         VCPNode *bestChild = nil;
         float bestChildScore = -1;
         for (VCPNode *child in currentNodeChildren) {
-            float childScore = [allScoresDict[child.taxonId] floatValue];
+            float childScore = [combinedScores[child.taxonId] floatValue];
             if (childScore > bestChildScore) {
                 bestChildScore = childScore;
                 bestChild = child;
@@ -222,8 +319,14 @@
         }
 
         if (bestChild) {
+            NSNumber *bestChildVisionScore = visionScores[bestChild.taxonId];
+            NSNumber *bestChildGeoScore = geoScores[bestChild.taxonId];
+            NSNumber *bestChildGeoThreshold = geoThresholds[bestChild.taxonId];
+            bestChild.geoThreshold = bestChildGeoThreshold;
             VCPPrediction *bestChildPrediction = [[VCPPrediction alloc] initWithNode:bestChild
-                                                                               score:bestChildScore];
+                                                                               score:bestChildScore
+                                                                               visionScore:bestChildVisionScore.floatValue
+                                                                               geoScore:bestChildGeoScore.floatValue];
             [bestBranch addObject:bestChildPrediction];
         }
 

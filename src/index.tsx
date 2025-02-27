@@ -228,11 +228,11 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
     if (
       isNaN(options.confidenceThreshold) ||
       options.confidenceThreshold < 0 ||
-      options.confidenceThreshold > 1
+      options.confidenceThreshold > 100
     ) {
       // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error(
-        'confidenceThreshold must be a string for a number between 0 and 1.'
+        'confidenceThreshold must be a number between 0 and 100.'
       );
     }
   }
@@ -274,6 +274,29 @@ function optionsAreValidForFrame(options: Options): boolean {
 function optionsAreValidForImage(options: OptionsForImage): boolean {
   'worklet';
   return optionsAreValid(options);
+}
+
+/**
+ * Scales certain score fields by 100
+ * @param prediction A prediction object
+ * @returns A copy of the prediction object with scaled scores
+ */
+function scalePrediction(p: Prediction): Prediction {
+  'worklet';
+
+  const prediction = { ...p };
+  prediction.score = prediction.score * 100;
+  prediction.vision_score = prediction.vision_score * 100;
+  if (prediction.geo_score !== null) {
+    prediction.geo_score = prediction.geo_score * 100;
+  }
+  if (
+    prediction?.geo_threshold !== null &&
+    prediction?.geo_threshold !== undefined
+  ) {
+    prediction.geo_threshold = prediction.geo_threshold * 100;
+  }
+  return prediction;
 }
 
 function handleResult(result: any, options: Options): Result {
@@ -340,6 +363,7 @@ function handleResult(result: any, options: Options): Result {
     // only KPCOFGS ranks qualify as "top" predictions
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
     .filter((prediction) => prediction.rank_level % 10 === 0)
+    .map((prediction) => scalePrediction(prediction))
     .filter(
       (prediction) => prediction.score > (options.confidenceThreshold || 0)
     );
@@ -394,6 +418,8 @@ interface BaseOptions {
   mode?: MODE;
   /**
    * The confidence threshold for the predictions.
+   *
+   * From 0 - 100.
    */
   confidenceThreshold?: number;
   /**
@@ -647,9 +673,15 @@ export function getPredictionsForImage(
           );
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = top100.slice(0, 10);
+          const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
+            scalePrediction(prediction)
+          );
+          const commonAncestorWithScaledScores = commonAncestor
+            ? scalePrediction(commonAncestor)
+            : undefined;
           const resultWithCommonAncestor = Object.assign({}, result, {
-            predictions: top10,
-            commonAncestor,
+            predictions: top10WithScaledScores,
+            commonAncestor: commonAncestorWithScaledScores,
           });
           resolve(resultWithCommonAncestor);
         } else {
@@ -657,9 +689,10 @@ export function getPredictionsForImage(
             // only KPCOFGS ranks qualify as "top" predictions
             // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
             .filter((prediction) => prediction.rank_level % 10 === 0)
+            .map((prediction) => scalePrediction(prediction))
             .filter(
               (prediction) =>
-                prediction.score > (newOptions.confidenceThreshold || 0.7)
+                prediction.score > (newOptions.confidenceThreshold || 70)
             );
           const handledResult = {
             ...result,

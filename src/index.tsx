@@ -368,11 +368,6 @@ export interface Location {
   elevation?: number;
 }
 
-export enum MODE {
-  BEST_BRANCH = 'BEST_BRANCH',
-  COMMON_ANCESTOR = 'COMMON_ANCESTOR',
-}
-
 interface BaseOptions {
   // Required
   /**
@@ -388,10 +383,6 @@ interface BaseOptions {
    */
   taxonomyPath: string;
   // Optional
-  /**
-   * Mode of compiling the results.
-   */
-  mode?: MODE;
   /**
    * The confidence threshold for the predictions.
    */
@@ -484,9 +475,20 @@ export function inatVision(frame: Frame, options: Options): Result {
   return handledResult;
 }
 
+export enum MODE {
+  BEST_BRANCH = 'BEST_BRANCH',
+  COMMON_ANCESTOR = 'COMMON_ANCESTOR',
+}
+
 interface OptionsForImage extends BaseOptions {
-  // Required
+  /**
+   * The uri of the image to predict on.
+   */
   uri: string;
+  /**
+   * Mode of compiling the results.
+   */
+  mode?: MODE;
 }
 
 const HUMAN_TAXON_ID = 43584;

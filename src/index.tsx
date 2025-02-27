@@ -228,11 +228,11 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
     if (
       isNaN(options.confidenceThreshold) ||
       options.confidenceThreshold < 0 ||
-      options.confidenceThreshold > 1
+      options.confidenceThreshold > 100
     ) {
       // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error(
-        'confidenceThreshold must be a string for a number between 0 and 1.'
+        'confidenceThreshold must be a number between 0 and 100.'
       );
     }
   }
@@ -394,6 +394,8 @@ interface BaseOptions {
   mode?: MODE;
   /**
    * The confidence threshold for the predictions.
+   *
+   * From 0 - 100.
    */
   confidenceThreshold?: number;
   /**
@@ -659,7 +661,7 @@ export function getPredictionsForImage(
             .filter((prediction) => prediction.rank_level % 10 === 0)
             .filter(
               (prediction) =>
-                prediction.score > (newOptions.confidenceThreshold || 0.7)
+                prediction.score > (newOptions.confidenceThreshold || 70)
             );
           const handledResult = {
             ...result,

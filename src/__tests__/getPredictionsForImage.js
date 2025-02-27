@@ -5,7 +5,7 @@ const correctOptions = {
   version: '1.0',
   modelPath: 'testModelPath',
   taxonomyPath: 'testTaxonomyPath',
-  confidenceThreshold: 0.5,
+  confidenceThreshold: 50,
   cropRatio: 0.8,
 };
 
@@ -41,29 +41,29 @@ describe('confidenceThreshold', () => {
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a number between 0 and 100.'
     );
   });
 
   it('should throw an error when confidenceThreshold is less than 0', () => {
     const options = {
       ...correctOptions,
-      confidenceThreshold: -0.5,
+      confidenceThreshold: -50,
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a number between 0 and 100.'
     );
   });
 
-  it('should throw an error when confidenceThreshold is greater than 1', () => {
+  it('should throw an error when confidenceThreshold is greater than 100', () => {
     const options = {
       ...correctOptions,
-      confidenceThreshold: 1.5,
+      confidenceThreshold: 150,
     };
 
     expect(() => getPredictionsForImage(options)).toThrowError(
-      'confidenceThreshold must be a string for a number between 0 and 1.'
+      'confidenceThreshold must be a number between 0 and 100.'
     );
   });
 });

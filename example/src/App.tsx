@@ -87,7 +87,7 @@ export default function App(): React.JSX.Element {
     RESULT,
   }
   const [viewStatus, setViewStatus] = useState<VIEW_STATUS>(VIEW_STATUS.NONE);
-  const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.7);
+  const [confidenceThreshold, setConfidenceThreshold] = useState<number>(70);
 
   const device = useCameraDevice('back');
 
@@ -350,24 +350,16 @@ export default function App(): React.JSX.Element {
             title="Show gallery"
             onPress={() => setViewStatus(VIEW_STATUS.GALLERY)}
           />
-          <Text style={styles.text}>Confidence threshold (0.0-1.0):</Text>
+          <Text style={styles.text}>Confidence threshold (0-100):</Text>
           <View style={styles.row}>
             <Button
               title="-"
-              onPress={() =>
-                setConfidenceThreshold(
-                  Math.round((confidenceThreshold - 0.1) * 10) / 10
-                )
-              }
+              onPress={() => setConfidenceThreshold(confidenceThreshold - 10)}
             />
             <Text style={styles.text}>{confidenceThreshold}</Text>
             <Button
               title="+"
-              onPress={() =>
-                setConfidenceThreshold(
-                  Math.round((confidenceThreshold + 0.1) * 10) / 10
-                )
-              }
+              onPress={() => setConfidenceThreshold(confidenceThreshold + 10)}
             />
           </View>
           <Button

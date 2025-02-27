@@ -277,13 +277,14 @@ function optionsAreValidForImage(options: OptionsForImage): boolean {
 }
 
 /**
- * Updates the scores by scaling certain score fields by 100
+ * Scales certain score fields by 100
  * @param prediction A prediction object
- * @returns The prediction object with scaled scores
+ * @returns A copy of the prediction object with scaled scores
  */
-function updatePredictionScaling(prediction: Prediction): Prediction {
+function scalePrediction(p: Prediction): Prediction {
   'worklet';
 
+  const prediction = { ...p };
   prediction.score = prediction.score * 100;
   prediction.vision_score = prediction.vision_score * 100;
   if (prediction.geo_score !== null) {
@@ -362,7 +363,7 @@ function handleResult(result: any, options: Options): Result {
     // only KPCOFGS ranks qualify as "top" predictions
     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
     .filter((prediction) => prediction.rank_level % 10 === 0)
-    .map((prediction) => updatePredictionScaling(prediction))
+    .map((prediction) => scalePrediction(prediction))
     .filter(
       (prediction) => prediction.score > (options.confidenceThreshold || 0)
     );
@@ -673,10 +674,10 @@ export function getPredictionsForImage(
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = top100.slice(0, 10);
           const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
-            updatePredictionScaling(prediction)
+            scalePrediction(prediction)
           );
           const commonAncestorWithScaledScores = commonAncestor
-            ? updatePredictionScaling(commonAncestor)
+            ? scalePrediction(commonAncestor)
             : undefined;
           const resultWithCommonAncestor = Object.assign({}, result, {
             predictions: top10WithScaledScores,
@@ -688,7 +689,7 @@ export function getPredictionsForImage(
             // only KPCOFGS ranks qualify as "top" predictions
             // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
             .filter((prediction) => prediction.rank_level % 10 === 0)
-            .map((prediction) => updatePredictionScaling(prediction))
+            .map((prediction) => scalePrediction(prediction))
             .filter(
               (prediction) =>
                 prediction.score > (newOptions.confidenceThreshold || 70)

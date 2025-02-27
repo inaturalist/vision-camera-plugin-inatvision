@@ -1,5 +1,6 @@
+@import Accelerate;
+
 #import "VCPMLUtils.h"
-#import <Accelerate/Accelerate.h>
 
 @implementation VCPMLUtils
 

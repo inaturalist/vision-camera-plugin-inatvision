@@ -6,7 +6,6 @@
 @import UIKit;
 @import Vision;
 @import CoreML;
-@import Accelerate;
 @import CoreGraphics;
 
 #import "VCPTaxonomy.h"

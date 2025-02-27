@@ -420,7 +420,7 @@ export default function App(): React.JSX.Element {
               </Text>
               <Text style={styles.smallLabel}>
                 {commonAncestor
-                  ? commonAncestor.score.toPrecision(2)
+                  ? commonAncestor.combined_score.toPrecision(2)
                   : 'No common ancestor'}
               </Text>
             </>
@@ -429,7 +429,7 @@ export default function App(): React.JSX.Element {
           <ScrollView>
             <View style={styles.dataRow}>
               <Text style={styles.smallLabel}>name</Text>
-              <Text style={styles.smallLabel}>score</Text>
+              <Text style={styles.smallLabel}>combined_score</Text>
               <Text style={styles.smallLabel}>vision_score</Text>
               <Text style={styles.smallLabel}>geo_score</Text>
               <Text style={styles.smallLabel}>geo_threshold</Text>
@@ -438,7 +438,9 @@ export default function App(): React.JSX.Element {
             {results.map((r) => (
               <View style={styles.dataRow} key={r.taxon_id}>
                 <Text style={styles.smallLabel}>{r.name}</Text>
-                <Text style={styles.smallLabel}>{r?.score.toPrecision(2)}</Text>
+                <Text style={styles.smallLabel}>
+                  {r?.combined_score.toPrecision(2)}
+                </Text>
                 <Text style={styles.smallLabel}>
                   {r?.vision_score.toPrecision(2)}
                 </Text>
@@ -521,7 +523,9 @@ export default function App(): React.JSX.Element {
             <View key={result.name} style={styles.labels}>
               <Text style={styles.text}>{result.name}</Text>
               <Text style={styles.smallLabel}>taxon_id {result.taxon_id}</Text>
-              <Text style={styles.smallLabel}>score {result.score}</Text>
+              <Text style={styles.smallLabel}>
+                combined_score {result.combined_score}
+              </Text>
               <Text style={styles.smallLabel}>
                 vision_score {result.vision_score}
               </Text>

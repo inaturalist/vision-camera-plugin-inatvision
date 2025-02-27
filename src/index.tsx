@@ -173,6 +173,7 @@ export interface Prediction {
   name: string;
   rank_level: RANK_LEVEL; // Android has
   score: number;
+  combined_score: number;
   vision_score: number;
   geo_score: number | null;
   // Only present if taxonomy files have geo_thresholds
@@ -286,6 +287,8 @@ function scalePrediction(p: Prediction): Prediction {
 
   const prediction = { ...p };
   prediction.score = prediction.score * 100;
+  // Duplicate the score into same key as iNatVisionAPI
+  prediction.combined_score = prediction.score;
   prediction.vision_score = prediction.vision_score * 100;
   if (prediction.geo_score !== null) {
     prediction.geo_score = prediction.geo_score * 100;

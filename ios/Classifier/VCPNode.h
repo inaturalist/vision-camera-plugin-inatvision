@@ -15,9 +15,6 @@
 @property NSNumber *rank;
 @property NSNumber *leafId;
 @property NSNumber *parentTaxonId;
-// Information available in model v2.3
-@property NSNumber *iconicId;
-@property NSNumber *spatialId;
 @property NSNumber *geoThreshold;
 
 @property (weak) VCPNode *parent;

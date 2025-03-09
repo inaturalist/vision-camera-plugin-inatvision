@@ -15,10 +15,6 @@ public class Node {
 
     public String leafId;
 
-    public String iconicId;
-
-    public String spatialId;
-
     public Double geoThreshold;
 
     public transient Node parent;
@@ -56,16 +52,6 @@ public class Node {
         if (headerList.contains("leaf_class_id")) {
           int leafClassIdIndex = headerList.indexOf("leaf_class_id");
           this.leafId = parts[leafClassIdIndex];
-        }
-
-        if (headerList.contains("iconic_class_id")) {
-          int iconicClassIdIndex = headerList.indexOf("iconic_class_id");
-          this.iconicId = parts[iconicClassIdIndex];
-        }
-
-        if (headerList.contains("spatial_class_id")) {
-          int spatialClassIdIndex = headerList.indexOf("spatial_class_id");
-          this.spatialId = parts[spatialClassIdIndex];
         }
 
         if (headerList.contains("geo_threshold")) {

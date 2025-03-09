@@ -431,12 +431,6 @@ public class Taxonomy {
             result.put("rank_level", (double) prediction.node.rank);
             result.put("rank", RANK_LEVEL_TO_NAME.get(prediction.node.rank));
             if (!mModelVersion.equals("1.0")) {
-              if ((prediction.node.iconicId != null) && (prediction.node.iconicId.length() > 0)) {
-                result.put("iconic_class_id", Integer.valueOf(prediction.node.iconicId));
-              }
-              if ((prediction.node.spatialId != null) && (prediction.node.spatialId.length() > 0)) {
-                result.put("spatial_class_id", Integer.valueOf(prediction.node.spatialId));
-              }
               if ((prediction.node.leafId != null) && (prediction.node.leafId.length() > 0)) {
                 result.put("leaf_id", Integer.valueOf(prediction.node.leafId));
               }

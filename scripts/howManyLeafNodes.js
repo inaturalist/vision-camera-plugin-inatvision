@@ -21,8 +21,6 @@ fs.createReadStream(filePathTaxonomy)
       entry.taxon_id = parseInt(entry.taxon_id, 10);
       entry.rank_level = parseInt(entry.rank_level, 10);
       entry.leaf_class_id = parseInt(entry.leaf_class_id, 10);
-      entry.iconic_class_id = parseInt(entry.iconic_class_id, 10);
-      entry.spatial_class_id = parseInt(entry.spatial_class_id, 10);
       return entry;
     });
     entriesTaxonomy = overridenEntries;

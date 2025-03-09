@@ -534,16 +534,6 @@ export default function App(): React.JSX.Element {
               <Text style={styles.smallLabel}>
                 geo_threshold {result.geo_threshold}
               </Text>
-              {!!result.spatial_class_id && (
-                <Text style={styles.smallLabel}>
-                  spatial_class_id {result.spatial_class_id}
-                </Text>
-              )}
-              {!!result.iconic_class_id && (
-                <Text style={styles.smallLabel}>
-                  iconic_class_id {result.iconic_class_id}
-                </Text>
-              )}
             </View>
           ))}
       </View>

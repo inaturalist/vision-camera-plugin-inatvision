@@ -36,15 +36,6 @@
             self.name = [dict valueForKey:@"name"];
         }
 
-        // Information available in model v2.3
-        if ([dict valueForKey:@"iconic_class_id"] && [dict valueForKey:@"iconic_class_id"] != [NSNull null]) {
-            self.iconicId = [dict valueForKey:@"iconic_class_id"];
-        }
-
-        if ([dict valueForKey:@"spatial_class_id"] && [dict valueForKey:@"spatial_class_id"] != [NSNull null]) {
-            self.spatialId = [dict valueForKey:@"spatial_class_id"];
-        }
-
         // Information available when combined with geomodel thresholds file,
         // as done in scripts/createTaxonomy.js
         if ([dict valueForKey:@"geo_threshold"] && [dict valueForKey:@"geo_threshold"] != [NSNull null]) {
@@ -80,12 +71,6 @@
     }
     if (self.name) {
         mutableDict[@"name"] = self.name;
-    }
-    if (self.iconicId) {
-        mutableDict[@"iconic_class_id"] = self.iconicId;
-    }
-    if (self.spatialId) {
-        mutableDict[@"spatial_class_id"] = self.spatialId;
     }
     if (self.geoThreshold) {
         mutableDict[@"geo_threshold"] = self.geoThreshold;

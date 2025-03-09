@@ -182,10 +182,6 @@ export interface Prediction {
   ancestor_ids: number[];
   // TODO: this is only present in __inatVision iOS and Android, and getPredictionsForImage on Android
   rank?: RANK;
-  // Only present for models of v2
-  iconic_class_id?: number;
-  // Only present for models of v2
-  spatial_class_id?: number;
   // Only present in leaf predictions
   leaf_id?: number;
 }

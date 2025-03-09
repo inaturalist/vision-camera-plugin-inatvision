@@ -20,6 +20,9 @@ in case of vulnerabilities.
 
 ## [Unreleased] - YYYY-MM-DD
 
+## [5.2.0] - 2025-03-09
+### Removed
+- Two properties (`iconic_class_id` and `spatial_class_id`) from `Prediction` and taxonomy file
 ## [5.1.0] - 2025-03-09
 ### Added
 - Support for cv model 2.20

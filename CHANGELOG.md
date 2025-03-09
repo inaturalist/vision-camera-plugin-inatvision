@@ -20,6 +20,9 @@ in case of vulnerabilities.
 
 ## [Unreleased] - YYYY-MM-DD
 
+## [5.1.0] - 2025-03-09
+### Added
+- Support for cv model 2.20
 ## [5.0.0] - 2025-02-28
 ### Added
 - Common ancestor calculation for predictions from image file

@@ -459,13 +459,11 @@ interface Options extends BaseOptions {
    */
   taxonomyRollupCutoff?: number;
   /**
-   * *Android only.*
    *
    * The iconic taxon id to filter by.
    */
   filterByTaxonId?: null | string;
   /**
-   * *Android only.*
    *
    * Wether to exclude the taxon set by filterByTaxonId or to only include it (and exclude all other).
    */

@@ -201,7 +201,6 @@ export default function App(): React.JSX.Element {
               longitude: geoModelCellLocation.longitude,
               elevation: geoModelCellLocation.elevation,
             },
-            patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
           console.log('time taken ms: ', timeAfter - timeBefore);

@@ -419,7 +419,7 @@ export default function App(): React.JSX.Element {
               </Text>
               <Text style={styles.smallLabel}>
                 {commonAncestor
-                  ? commonAncestor.combined_score.toPrecision(2)
+                  ? commonAncestor?.combined_score?.toPrecision(2)
                   : 'No common ancestor'}
               </Text>
             </>
@@ -438,10 +438,10 @@ export default function App(): React.JSX.Element {
               <View style={styles.dataRow} key={r.taxon_id}>
                 <Text style={styles.smallLabel}>{r.name}</Text>
                 <Text style={styles.smallLabel}>
-                  {r?.combined_score.toPrecision(2)}
+                  {r?.combined_score?.toPrecision(2)}
                 </Text>
                 <Text style={styles.smallLabel}>
-                  {r?.vision_score.toPrecision(2)}
+                  {r?.vision_score?.toPrecision(2)}
                 </Text>
                 <Text style={styles.smallLabel}>
                   {r?.geo_score?.toPrecision(2)}

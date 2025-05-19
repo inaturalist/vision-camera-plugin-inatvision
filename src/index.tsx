@@ -470,13 +470,6 @@ interface Options extends BaseOptions {
    * Wether to exclude the taxon set by filterByTaxonId or to only include it (and exclude all other).
    */
   negativeFilter?: null | boolean;
-  // Patches
-  /**
-   * Currently, using react-native-vision-camera v3.9.1, Android does not support orientation changes.
-   * So, we have to patch the orientation on Android. This takes in a string of the current device orientation
-   * and then rotates the frame accordingly before it is used for processing.
-   */
-  patchedOrientationAndroid?: string;
 }
 
 export function getCellLocation(location: Location): LocationLookup {

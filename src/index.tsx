@@ -25,11 +25,6 @@ const VisionCameraPluginInatVision = NativeModules.VisionCameraPluginInatVision
       }
     );
 
-class INatVisionError extends Error {}
-Object.defineProperty(INatVisionError.prototype, 'name', {
-  value: 'INatVisionError',
-});
-
 interface State {
   eventListener: null | EmitterSubscription;
   storedResults: ISharedValue<Result[]>;
@@ -210,7 +205,6 @@ const supportedVersions = ['1.0', '2.3', '2.4', '2.13', '2.20', 'small_2'];
 function locationIsValid(location: Location): boolean {
   'worklet';
   if (!location || !location.latitude || !location.longitude) {
-    // have not used INatVisionError here because I can not test it due to issue #36
     throw new Error('location must have latitude and longitude set.');
   }
   return true;
@@ -227,7 +221,6 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       options.confidenceThreshold < 0 ||
       options.confidenceThreshold > 100
     ) {
-      // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error(
         'confidenceThreshold must be a number between 0 and 100.'
       );
@@ -239,13 +232,11 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       options.cropRatio < 0 ||
       options.cropRatio > 1
     ) {
-      // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error('cropRatio must be a number between 0 and 1.');
     }
   }
   if (options.useGeomodel) {
     if (!options.location) {
-      // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error('location must be set when useGeomodel is true.');
     }
     locationIsValid(options.location);
@@ -261,7 +252,6 @@ function optionsAreValidForFrame(options: Options): boolean {
       options.taxonomyRollupCutoff < 0 ||
       options.taxonomyRollupCutoff > 1
     ) {
-      // have not used INatVisionError here because I can not test it due to issue #36
       throw new Error('taxonomyRollupCutoff must be a number between 0 and 1.');
     }
   }
@@ -484,7 +474,7 @@ export function getCellLocation(location: Location): LocationLookup {
 export function inatVision(frame: Frame, options: Options): Result {
   'worklet';
   if (plugin === undefined) {
-    throw new INatVisionError("Couldn't find the 'inatVision' plugin.");
+    throw new Error("Couldn't find the 'inatVision' plugin.");
   }
   optionsAreValidForFrame(options);
   // @ts-expect-error Frame Processors are not typed.

@@ -1753,10 +1753,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@react-native-camera-roll/camera-roll@7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-7.2.0.tgz#e1de34175619048019f766858d3563608c2b3ef8"
-  integrity sha512-7y1lW+b9lpXsqUDCi4Ow0XozVe8OLqN/Pfq6lJpAxbgZ0TEVpVKniQj2ZeLMWsA28eae7JMqGqqj4e9uVp8eOw==
+"@react-native-camera-roll/camera-roll@7.10.2":
+  version "7.10.2"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-7.10.2.tgz#af2234f60f0b55aff9afb60888ce7f0669d52593"
+  integrity sha512-XgJQJDFUycmqSX+MH7vTcRigQwEIQNLIu1GvOngCZRwlSV2mF61UzeruSmmHwkBcGnHZFXkKg9fil0FQVfyglw==
 
 "@react-native-community/cli-clean@15.0.1":
   version "15.0.1"

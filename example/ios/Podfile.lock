@@ -47,6 +47,7 @@ PODS:
     - React-RCTText (= 0.78.3)
     - React-RCTVibration (= 0.78.3)
   - React-callinvoker (0.78.3)
+  - React-Codegen (0.1.0)
   - React-Core (0.78.3):
     - glog
     - hermes-engine
@@ -1604,7 +1605,12 @@ PODS:
     - React-Core
     - VisionCamera/FrameProcessors
   - VisionCameraPluginInatVision (5.3.0):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - ReactCommon/turbomodule/core
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1685,6 +1691,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - React-Codegen
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1848,6 +1855,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: c9c9e64389bc545fc137030615b387ef1654dcee
   React: 14a80ea4f13387cfdaa4250b46fbfe19754c220c
   React-callinvoker: fed1dad5d6cf992c7b4b5fdbf1bf67fe2e8fb6c5
+  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 3c803e7f3be6fa68e3dabcac283a5a5f87340a60
   React-CoreModules: 94d556b4055defb79278c3afba95e521998b9b3a
   React-cxxreact: 21c826a567199cc2d5797bd4cfe3c0d94bb3a7de
@@ -1872,18 +1880,18 @@ SPEC CHECKSUMS:
   React-logger: 8d00d3d794041a77bd890158353361e2709b04c1
   React-Mapbuffer: b0debf83f1eecbb29ae07e0b22ca2483f1550685
   React-microtasksnativemodule: b902bf1dc40aa577bb8e00e2ec897853fbc82ca4
-  react-native-cameraroll: f8ab2af8d087ee31f8efabc12ba769240a6983b9
-  react-native-image-picker: 1b6097f71e3cf785a40d22be7904f17e924965bb
-  react-native-worklets-core: b59cf88762c8fb6132d8796babd4cec15217d6f0
+  react-native-cameraroll: 29dd13d044bfb512001c0952f604a7ed14ff392b
+  react-native-image-picker: 84b261e109faa7312bca59f1f65c8f2b22865496
+  react-native-worklets-core: 70698b8dcaf742004d9fc4c483c2ffd82ebff25d
   React-NativeModulesApple: c8bb2bc56d39bd122c56ef58a55c3f34d53f1585
   React-perflogger: d06f0fd0727356651a5535f6d717130187aeb667
   React-performancetimeline: 7afc2307ffc4047cef95eb711ea39a12fd90d533
   React-RCTActionSheet: a078d5008632fed31b0024c420ee02e612b317d5
   React-RCTAnimation: b197cc109a896c6ce23981e02e317cfc055f6fda
-  React-RCTAppDelegate: 6e7e4fcec0d72cbe2ca43a028400ebc027264e8f
+  React-RCTAppDelegate: f7f1d7362256b7c142d9ab49f980df488101f869
   React-RCTBlob: c12d15d40db01ac3fe57c24d3ef5233ff3333da6
-  React-RCTFabric: 24b33edf434ab6856fd0b0af266f19fba335a465
-  React-RCTFBReactNativeSpec: e1f4d2662a8a9fd6da4ae3b6b338c7476b4e992b
+  React-RCTFabric: 6bb325819bbfb8518070e6e3a31fbefd935be4da
+  React-RCTFBReactNativeSpec: c3a78cb9f2a98146443f1b732a4f21b2ce736abd
   React-RCTImage: 7a3d9d67161c714fa4d9b93820da39a266d0f1ff
   React-RCTLinking: f860b917500cd3974235a48d5b199a74a4ed6c26
   React-RCTNetwork: 6a984ab1b5a81d17a2df6cc02c24b249fb055deb
@@ -1906,9 +1914,9 @@ SPEC CHECKSUMS:
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 7e17e56cca70c88d6fdcae0257f7c0bcc54c8b2f
-  VisionCameraPluginInatVision: d88681b3db2dde4997ba6ab3877b039d5e646e84
+  VisionCameraPluginInatVision: 8c967b956cb39cbc44e0aac49b833f51bc6e5b6f
   Yoga: eca8dd841b7cd47d82d66be58af8e3aeb819012f
 
-PODFILE CHECKSUM: c985484b79a69d05c93c72e446976c7e92d23107
+PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73
 
 COCOAPODS: 1.16.2

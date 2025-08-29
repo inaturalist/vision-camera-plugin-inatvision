@@ -201,7 +201,6 @@ export default function App(): React.JSX.Element {
               longitude: geoModelCellLocation.longitude,
               elevation: geoModelCellLocation.elevation,
             },
-            patchedOrientationAndroid: 'portrait',
           });
           const timeAfter = new Date().getTime();
           console.log('time taken ms: ', timeAfter - timeBefore);
@@ -502,6 +501,20 @@ export default function App(): React.JSX.Element {
           enableFpsGraph={true}
           photoQualityBalance="quality"
           enableLocation={location.hasPermission}
+          outputOrientation="device"
+          onStarted={() => console.log('Camera started!')}
+          onStopped={() => console.log('Camera stopped!')}
+          onOutputOrientationChanged={(o) =>
+            console.log(`Output orientation changed to ${o}!`)
+          }
+          onPreviewOrientationChanged={(o) =>
+            console.log(`Preview orientation changed to ${o}!`)
+          }
+          onPreviewStarted={() => console.log('Preview started!')}
+          onPreviewStopped={() => console.log('Preview stopped!')}
+          onUIRotationChanged={(degrees) =>
+            console.log(`UI Rotation changed: ${degrees}°`)
+          }
         />
         <View style={styles.row}>
           <Button

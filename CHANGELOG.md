@@ -19,7 +19,11 @@ for any bug fixes.
 in case of vulnerabilities.
 
 ## [Unreleased] - YYYY-MM-DD
-
+### Changed
+- Updated react-native-vision-camera dependency to v4.5.2 this includes native handling of camera orientation
+### Removed
+- patchedOrientationAndroid property
+- Custom INatVisionError class
 ## [5.2.0] - 2025-03-09
 ### Removed
 - Two properties (`iconic_class_id` and `spatial_class_id`) from `Prediction` and taxonomy file

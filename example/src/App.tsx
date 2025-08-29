@@ -19,13 +19,15 @@ import {
   useFrameProcessor,
   useCameraPermission,
   useLocationPermission,
-  runAsync,
 } from 'react-native-vision-camera';
 import RNFS from 'react-native-fs';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
+
+// @ts-ignore
+import usePatchedRunAsync from './visionCameraPatches';
 
 const testLocationEurope = {
   latitude: 54.29,
@@ -177,10 +179,11 @@ export default function App(): React.JSX.Element {
     testLocationEuropeNoElevation
   );
 
+  const patchedRunAsync = usePatchedRunAsync();
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      runAsync(frame, () => {
+      patchedRunAsync(frame, () => {
         'worklet';
         try {
           const timeBefore = new Date().getTime();
@@ -213,6 +216,7 @@ export default function App(): React.JSX.Element {
       });
     },
     [
+      patchedRunAsync,
       confidenceThreshold,
       filterByTaxonId,
       negativeFilter,

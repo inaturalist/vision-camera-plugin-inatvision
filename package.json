@@ -57,17 +57,17 @@
     "h3-js": "^4.1.0"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^17.0.2",
-    "@evilmartians/lefthook": "^1.2.2",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@evilmartians/lefthook": "^1.5.0",
     "@react-native-community/eslint-config": "^3.0.2",
     "@react-native/babel-preset": "0.78.3",
-    "@release-it/conventional-changelog": "^5.0.0",
+    "@release-it/conventional-changelog": "^9.0.2",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.0.0",
     "@types/react-native": "0.70.0",
-    "commitlint": "^17.0.2",
+    "commitlint": "^19.6.1",
     "csv-parser": "^3.0.0",
-    "del-cli": "^5.0.0",
+    "del-cli": "^5.1.0",
     "download": "^8.0.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
@@ -80,7 +80,7 @@
     "react-native-builder-bob": "^0.20.4",
     "react-native-vision-camera": "4.7.1",
     "react-native-worklets-core": "1.6.2",
-    "release-it": "^15.0.0",
+    "release-it": "^17.10.0",
     "typescript": "^4.5.2"
   },
   "peerDependencies": {

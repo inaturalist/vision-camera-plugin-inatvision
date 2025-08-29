@@ -1259,8 +1259,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-image-picker (7.0.3):
+  - react-native-image-picker (8.2.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-worklets-core (1.6.2):
     - DoubleConversion
     - glog
@@ -1854,7 +1873,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: b0debf83f1eecbb29ae07e0b22ca2483f1550685
   React-microtasksnativemodule: b902bf1dc40aa577bb8e00e2ec897853fbc82ca4
   react-native-cameraroll: f8ab2af8d087ee31f8efabc12ba769240a6983b9
-  react-native-image-picker: e3b9fdaf27763b5ea8d6b4a62c60107f1a4349d3
+  react-native-image-picker: 1b6097f71e3cf785a40d22be7904f17e924965bb
   react-native-worklets-core: b59cf88762c8fb6132d8796babd4cec15217d6f0
   React-NativeModulesApple: c8bb2bc56d39bd122c56ef58a55c3f34d53f1585
   React-perflogger: d06f0fd0727356651a5535f6d717130187aeb667

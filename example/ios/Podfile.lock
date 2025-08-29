@@ -1242,7 +1242,7 @@ PODS:
     - React-Core
   - react-native-image-picker (7.0.3):
     - React-Core
-  - react-native-worklets-core (1.5.0):
+  - react-native-worklets-core (1.6.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1836,7 +1836,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: b902bf1dc40aa577bb8e00e2ec897853fbc82ca4
   react-native-cameraroll: 638d2bd176bf069087d9bffaca9149c179c4b5c3
   react-native-image-picker: e3b9fdaf27763b5ea8d6b4a62c60107f1a4349d3
-  react-native-worklets-core: 5281a88dd187663e9d3cd58e54ab5c99e29d671a
+  react-native-worklets-core: b59cf88762c8fb6132d8796babd4cec15217d6f0
   React-NativeModulesApple: c8bb2bc56d39bd122c56ef58a55c3f34d53f1585
   React-perflogger: d06f0fd0727356651a5535f6d717130187aeb667
   React-performancetimeline: 7afc2307ffc4047cef95eb711ea39a12fd90d533

@@ -1238,8 +1238,27 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
-  - react-native-cameraroll (7.2.0):
+  - react-native-cameraroll (7.10.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-image-picker (7.0.3):
     - React-Core
   - react-native-worklets-core (1.6.2):
@@ -1834,7 +1853,7 @@ SPEC CHECKSUMS:
   React-logger: 8d00d3d794041a77bd890158353361e2709b04c1
   React-Mapbuffer: b0debf83f1eecbb29ae07e0b22ca2483f1550685
   React-microtasksnativemodule: b902bf1dc40aa577bb8e00e2ec897853fbc82ca4
-  react-native-cameraroll: 638d2bd176bf069087d9bffaca9149c179c4b5c3
+  react-native-cameraroll: f8ab2af8d087ee31f8efabc12ba769240a6983b9
   react-native-image-picker: e3b9fdaf27763b5ea8d6b4a62c60107f1a4349d3
   react-native-worklets-core: b59cf88762c8fb6132d8796babd4cec15217d6f0
   React-NativeModulesApple: c8bb2bc56d39bd122c56ef58a55c3f34d53f1585

@@ -630,8 +630,8 @@ function commonAncestorFromAggregatedScores(
         (commonAncestorRankType === COMMON_ANCESTOR_RANK_TYPE.MAJOR
           ? prediction.rank_level % 10 === 0
           : commonAncestorRankType !== COMMON_ANCESTOR_RANK_TYPE.UNRESTRICTED
-          ? prediction.rank_level <= commonAncestorRankLevelMax
-          : true) &&
+            ? prediction.rank_level <= commonAncestorRankLevelMax
+            : true) &&
         (!filterForNearby ||
           (prediction.geo_score &&
             prediction.geo_threshold &&

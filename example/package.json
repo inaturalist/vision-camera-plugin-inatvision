@@ -15,7 +15,7 @@
     "react-native": "0.78.3",
     "react-native-fs": "2.20.0",
     "react-native-image-picker": "8.2.1",
-    "react-native-vision-camera": "4.7.1",
+    "react-native-vision-camera": "4.7.2",
     "react-native-worklets-core": "1.6.2"
   },
   "devDependencies": {

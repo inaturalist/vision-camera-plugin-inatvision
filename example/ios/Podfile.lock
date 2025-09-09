@@ -47,7 +47,6 @@ PODS:
     - React-RCTText (= 0.78.3)
     - React-RCTVibration (= 0.78.3)
   - React-callinvoker (0.78.3)
-  - React-Codegen (0.1.0)
   - React-Core (0.78.3):
     - glog
     - hermes-engine
@@ -1605,13 +1604,27 @@ PODS:
     - React-Core
     - VisionCamera/FrameProcessors
   - VisionCameraPluginInatVision (5.3.0):
-    - RCT-Folly
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
     - RCTRequired
     - RCTTypeSafety
-    - React-Codegen
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - VisionCamera
+    - Yoga
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1692,7 +1705,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - React-Codegen
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1856,7 +1868,6 @@ SPEC CHECKSUMS:
   RCTTypeSafety: c9c9e64389bc545fc137030615b387ef1654dcee
   React: 14a80ea4f13387cfdaa4250b46fbfe19754c220c
   React-callinvoker: fed1dad5d6cf992c7b4b5fdbf1bf67fe2e8fb6c5
-  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 3c803e7f3be6fa68e3dabcac283a5a5f87340a60
   React-CoreModules: 94d556b4055defb79278c3afba95e521998b9b3a
   React-cxxreact: 21c826a567199cc2d5797bd4cfe3c0d94bb3a7de
@@ -1915,7 +1926,7 @@ SPEC CHECKSUMS:
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 4146fa2612c154f893a42a9b1feedf868faa6b23
-  VisionCameraPluginInatVision: 696e2608845cf931784fbfdf8dc49a2af6f11c19
+  VisionCameraPluginInatVision: af6dde02a933ed67d5aba5fed27ce23431979ed1
   Yoga: eca8dd841b7cd47d82d66be58af8e3aeb819012f
 
 PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73

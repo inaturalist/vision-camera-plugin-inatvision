@@ -2212,16 +2212,16 @@ PODS:
   - RNFS (2.20.0):
     - React-Core
   - SocketRocket (0.7.1)
-  - VisionCamera (4.7.2):
-    - VisionCamera/Core (= 4.7.2)
-    - VisionCamera/FrameProcessors (= 4.7.2)
-    - VisionCamera/React (= 4.7.2)
-  - VisionCamera/Core (4.7.2)
-  - VisionCamera/FrameProcessors (4.7.2):
+  - VisionCamera (4.7.3):
+    - VisionCamera/Core (= 4.7.3)
+    - VisionCamera/FrameProcessors (= 4.7.3)
+    - VisionCamera/React (= 4.7.3)
+  - VisionCamera/Core (4.7.3)
+  - VisionCamera/FrameProcessors (4.7.3):
     - React
     - React-callinvoker
     - react-native-worklets-core
-  - VisionCamera/React (4.7.2):
+  - VisionCamera/React (4.7.3):
     - React-Core
     - VisionCamera/FrameProcessors
   - VisionCameraPluginInatVision (6.0.0-rc.1):
@@ -2578,7 +2578,7 @@ SPEC CHECKSUMS:
   ReactCommon: 592ef441605638b95e533653259254b4bd35ff4f
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  VisionCamera: 4146fa2612c154f893a42a9b1feedf868faa6b23
+  VisionCamera: 0044a94f7489f19e19d5938e97dfc36f4784af3c
   VisionCameraPluginInatVision: 0ca8554be3978df6f300961831f5939b4d96c076
   Yoga: a742cc68e8366fcfc681808162492bc0aa7a9498
 

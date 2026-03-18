@@ -1838,7 +1838,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-worklets-core (1.6.2):
+  - react-native-worklets-core (1.6.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -2742,7 +2742,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: d1ee999dc9052e23f6488b730fa2d383a4ea40e5
   react-native-cameraroll: bb98380ee21115d5fe1ae0f8b80c86e044613746
   react-native-image-picker: 0314366753615115fa55c3cc937ac44cb7e75702
-  react-native-worklets-core: 28a6e2121dcf62543b703e81bc4860e9a0150cee
+  react-native-worklets-core: aaaac7d17f7e576592369a54f30e96fe4875c983
   React-NativeModulesApple: 46690a0fe94ec28fc6fc686ec797b911d251ded0
   React-oscompat: 95875e81f5d4b3c7b2c888d5bd2c9d83450d8bdb
   React-perflogger: 2e229bf33e42c094fd64516d89ec1187a2b79b5b

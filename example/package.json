@@ -10,10 +10,10 @@
     "pods": "pod-install --quiet"
   },
   "dependencies": {
+    "@dr.pogodin/react-native-fs": "2.38.2",
     "@react-native-camera-roll/camera-roll": "7.10.2",
     "react": "19.2.0",
     "react-native": "0.83.9",
-    "react-native-fs": "2.20.0",
     "react-native-image-picker": "8.2.1",
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3"

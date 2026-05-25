@@ -66,7 +66,7 @@ fs.createReadStream(filePathTaxonomy)
         // Also write a new .csv with the threshold data appended to the original rows
         const csvHeader = Object.keys(combinedEntries[0]).join(',');
         const csvRows = combinedEntries.map((entry) =>
-          Object.values(entry).join(',')
+          Object.values(entry).join(','),
         );
         let csvData = [csvHeader, ...csvRows].join('\n');
         // Replace all NaN with empty string

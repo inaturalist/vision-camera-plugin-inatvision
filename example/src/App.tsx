@@ -163,15 +163,15 @@ export default function App(): React.JSX.Element {
       (async () => {
         await copyFileAssets(
           modelFilenameAndroid,
-          `${DocumentDirectoryPath}/${modelFilenameAndroid}`
+          `${DocumentDirectoryPath}/${modelFilenameAndroid}`,
         );
         await copyFileAssets(
           taxonomyFilenameAndroid,
-          `${DocumentDirectoryPath}/${taxonomyFilenameAndroid}`
+          `${DocumentDirectoryPath}/${taxonomyFilenameAndroid}`,
         );
         await copyFileAssets(
           geomodelFilenameAndroid,
-          `${DocumentDirectoryPath}/${geomodelFilenameAndroid}`
+          `${DocumentDirectoryPath}/${geomodelFilenameAndroid}`,
         );
       })();
     }
@@ -180,11 +180,11 @@ export default function App(): React.JSX.Element {
   const handleResults = Worklets.createRunOnJS(
     (predictions: InatVision.Prediction[]) => {
       setResult(predictions);
-    }
+    },
   );
 
   const geoModelCellLocation = InatVision.getCellLocation(
-    testLocationEuropeNoElevation
+    testLocationEuropeNoElevation,
   );
 
   const patchedRunAsync = usePatchedRunAsync();
@@ -231,7 +231,7 @@ export default function App(): React.JSX.Element {
       handleResults,
       useGeomodel,
       geoModelCellLocation,
-    ]
+    ],
   );
 
   function selectImage() {
@@ -257,7 +257,7 @@ export default function App(): React.JSX.Element {
             Alert.alert('No image URI');
           }
         }
-      }
+      },
     );
   }
 

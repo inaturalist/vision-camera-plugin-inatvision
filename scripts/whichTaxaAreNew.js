@@ -48,8 +48,8 @@ fs.createReadStream(filePathTaxonomy)
         const newTaxa = entriesTaxonomy2.filter(
           (entry2) =>
             !entriesTaxonomy1.some(
-              (entry1) => entry1.taxon_id === entry2.taxon_id
-            )
+              (entry1) => entry1.taxon_id === entry2.taxon_id,
+            ),
         );
         console.log('newTaxa', newTaxa.length);
         // Write json to file
@@ -59,8 +59,8 @@ fs.createReadStream(filePathTaxonomy)
         const removedTaxa = entriesTaxonomy1.filter(
           (entry1) =>
             !entriesTaxonomy2.some(
-              (entry2) => entry1.taxon_id === entry2.taxon_id
-            )
+              (entry2) => entry1.taxon_id === entry2.taxon_id,
+            ),
         );
         console.log('removedTaxa', removedTaxa.length);
         // Write json to file
@@ -68,7 +68,7 @@ fs.createReadStream(filePathTaxonomy)
         fs.writeFileSync('removedTaxa.json', json2);
         // Combine all taxon_ids of removed taxa into a comma sperated long string
         const removedSpecies = removedTaxa.filter(
-          (entry) => entry.rank_level === 10
+          (entry) => entry.rank_level === 10,
         );
         console.log('removedSpecies.length', removedSpecies.length);
         const removedTaxaIds = removedSpecies.map((entry) => entry.taxon_id);

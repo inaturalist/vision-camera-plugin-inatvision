@@ -22,7 +22,7 @@ const VisionCameraPluginInatVision = NativeModules.VisionCameraPluginInatVision
         get() {
           throw new Error(LINKING_ERROR);
         },
-      }
+      },
     );
 
 interface State {
@@ -222,7 +222,7 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
       options.confidenceThreshold > 100
     ) {
       throw new Error(
-        'confidenceThreshold must be a number between 0 and 100.'
+        'confidenceThreshold must be a number between 0 and 100.',
       );
     }
   }
@@ -354,7 +354,7 @@ function handleResult(result: any, options: Options): Result {
     .filter((prediction) => prediction.rank_level % 10 === 0)
     .map((prediction) => scalePrediction(prediction))
     .filter(
-      (prediction) => prediction.score > (options.confidenceThreshold || 0)
+      (prediction) => prediction.score > (options.confidenceThreshold || 0),
     );
   const handledResult = {
     ...current,
@@ -511,7 +511,7 @@ interface OptionsForImage extends BaseOptions {
 
 const HUMAN_TAXON_ID = 43584;
 function limitLeafPredictionsThatIncludeHumans(
-  predictions: Prediction[]
+  predictions: Prediction[],
 ): Prediction[] {
   // If only one prediction, return original array
   if (predictions.length === 1) {
@@ -519,7 +519,7 @@ function limitLeafPredictionsThatIncludeHumans(
   }
   // Find human prediction
   const humanIndex = predictions.findIndex(
-    (p) => p.taxon_id === HUMAN_TAXON_ID
+    (p) => p.taxon_id === HUMAN_TAXON_ID,
   );
   // If no humans, return original array
   // (also returns here if predictions is an empty array)
@@ -552,7 +552,7 @@ function limitLeafPredictionsThatIncludeHumans(
 function commonAncestorFromPredictions(
   predictions: Prediction[],
   top15Leaves: Prediction[],
-  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
 ): Prediction | undefined {
   // Get the top 15 leaf nodes with scores higher than top combined score * 0.01
   const topCombinedScore = top15Leaves[0]?.score || 0;
@@ -562,7 +562,7 @@ function commonAncestorFromPredictions(
   // Get quotient to normalize the top 15 scores
   const scoreSumOfTop15 = top15FilteredLeaves.reduce(
     (acc, p) => acc + p.score,
-    0
+    0,
   );
   const parentIds = new Set();
   top15FilteredLeaves.forEach((p) => {
@@ -601,7 +601,7 @@ function commonAncestorFromPredictions(
   ];
   return commonAncestorFromAggregatedScores(
     normalizedTop15,
-    commonAncestorRankType
+    commonAncestorRankType,
   );
 }
 
@@ -610,7 +610,7 @@ const commonAncestorRankLevelMin = 20;
 const commonAncestorRankLevelMax = 33;
 function commonAncestorFromAggregatedScores(
   predictions: Prediction[],
-  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined
+  commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
 ): Prediction | undefined {
   // As in the vision API:
   // # if using combined scores to aggregate, and there are taxa expected nearby,
@@ -619,7 +619,7 @@ function commonAncestorFromAggregatedScores(
     (prediction) =>
       prediction.geo_score &&
       prediction.geo_threshold &&
-      prediction.geo_score >= prediction.geo_threshold
+      prediction.geo_score >= prediction.geo_threshold,
   );
   // Filter and sort candidates
   const commonAncestorCandidates = predictions
@@ -635,7 +635,7 @@ function commonAncestorFromAggregatedScores(
         (!filterForNearby ||
           (prediction.geo_score &&
             prediction.geo_threshold &&
-            prediction.geo_score >= prediction.geo_threshold))
+            prediction.geo_score >= prediction.geo_threshold)),
     )
     .sort((a, b) => a.rank_level - b.rank_level);
   const commonAncestor = commonAncestorCandidates[0];
@@ -646,7 +646,7 @@ function commonAncestorFromAggregatedScores(
  * Function to call the computer vision model with a image from disk
  */
 export function getPredictionsForImage(
-  options: OptionsForImage
+  options: OptionsForImage,
 ): Promise<ResultForImage> {
   optionsAreValidForImage(options);
   const newOptions = {
@@ -673,12 +673,12 @@ export function getPredictionsForImage(
           const commonAncestor = commonAncestorFromPredictions(
             result.predictions,
             top15Leaves,
-            newOptions.commonAncestorRankType
+            newOptions.commonAncestorRankType,
           );
           // max 10 (s > ts * 0.001), not normalized, leaf only
           const top10 = top100.slice(0, 10);
           const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
-            scalePrediction(prediction)
+            scalePrediction(prediction),
           );
           const commonAncestorWithScaledScores = commonAncestor
             ? scalePrediction(commonAncestor)
@@ -696,7 +696,7 @@ export function getPredictionsForImage(
             .map((prediction) => scalePrediction(prediction))
             .filter(
               (prediction) =>
-                prediction.score > (newOptions.confidenceThreshold || 70)
+                prediction.score > (newOptions.confidenceThreshold || 70),
             );
           const handledResult = {
             ...result,
@@ -722,7 +722,7 @@ interface OptionsForLocation {
  * Function to call the geomodel with a given location
  */
 export function getPredictionsForLocation(
-  options: OptionsForLocation
+  options: OptionsForLocation,
 ): Promise<Result> {
   locationIsValid(options.location);
   const locationLookup = lookUpLocation(options.location);

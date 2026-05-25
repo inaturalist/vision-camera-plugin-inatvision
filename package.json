@@ -41,6 +41,9 @@
     "release": "release-it",
     "example": "yarn workspace vision-camera-plugin-inatvision-example",
     "start": "yarn example start --reset-cache",
+    "ios": "yarn example ios",
+    "android": "yarn example android",
+    "pods": "yarn example pods",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build"
   },
   "workspaces": [

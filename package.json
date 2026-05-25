@@ -4,7 +4,6 @@
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
-  "source": "./src/index.tsx",
   "exports": {
     ".": {
       "source": "./src/index.tsx",
@@ -39,11 +38,17 @@
     "prepare": "bob build",
     "prepack": "bob build",
     "release": "release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn install && yarn example pods",
+    "example": "yarn workspace vision-camera-plugin-inatvision-example",
     "start": "yarn example start --reset-cache",
+    "ios": "yarn example ios",
+    "android": "yarn example android",
+    "pods": "yarn example pods",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build"
   },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.12.0",
   "keywords": [
     "react-native",
     "ios",
@@ -86,6 +91,7 @@
     "react": "19.2.0",
     "react-native": "0.83.9",
     "react-native-builder-bob": "^0.40.17",
+    "react-native-monorepo-config": "^0.3.1",
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3",
     "release-it": "^17.10.0",

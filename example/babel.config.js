@@ -1,18 +1,13 @@
 const path = require('path');
+const { getConfig } = require('react-native-builder-bob/babel-config');
 const pak = require('../package.json');
 
-module.exports = {
-  presets: ['module:@react-native/babel-preset'],
-  plugins: [
-    [
-      'module-resolver',
-      {
-        extensions: ['.tsx', '.ts', '.js', '.json'],
-        alias: {
-          [pak.name]: path.join(__dirname, '..', pak.source),
-        },
-      },
-    ],
-    ['react-native-worklets-core/plugin'],
-  ],
-};
+const root = path.resolve(__dirname, '..');
+
+module.exports = getConfig(
+  {
+    presets: ['module:@react-native/babel-preset'],
+    plugins: [['react-native-worklets-core/plugin']],
+  },
+  { root, pkg: pak },
+);

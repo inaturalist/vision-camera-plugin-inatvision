@@ -39,11 +39,14 @@
     "prepare": "bob build",
     "prepack": "bob build",
     "release": "release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn install && yarn example pods",
+    "example": "yarn workspace vision-camera-plugin-inatvision-example",
     "start": "yarn example start --reset-cache",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build"
   },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.12.0",
   "keywords": [
     "react-native",
     "ios",

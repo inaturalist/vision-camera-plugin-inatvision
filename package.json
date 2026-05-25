@@ -4,7 +4,7 @@
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
+  "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "files": [
@@ -79,7 +79,7 @@
     "prettier": "^3.0.3",
     "react": "19.2.0",
     "react-native": "0.83.9",
-    "react-native-builder-bob": "^0.20.4",
+    "react-native-builder-bob": "^0.40.17",
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3",
     "release-it": "^17.10.0",

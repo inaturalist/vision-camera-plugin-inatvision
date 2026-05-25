@@ -20,11 +20,16 @@ import {
   useCameraPermission,
   useLocationPermission,
 } from 'react-native-vision-camera';
-import RNFS from 'react-native-fs';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
+import {
+  copyFileAssets,
+  DocumentDirectoryPath,
+  MainBundlePath,
+  readDir,
+} from '@dr.pogodin/react-native-fs';
 
 // @ts-ignore
 import usePatchedRunAsync from './visionCameraPatches';
@@ -56,16 +61,16 @@ const modelVersion = 'small_2';
 
 const modelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.MainBundlePath}/${modelFilenameIOS}`
-    : `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`;
+    ? `${MainBundlePath}/${modelFilenameIOS}`
+    : `${DocumentDirectoryPath}/${modelFilenameAndroid}`;
 const geomodelPath =
   Platform.OS === 'ios'
-    ? `${RNFS.MainBundlePath}/${geomodelFilenameIOS}`
-    : `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`;
+    ? `${MainBundlePath}/${geomodelFilenameIOS}`
+    : `${DocumentDirectoryPath}/${geomodelFilenameAndroid}`;
 const taxonomyPath =
   Platform.OS === 'ios'
-    ? `${RNFS.MainBundlePath}/${taxonomyFilenameIOS}`
-    : `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
+    ? `${MainBundlePath}/${taxonomyFilenameIOS}`
+    : `${DocumentDirectoryPath}/${taxonomyFilenameAndroid}`;
 
 export default function App(): React.JSX.Element {
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -131,7 +136,7 @@ export default function App(): React.JSX.Element {
   }, []);
 
   const checkForModelFilesIOS = () => {
-    RNFS.readDir(RNFS.MainBundlePath).then((files) => {
+    readDir(MainBundlePath).then((files) => {
       const hasModel = files.find((r) => r.name === modelFilenameIOS);
       const hasTaxonomy = files.find((r) => r.name === taxonomyFilenameIOS);
       const hasGeomodel = files.find((r) => r.name === geomodelFilenameIOS);
@@ -153,17 +158,17 @@ export default function App(): React.JSX.Element {
       checkForModelFilesIOS();
     } else {
       (async () => {
-        await RNFS.copyFileAssets(
+        await copyFileAssets(
           modelFilenameAndroid,
-          `${RNFS.DocumentDirectoryPath}/${modelFilenameAndroid}`
+          `${DocumentDirectoryPath}/${modelFilenameAndroid}`
         );
-        await RNFS.copyFileAssets(
+        await copyFileAssets(
           taxonomyFilenameAndroid,
-          `${RNFS.DocumentDirectoryPath}/${taxonomyFilenameAndroid}`
+          `${DocumentDirectoryPath}/${taxonomyFilenameAndroid}`
         );
-        await RNFS.copyFileAssets(
+        await copyFileAssets(
           geomodelFilenameAndroid,
-          `${RNFS.DocumentDirectoryPath}/${geomodelFilenameAndroid}`
+          `${DocumentDirectoryPath}/${geomodelFilenameAndroid}`
         );
       })();
     }

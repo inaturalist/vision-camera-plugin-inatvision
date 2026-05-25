@@ -7362,7 +7362,7 @@ react-native-builder-bob@^0.40.17:
     which "^2.0.2"
     yargs "^17.5.1"
 
-react-native-monorepo-config@^0.3.3:
+react-native-monorepo-config@^0.3.1, react-native-monorepo-config@^0.3.3:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/react-native-monorepo-config/-/react-native-monorepo-config-0.3.5.tgz#2c174bf188691b9de65a8370110be0cc2b15ceab"
   integrity sha512-Xdu7k0s4V2FHn2OGnlr3D22Dgt5ij0ek9yzloPoLkHh3rL/jUQbPrawieKsAbkqoenv/7pfPJwMlPT27bvN1fg==

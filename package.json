@@ -79,7 +79,7 @@
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3",
     "release-it": "^17.10.0",
-    "typescript": "^4.5.2"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "react": "*",

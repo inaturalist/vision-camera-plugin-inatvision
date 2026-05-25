@@ -136,6 +136,9 @@ export default function App(): React.JSX.Element {
   }, []);
 
   const checkForModelFilesIOS = () => {
+    if (MainBundlePath === undefined) {
+      return;
+    }
     readDir(MainBundlePath).then((files) => {
       const hasModel = files.find((r) => r.name === modelFilenameIOS);
       const hasTaxonomy = files.find((r) => r.name === taxonomyFilenameIOS);

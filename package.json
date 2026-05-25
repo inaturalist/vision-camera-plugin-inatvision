@@ -90,16 +90,6 @@
   "engines": {
     "node": ">= 20.0.0"
   },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ],
-    "setupFiles": [
-      "<rootDir>/src/jestSetup/jest.setup.js"
-    ]
-  },
   "release-it": {
     "git": {
       "commitMessage": "chore: release ${version}",

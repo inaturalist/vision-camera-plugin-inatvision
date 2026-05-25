@@ -14,7 +14,7 @@ describe('inatVision', () => {
     };
 
     expect(() => inatVision(mockFrame, options)).not.toThrowError(
-      'This model version is not supported.'
+      'This model version is not supported.',
     );
   });
 
@@ -24,7 +24,7 @@ describe('inatVision', () => {
     };
 
     expect(() => inatVision(mockFrame, options)).toThrowError(
-      'This model version is not supported.'
+      'This model version is not supported.',
     );
   });
 });

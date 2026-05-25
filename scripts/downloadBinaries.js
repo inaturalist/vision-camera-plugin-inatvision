@@ -25,13 +25,13 @@ const androidDestination = path.join(
   'app',
   'src',
   'main',
-  'assets'
+  'assets',
 );
 const iosDestination = path.join(__dirname, '..', 'example', 'ios');
 
 const androidModel = path.join(
   androidDestination,
-  `${cvModelFilename}.${androidExt}`
+  `${cvModelFilename}.${androidExt}`,
 );
 const iosModel = path.join(iosDestination, `${cvModelFilename}.${iosExt}`);
 
@@ -50,7 +50,7 @@ const iosModel = path.join(iosDestination, `${cvModelFilename}.${iosExt}`);
   }
 
   console.log(
-    `Android model files missing, downloading from '${binariesBaseDir}'...`
+    `Android model files missing, downloading from '${binariesBaseDir}'...`,
   );
 
   await download(androidCV, androidDestination);
@@ -74,7 +74,7 @@ const iosModel = path.join(iosDestination, `${cvModelFilename}.${iosExt}`);
   }
 
   console.log(
-    `iOS Model files missing, downloading from '${binariesBaseDir}'...`
+    `iOS Model files missing, downloading from '${binariesBaseDir}'...`,
   );
 
   await download(iosCV, iosDestination);

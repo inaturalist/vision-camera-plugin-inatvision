@@ -26,11 +26,11 @@ fs.createReadStream(filePathTaxonomy)
     entriesTaxonomy = overridenEntries;
     // Count leaf nodes
     const leafNodes = entriesTaxonomy.filter(
-      (entry) => !!entry.leaf_class_id
+      (entry) => !!entry.leaf_class_id,
     ).length;
     console.log('leafNodes', leafNodes);
     const species = entriesTaxonomy.filter(
-      (entry) => !!entry.leaf_class_id && entry.rank_level === 10
+      (entry) => !!entry.leaf_class_id && entry.rank_level === 10,
     ).length;
     console.log('species', species);
   });

@@ -32,7 +32,7 @@ const usePatchedRunAsync = () => {
         frame.decrementRefCount();
         isAsyncContextBusy.value = false;
       }
-    }
+    },
   );
 
   function customRunAsync(frame, func) {

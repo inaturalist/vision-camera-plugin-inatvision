@@ -33,7 +33,7 @@ jest.mock('react-native', () => ({
       getPredictionsForImage: jest.fn(() =>
         Promise.resolve({
           predictions: [],
-        })
+        }),
       ),
       getPredictionsForLocation: jest.fn(),
     },

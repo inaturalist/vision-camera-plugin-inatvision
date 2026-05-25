@@ -2,11 +2,17 @@
   "name": "vision-camera-plugin-inatvision",
   "version": "6.0.0-rc.2",
   "description": "VisionCamera Frame Processor Plugin to label images using iNaturalist's Computer Vision",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
-  "react-native": "src/index",
-  "source": "src/index",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "source": "./src/index.tsx",
+  "exports": {
+    ".": {
+      "source": "./src/index.tsx",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "src",
     "lib",
@@ -29,7 +35,7 @@
   "scripts": {
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint",
     "prepare": "bob build",
     "prepack": "bob build",
     "release": "release-it",
@@ -57,9 +63,12 @@
     "h3-js": "^4.4.0"
   },
   "devDependencies": {
-    "@evilmartians/lefthook": "^1.5.0",
+    "@eslint/compat": "^1.4.1",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
     "@react-native/babel-preset": "0.83.9",
     "@react-native/eslint-config": "0.83.9",
+    "@react-native/typescript-config": "0.83.9",
     "@release-it/conventional-changelog": "^9.0.2",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.2.0",
@@ -67,20 +76,20 @@
     "csv-parser": "^3.2.0",
     "del-cli": "^5.1.0",
     "download": "^8.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.1.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-ft-flow": "^3.0.11",
-    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-prettier": "^5.5.4",
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
     "prettier": "^3.0.3",
     "react": "19.2.0",
     "react-native": "0.83.9",
-    "react-native-builder-bob": "^0.20.4",
+    "react-native-builder-bob": "^0.40.17",
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3",
     "release-it": "^17.10.0",
-    "typescript": "^4.5.2"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -91,78 +100,16 @@
   "engines": {
     "node": ">= 20.0.0"
   },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ],
-    "setupFiles": [
-      "<rootDir>/src/jestSetup/jest.setup.js"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@react-native",
-      "prettier"
-    ],
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
-      ],
-      "react-hooks/exhaustive-deps": [
-        "warn",
-        {
-          "additionalHooks": "(useFrameProcessor)"
-        }
-      ]
-    }
-  },
-  "eslintIgnore": [
-    "node_modules/",
-    "lib/"
-  ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
     "targets": [
-      "commonjs",
-      "module",
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
       [
         "typescript",
         {

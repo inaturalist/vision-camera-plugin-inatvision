@@ -32,7 +32,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude and longitude set.'
+      'location must have latitude and longitude set.',
     );
   });
 
@@ -46,7 +46,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude and longitude set.'
+      'location must have latitude and longitude set.',
     );
   });
 
@@ -60,7 +60,7 @@ describe('location', () => {
     };
 
     expect(() => getPredictionsForLocation(options)).toThrowError(
-      'location must have latitude and longitude set.'
+      'location must have latitude and longitude set.',
     );
   });
 });

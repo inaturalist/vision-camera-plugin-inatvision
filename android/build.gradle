@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.2.1"
+    classpath "com.android.tools.build:gradle:8.7.2"
   }
 }
 
@@ -28,20 +28,27 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace "com.visioncameraplugininatvision"
+
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
   }
+
+  buildFeatures {
+    buildConfig true
+  }
+
   buildTypes {
     release {
       minifyEnabled false
     }
   }
 
-  lintOptions {
-    disable "GradleCompatible"
+  lint {
+    disable += "GradleCompatible"
   }
 
   compileOptions {
@@ -49,6 +56,14 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
+  sourceSets {
+    main {
+      java.srcDirs += [
+        "generated/java",
+        "generated/jni"
+      ]
+    }
+  }
 }
 
 repositories {

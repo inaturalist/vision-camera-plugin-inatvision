@@ -15,6 +15,7 @@
     "react": "19.2.0",
     "react-native": "0.83.9",
     "react-native-image-picker": "8.2.1",
+    "react-native-safe-area-context": "5.8.0",
     "react-native-vision-camera": "4.7.3",
     "react-native-worklets-core": "1.6.3"
   },

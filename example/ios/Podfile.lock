@@ -2000,6 +2000,93 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-safe-area-context (5.8.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-safe-area-context/common (= 5.8.0)
+    - react-native-safe-area-context/fabric (= 5.8.0)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - react-native-safe-area-context/common (5.8.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - react-native-safe-area-context/fabric (5.8.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-safe-area-context/common
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-worklets-core (1.6.3):
     - boost
     - DoubleConversion
@@ -2705,6 +2792,7 @@ DEPENDENCIES:
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
   - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-worklets-core (from `../node_modules/react-native-worklets-core`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
@@ -2843,6 +2931,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-worklets-core:
     :path: "../node_modules/react-native-worklets-core"
   React-NativeModulesApple:
@@ -2967,6 +3057,7 @@ SPEC CHECKSUMS:
   React-mutationobservernativemodule: 867e9c215f21b4308fa98473f3c38585b5897e44
   react-native-cameraroll: bb98380ee21115d5fe1ae0f8b80c86e044613746
   react-native-image-picker: 0314366753615115fa55c3cc937ac44cb7e75702
+  react-native-safe-area-context: ebd2c2ece5e6e650a6963184039ec8cfd8960d86
   react-native-worklets-core: aaaac7d17f7e576592369a54f30e96fe4875c983
   React-NativeModulesApple: 519f9f98375db6458a7220becd25db81b3860b76
   React-networking: 2318cba8288ec5df38e899feed3baaac0629b4bd
@@ -3004,7 +3095,7 @@ SPEC CHECKSUMS:
   ReactNativeFs: 8ee52268099f843309fac2d0e291d254116d1df2
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 0044a94f7489f19e19d5938e97dfc36f4784af3c
-  VisionCameraPluginInatVision: d992664e78b4e1f54deb34db0f249b40a05fc0e7
+  VisionCameraPluginInatVision: e3f19d45c73cc7a1b53d776d2b4566bca4a58279
   Yoga: e6489bbfdab9b98f8d51993484d6bd40216b7834
 
 PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73

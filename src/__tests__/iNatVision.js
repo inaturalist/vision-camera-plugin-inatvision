@@ -32,6 +32,16 @@ const mockNativeResult = (score) => ({
     },
   ],
 });
+
+function runTwoFrames(numStoredResults) {
+  pluginCall()
+    .mockReturnValueOnce(mockNativeResult(0.9))
+    .mockReturnValueOnce(mockNativeResult(0.1));
+
+  inatVision(mockFrame, { ...baseOptions, numStoredResults });
+  return inatVision(mockFrame, { ...baseOptions, numStoredResults });
+}
+
 describe('inatVision', () => {
   beforeEach(() => {
     resetStoredResults();
@@ -49,6 +59,27 @@ describe('inatVision', () => {
     expect(() =>
       inatVision(mockFrame, { ...baseOptions, version: '0.9' }),
     ).toThrowError('This model version is not supported.');
+  });
+});
 
+describe('numStoredResults', () => {
+  beforeEach(() => {
+    resetStoredResults();
+  });
+
+  it.each([0, 1])(
+    'returns the current frame when numStoredResults is %i, even if a prior frame scored higher',
+    (numStoredResults) => {
+      const result = runTwoFrames(numStoredResults);
+
+      expect(result.predictions[0].score).toBe(10);
+    },
+  );
+
+  it('applies temporal smoothing when numStoredResults is 5', () => {
+    const result = runTwoFrames(5);
+
+    // Prior high-confidence frame (0.9) beats the current weak frame (0.1) after penalty
+    expect(result.predictions[0].score).toBe(90);
   });
 });

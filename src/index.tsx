@@ -336,27 +336,30 @@ function handleResult(result: any, options: Options): Result {
   }
 
   let current: Result = result;
-  const currentLastPrediction =
-    current.predictions[current.predictions.length - 1];
-  let currentScore = currentLastPrediction?.score || 0;
 
-  const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
-  // Select the best result from the stored results
-  for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
-    const candidateResult = state.storedResults.value[i];
-    if (!candidateResult) {
-      break;
-    }
-    const candidateLastPrediction =
-      candidateResult.predictions[candidateResult.predictions.length - 1];
-    const candidateScore = candidateLastPrediction?.score || 0;
+  if (maxNumStoredResults > 1) {
+    const currentLastPrediction =
+      current.predictions[current.predictions.length - 1];
+    let currentScore = currentLastPrediction?.score || 0;
 
-    const penalty =
-      1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+    const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
+    // Select the best result from the stored results
+    for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
+      const candidateResult = state.storedResults.value[i];
+      if (!candidateResult) {
+        break;
+      }
+      const candidateLastPrediction =
+        candidateResult.predictions[candidateResult.predictions.length - 1];
+      const candidateScore = candidateLastPrediction?.score || 0;
 
-    if (candidateScore * penalty > currentScore) {
-      current = candidateResult;
-      currentScore = candidateScore;
+      const penalty =
+        1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+
+      if (candidateScore * penalty > currentScore) {
+        current = candidateResult;
+        currentScore = candidateScore;
+      }
     }
   }
 

@@ -495,7 +495,13 @@ export function getCellLocation(location: Location): LocationLookup {
 }
 
 /**
- * Function to call the computer vision model with a frame from the camera
+ * Function to call the computer vision model with a frame from the camera.
+ *
+ * When `useGeomodel` is enabled, `options.location` must include `elevation`.
+ * The frame worklet cannot run `lookUpLocation` (it loads a large JSON file),
+ * so compute the cell centroid and elevation with `getCellLocation` on the JS
+ * thread and pass the result as `options.location`.
+ *
  * @param frame The frame to predict on.
  * @param options The options for the prediction.
  */

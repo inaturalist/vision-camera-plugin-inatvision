@@ -32,6 +32,7 @@ const mockNativeResult = (score) => ({
 });
 describe('inatVision', () => {
   it('should not throw an error when version is supported', () => {
+    pluginCall().mockReturnValue(mockNativeResult(0.5));
 
     expect(() => inatVision(mockFrame, baseOptions)).not.toThrowError(
       'This model version is not supported.',

@@ -437,7 +437,10 @@ interface BaseOptions {
   useGeomodel?: boolean;
   /**
    *
-   * The location object used for geomodel prediction.
+   * The location used for geomodel prediction. When using the frame processor
+   * with `useGeomodel`, pass a location that includes `elevation` (typically
+   * from `getCellLocation`). The image API snaps coordinates and fills in
+   * elevation automatically via `lookUpLocation`.
    */
   location?: Location;
   /**

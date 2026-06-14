@@ -280,7 +280,7 @@ function optionsAreValidForImage(options: OptionsForImage): boolean {
  * @param prediction A prediction object
  * @returns A copy of the prediction object with scaled scores
  */
-function scalePrediction(p: Prediction): Prediction {
+export function scalePrediction(p: Prediction): Prediction {
   'worklet';
 
   const prediction = { ...p };
@@ -544,7 +544,7 @@ interface OptionsForImage extends BaseOptions {
 }
 
 const HUMAN_TAXON_ID = 43584;
-function limitLeafPredictionsThatIncludeHumans(
+export function limitLeafPredictionsThatIncludeHumans(
   predictions: Prediction[],
 ): Prediction[] {
   // If only one prediction, return original array
@@ -583,7 +583,7 @@ function limitLeafPredictionsThatIncludeHumans(
   return [];
 }
 
-function commonAncestorFromPredictions(
+export function commonAncestorFromPredictions(
   predictions: Prediction[],
   top15Leaves: Prediction[],
   commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
@@ -642,7 +642,7 @@ function commonAncestorFromPredictions(
 const commonAncestorScoreThreshold = 0.78;
 const commonAncestorRankLevelMin = 20;
 const commonAncestorRankLevelMax = 33;
-function commonAncestorFromAggregatedScores(
+export function commonAncestorFromAggregatedScores(
   predictions: Prediction[],
   commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
 ): Prediction | undefined {

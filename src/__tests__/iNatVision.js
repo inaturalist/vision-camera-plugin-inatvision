@@ -13,6 +13,23 @@ const baseOptions = {
   taxonomyPath: '/taxonomy',
   confidenceThreshold: 0,
 };
+
+const pluginCall = () =>
+  VisionCameraProxy.initFrameProcessorPlugin.mock.results[0].value.call;
+
+const mockNativeResult = (score) => ({
+  predictions: [
+    {
+      name: 'Test species',
+      rank_level: 10,
+      score,
+      vision_score: score,
+      geo_score: null,
+      taxon_id: 1,
+      ancestor_ids: [],
+    },
+  ],
+});
 describe('inatVision', () => {
   it('should not throw an error when version is supported', () => {
 

@@ -391,7 +391,12 @@ export interface Location {
   longitude: number;
   /**
    *
-   * The elevation of the location.
+   * The elevation of the location in meters.
+   *
+   * Optional for `getPredictionsForImage` and `getPredictionsForLocation`
+   * (elevation is looked up automatically). Required on the frame processor
+   * path when `useGeomodel` is true — call `getCellLocation` on the JS thread
+   * before passing `location` into `inatVision`.
    */
   elevation?: number;
 }

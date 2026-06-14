@@ -66,6 +66,7 @@ export function removeLogListener(): void {
     return;
   }
   state.eventListener.remove();
+  state.eventListener = null;
 }
 
 enum RANK {

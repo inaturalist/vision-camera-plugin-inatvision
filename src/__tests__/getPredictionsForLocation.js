@@ -63,4 +63,40 @@ describe('location', () => {
       'location must have latitude and longitude set.',
     );
   });
+
+  it('should not throw an error when latitude is 0', () => {
+    const options = {
+      ...correctOptions,
+      location: {
+        latitude: 0,
+        longitude: -18,
+      },
+    };
+
+    expect(() => getPredictionsForLocation(options)).not.toThrowError();
+  });
+
+  it('should not throw an error when longitude is 0', () => {
+    const options = {
+      ...correctOptions,
+      location: {
+        latitude: 54,
+        longitude: 0,
+      },
+    };
+
+    expect(() => getPredictionsForLocation(options)).not.toThrowError();
+  });
+
+  it('should not throw an error when latitude and longitude are both 0', () => {
+    const options = {
+      ...correctOptions,
+      location: {
+        latitude: 0,
+        longitude: 0,
+      },
+    };
+
+    expect(() => getPredictionsForLocation(options)).not.toThrowError();
+  });
 });

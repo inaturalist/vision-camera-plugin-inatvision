@@ -485,6 +485,11 @@ interface Options extends BaseOptions {
   negativeFilter?: null | boolean;
 }
 
+/**
+ * Snap a coordinate to its H3 cell centroid and look up elevation. Call on the
+ * JS thread and pass the result as `options.location` when using the frame
+ * processor with `useGeomodel`.
+ */
 export function getCellLocation(location: Location): LocationLookup {
   return lookUpLocation(location);
 }

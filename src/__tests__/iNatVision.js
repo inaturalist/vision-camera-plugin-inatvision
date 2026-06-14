@@ -62,6 +62,64 @@ describe('inatVision', () => {
   });
 });
 
+describe('handleResult', () => {
+  beforeEach(() => {
+    resetStoredResults();
+    pluginCall().mockReturnValue({
+      predictions: [
+        {
+          name: 'Family',
+          rank_level: 30,
+          score: 0.2,
+          vision_score: 0.2,
+          geo_score: null,
+          taxon_id: 100,
+        },
+        {
+          name: 'Species',
+          rank_level: 10,
+          score: 0.8,
+          vision_score: 0.8,
+          geo_score: null,
+          taxon_id: 200,
+        },
+        {
+          name: 'Subspecies',
+          rank_level: 5,
+          score: 0.9,
+          vision_score: 0.9,
+          geo_score: null,
+          taxon_id: 300,
+        },
+      ],
+    });
+  });
+
+  it('maps rank levels, derives ancestor ids, and filters to KPCOFGS ranks', () => {
+    const result = inatVision(mockFrame, {
+      ...baseOptions,
+      numStoredResults: 1,
+      confidenceThreshold: 0,
+    });
+
+    expect(result.predictions.map((p) => p.rank_level)).toEqual([30, 10]);
+    expect(result.predictions[1].rank).toBe('species');
+    expect(result.predictions[1].ancestor_ids).toEqual([100]);
+    expect(result.predictions[0].score).toBe(20);
+    expect(result.predictions[1].score).toBe(80);
+  });
+
+  it('filters predictions below confidenceThreshold after scaling', () => {
+    const result = inatVision(mockFrame, {
+      ...baseOptions,
+      numStoredResults: 1,
+      confidenceThreshold: 50,
+    });
+
+    expect(result.predictions.map((p) => p.taxon_id)).toEqual([200]);
+  });
+});
+
 describe('numStoredResults', () => {
   beforeEach(() => {
     resetStoredResults();

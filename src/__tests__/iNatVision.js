@@ -31,6 +31,10 @@ const mockNativeResult = (score) => ({
   ],
 });
 describe('inatVision', () => {
+  beforeEach(() => {
+    resetStoredResults();
+  });
+
   it('should not throw an error when version is supported', () => {
     pluginCall().mockReturnValue(mockNativeResult(0.5));
 

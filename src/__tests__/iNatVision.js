@@ -7,13 +7,16 @@ const mockFrame = {
   base64: 'base64',
 };
 
+const baseOptions = {
+  version: '1.0',
+  modelPath: '/model',
+  taxonomyPath: '/taxonomy',
+  confidenceThreshold: 0,
+};
 describe('inatVision', () => {
   it('should not throw an error when version is supported', () => {
-    const options = {
-      version: '1.0',
-    };
 
-    expect(() => inatVision(mockFrame, options)).not.toThrowError(
+    expect(() => inatVision(mockFrame, baseOptions)).not.toThrowError(
       'This model version is not supported.',
     );
   });

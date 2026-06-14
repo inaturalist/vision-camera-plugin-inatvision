@@ -1,4 +1,6 @@
-import { inatVision } from '../index';
+import { VisionCameraProxy } from 'react-native-vision-camera';
+
+import { inatVision, resetStoredResults } from '../index';
 
 const mockFrame = {
   width: 100,

@@ -204,7 +204,19 @@ const supportedVersions = ['1.0', '2.3', '2.4', '2.13', '2.20', 'small_2'];
 
 function locationIsValid(location: Location): boolean {
   'worklet';
-  if (!location || !location.latitude || !location.longitude) {
+  if (!location) {
+    throw new Error('location must have latitude and longitude set.');
+  }
+  if (
+    typeof location.latitude !== 'number' ||
+    Number.isNaN(location.latitude)
+  ) {
+    throw new Error('location must have latitude and longitude set.');
+  }
+  if (
+    typeof location.longitude !== 'number' ||
+    Number.isNaN(location.longitude)
+  ) {
     throw new Error('location must have latitude and longitude set.');
   }
   return true;

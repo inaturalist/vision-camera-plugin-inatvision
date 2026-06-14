@@ -22,12 +22,9 @@ describe('inatVision', () => {
   });
 
   it('should throw an error when version is not supported', () => {
-    const options = {
-      version: '0.9',
-    };
+    expect(() =>
+      inatVision(mockFrame, { ...baseOptions, version: '0.9' }),
+    ).toThrowError('This model version is not supported.');
 
-    expect(() => inatVision(mockFrame, options)).toThrowError(
-      'This model version is not supported.',
-    );
   });
 });

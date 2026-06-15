@@ -1,4 +1,6 @@
-import { getPredictionsForImage } from '../index';
+import { NativeModules } from 'react-native';
+
+import { getPredictionsForImage, MODE } from '../index';
 
 const correctOptions = {
   uri: 'testUri',
@@ -99,6 +101,31 @@ describe('cropRatio', () => {
 
     expect(() => getPredictionsForImage(options)).toThrowError(
       'cropRatio must be a number between 0 and 1.',
+    );
+  });
+});
+
+describe('getPredictionsForImage result handling', () => {
+  const baseOptions = {
+    uri: 'testUri',
+    version: '1.0',
+    modelPath: 'testModelPath',
+    taxonomyPath: 'testTaxonomyPath',
+    confidenceThreshold: 0,
+  };
+
+  beforeEach(() => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockReset();
+  });
+
+  it('propagates native promise rejections', async () => {
+    const nativeError = new Error('native failure');
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockRejectedValueOnce(
+      nativeError,
+    );
+
+    await expect(getPredictionsForImage(baseOptions)).rejects.toThrow(
+      'native failure',
     );
   });
 });

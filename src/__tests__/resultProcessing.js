@@ -1,6 +1,10 @@
 import {
+  limitLeafPredictionsThatIncludeHumans,
   scalePrediction,
 } from '../index';
+
+const HUMAN_TAXON_ID = 43584;
+
 function prediction(overrides) {
   return {
     name: 'Test taxon',
@@ -37,5 +41,53 @@ describe('scalePrediction', () => {
     const scaled = scalePrediction(prediction({ geo_score: null }));
 
     expect(scaled.geo_score).toBeNull();
+  });
+});
+
+describe('limitLeafPredictionsThatIncludeHumans', () => {
+  it('returns an empty array unchanged', () => {
+    expect(limitLeafPredictionsThatIncludeHumans([])).toEqual([]);
+  });
+
+  it('returns a single prediction unchanged', () => {
+    const only = [prediction({ taxon_id: 123 })];
+
+    expect(limitLeafPredictionsThatIncludeHumans(only)).toBe(only);
+  });
+
+  it('returns all predictions when humans are absent', () => {
+    const predictions = [
+      prediction({ taxon_id: 1, score: 0.9 }),
+      prediction({ taxon_id: 2, score: 0.1 }),
+    ];
+
+    expect(limitLeafPredictionsThatIncludeHumans(predictions)).toEqual(
+      predictions,
+    );
+  });
+
+  it('returns only humans when they lead with a wide margin', () => {
+    const human = prediction({ taxon_id: HUMAN_TAXON_ID, score: 0.9 });
+    const other = prediction({ taxon_id: 2, score: 0.5 });
+
+    expect(
+      limitLeafPredictionsThatIncludeHumans([human, other]),
+    ).toEqual([human]);
+  });
+
+  it('returns an empty array when humans lead but the margin is too small', () => {
+    const human = prediction({ taxon_id: HUMAN_TAXON_ID, score: 0.6 });
+    const other = prediction({ taxon_id: 2, score: 0.5 });
+
+    expect(limitLeafPredictionsThatIncludeHumans([human, other])).toEqual([]);
+  });
+
+  it('returns an empty array when humans are not the top prediction', () => {
+    const other = prediction({ taxon_id: 2, score: 0.9 });
+    const human = prediction({ taxon_id: HUMAN_TAXON_ID, score: 0.5 });
+
+    expect(
+      limitLeafPredictionsThatIncludeHumans([other, human]),
+    ).toEqual([]);
   });
 });

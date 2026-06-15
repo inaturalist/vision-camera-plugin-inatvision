@@ -1,6 +1,6 @@
 //
-//  NATPredictionNode.m
-//  RNTestLibrary
+//  VCPNode.m
+//  VisionCameraPluginInatVision
 //
 //  Created by Alex Shepard on 3/13/19.
 //  Copyright © 2023 iNaturalist. All rights reserved.

@@ -8,7 +8,7 @@
 #import "VCPPrediction.h"
 #import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
-#import "VCPMLUtils.h"
+#import "VCPPredictionPipeline.h"
 
 #import <React/RCTBridgeModule.h>
 
@@ -124,31 +124,11 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
           MLMultiArray *visionScores = [cvModel visionPredictionsForImageData:imageData orientation:orientation];
 
-          // Combine vision scores with geomodel scores
-          MLMultiArray *results = nil;
-          if (geomodelPreds != nil) {
-              NSError *err = nil;
-              results = [VCPMLUtils combineVisionScores:visionScores with:geomodelPreds error:&err];
-              results = [VCPMLUtils normalizeMultiArray:results error:&err];
-          } else {
-              results = visionScores;
-          }
-
-          [taxonomy deriveTopScoreRatioCutoff:results];
-
-          NSMutableArray *predictions = [NSMutableArray array];
-          if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-            NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-            for (VCPPrediction *prediction in commonAncestor) {
-              [predictions addObject:[prediction asDict]];
-            }
-          } else {
-            NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-            for (VCPPrediction *prediction in bestBranch) {
-                // convert the VCPPredictions in the bestBranch into dicts
-                [predictions addObject:[prediction asDict]];
-            }
-          }
+          NSArray *predictions = [VCPPredictionPipeline predictionDictionariesForVisionScores:visionScores
+                                                                              geomodelPreds:geomodelPreds
+                                                                                   taxonomy:taxonomy
+                                                                       taxonomyRollupCutoff:nil
+                                                                                       mode:mode];
 
           // End timestamp
           NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
@@ -182,33 +162,11 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
 
         MLMultiArray *visionScores = [cvModel visionPredictionsForUrl:imageURL];
 
-        // Combine vision scores with geomodel scores
-        MLMultiArray *results = nil;
-        if (geomodelPreds != nil) {
-            NSError *err = nil;
-            results = [VCPMLUtils combineVisionScores:visionScores with:geomodelPreds error:&err];
-            results = [VCPMLUtils normalizeMultiArray:results error:&err];
-        } else {
-            results = visionScores;
-        }
-
-        [taxonomy deriveTopScoreRatioCutoff:results];
-
-        // convert the VCPPredictions in the bestBranch into dicts
-        NSMutableArray *predictions = [NSMutableArray array];
-
-        // Only in mode "COMMON_ANCESTOR"
-        if ([mode isEqualToString:@"COMMON_ANCESTOR"]) {
-          NSArray *commonAncestor = [taxonomy inflateCommonAncestorFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-          for (VCPPrediction *prediction in commonAncestor) {
-              [predictions addObject:[prediction asDict]];
-          }
-        } else {
-          NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
-          for (VCPPrediction *prediction in bestBranch) {
-              [predictions addObject:[prediction asDict]];
-          }
-        }
+        NSArray *predictions = [VCPPredictionPipeline predictionDictionariesForVisionScores:visionScores
+                                                                              geomodelPreds:geomodelPreds
+                                                                                   taxonomy:taxonomy
+                                                                       taxonomyRollupCutoff:nil
+                                                                                       mode:mode];
 
         // End timestamp
         NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];

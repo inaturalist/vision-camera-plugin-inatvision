@@ -12,7 +12,7 @@
 #import "VCPPrediction.h"
 #import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
-#import "VCPPredictionPipeline.h"
+#import "VCPMLUtils.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
 
@@ -105,12 +105,29 @@
     VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
     MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];
 
+    MLMultiArray *results = nil;
+
+    if (geomodelPreds != nil) {
+        NSError *err = nil;
+        results = [VCPMLUtils combineVisionScores:visionScores with:geomodelPreds error:&err];
+        results = [VCPMLUtils normalizeMultiArray:results error:&err];
+    } else {
+        results = visionScores;
+    }
+
+    // Setup taxonomy
     VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
-    NSArray *predictions = [VCPPredictionPipeline predictionDictionariesForVisionScores:visionScores
-                                                                            geomodelPreds:geomodelPreds
-                                                                                 taxonomy:taxonomy
-                                                                     taxonomyRollupCutoff:taxonomyRollupCutoff
-                                                                                     mode:nil];
+    [taxonomy deriveTopScoreRatioCutoff:results];
+    if (taxonomyRollupCutoff) {
+      [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
+    }
+
+    // convert the VCPPredictions in the bestRecentBranch into dicts
+    NSMutableArray *predictions = [NSMutableArray array];
+    NSArray *bestBranch = [taxonomy inflateTopBranchFromClassification:results visionScores:visionScores geoScores:geomodelPreds];
+    for (VCPPrediction *prediction in bestBranch) {
+        [predictions addObject:[prediction asDict]];
+    }
 
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];

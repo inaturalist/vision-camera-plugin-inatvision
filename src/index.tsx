@@ -52,7 +52,9 @@ export interface CameraLogEvent {
 /**
  *  Adds a listener for the camera log event
  */
-export function addLogListener(callback: (event: CameraLogEvent) => void): void {
+export function addLogListener(
+  callback: (event: CameraLogEvent) => void,
+): void {
   // Remove the previous listener if it exists
   if (state.eventListener) {
     state.eventListener.remove();
@@ -698,54 +700,54 @@ export function getPredictionsForImage(
     const locationLookup = lookUpLocation(options.location);
     newOptions.location = locationLookup;
   }
-  return VisionCameraPluginInatVision.getPredictionsForImage(
-    newOptions,
-  ).then((result: ResultForImage) => {
-    if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
-      // From native we get all predictions (leaves and ancestors) that have
-      // score > top score * 0.001, score & vision score is normalized
-      const leafPredictions = result.predictions
-        .filter((p) => p?.leaf_id !== undefined)
-        .sort((a, b) => b.score - a.score);
-      // max 100 (s > ts * 0.001), not normalized, leaf only
-      const top100Leaves = leafPredictions.slice(0, 100);
-      const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
-      // max 15 (s > ts * 0.001), not normalized, leaf only
-      const top15Leaves = top100.slice(0, 15);
-      const commonAncestor = commonAncestorFromPredictions(
-        result.predictions,
-        top15Leaves,
-        newOptions.commonAncestorRankType,
-      );
-      // max 10 (s > ts * 0.001), not normalized, leaf only
-      const top10 = top100.slice(0, 10);
-      const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
-        scalePrediction(prediction),
-      );
-      const commonAncestorWithScaledScores = commonAncestor
-        ? scalePrediction(commonAncestor)
-        : undefined;
-      return Object.assign({}, result, {
-        predictions: top10WithScaledScores,
-        commonAncestor: commonAncestorWithScaledScores,
-      });
-    }
+  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions).then(
+    (result: ResultForImage) => {
+      if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
+        // From native we get all predictions (leaves and ancestors) that have
+        // score > top score * 0.001, score & vision score is normalized
+        const leafPredictions = result.predictions
+          .filter((p) => p?.leaf_id !== undefined)
+          .sort((a, b) => b.score - a.score);
+        // max 100 (s > ts * 0.001), not normalized, leaf only
+        const top100Leaves = leafPredictions.slice(0, 100);
+        const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
+        // max 15 (s > ts * 0.001), not normalized, leaf only
+        const top15Leaves = top100.slice(0, 15);
+        const commonAncestor = commonAncestorFromPredictions(
+          result.predictions,
+          top15Leaves,
+          newOptions.commonAncestorRankType,
+        );
+        // max 10 (s > ts * 0.001), not normalized, leaf only
+        const top10 = top100.slice(0, 10);
+        const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
+          scalePrediction(prediction),
+        );
+        const commonAncestorWithScaledScores = commonAncestor
+          ? scalePrediction(commonAncestor)
+          : undefined;
+        return Object.assign({}, result, {
+          predictions: top10WithScaledScores,
+          commonAncestor: commonAncestorWithScaledScores,
+        });
+      }
 
-    const predictions = result.predictions
-      // only KPCOFGS ranks qualify as "top" predictions
-      // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-      .filter((prediction) => prediction.rank_level % 10 === 0)
-      .map((prediction) => scalePrediction(prediction))
-      .filter(
-        (prediction) =>
-          prediction.score > (newOptions.confidenceThreshold || 70),
-      );
+      const predictions = result.predictions
+        // only KPCOFGS ranks qualify as "top" predictions
+        // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+        .filter((prediction) => prediction.rank_level % 10 === 0)
+        .map((prediction) => scalePrediction(prediction))
+        .filter(
+          (prediction) =>
+            prediction.score > (newOptions.confidenceThreshold || 70),
+        );
 
-    return {
-      ...result,
-      predictions,
-    };
-  });
+      return {
+        ...result,
+        predictions,
+      };
+    },
+  );
 }
 
 interface OptionsForLocation {

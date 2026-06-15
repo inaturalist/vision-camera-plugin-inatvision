@@ -70,9 +70,9 @@ describe('limitLeafPredictionsThatIncludeHumans', () => {
     const human = prediction({ taxon_id: HUMAN_TAXON_ID, score: 0.9 });
     const other = prediction({ taxon_id: 2, score: 0.5 });
 
-    expect(
-      limitLeafPredictionsThatIncludeHumans([human, other]),
-    ).toEqual([human]);
+    expect(limitLeafPredictionsThatIncludeHumans([human, other])).toEqual([
+      human,
+    ]);
   });
 
   it('returns an empty array when humans lead but the margin is too small', () => {
@@ -86,8 +86,6 @@ describe('limitLeafPredictionsThatIncludeHumans', () => {
     const other = prediction({ taxon_id: 2, score: 0.9 });
     const human = prediction({ taxon_id: HUMAN_TAXON_ID, score: 0.5 });
 
-    expect(
-      limitLeafPredictionsThatIncludeHumans([other, human]),
-    ).toEqual([]);
+    expect(limitLeafPredictionsThatIncludeHumans([other, human])).toEqual([]);
   });
 });

@@ -43,9 +43,16 @@ export function resetStoredResults(): void {
 }
 
 /**
+ * Payload emitted on the `CameraLog` event (Android only).
+ */
+export interface CameraLogEvent {
+  log: string;
+}
+
+/**
  *  Adds a listener for the camera log event
  */
-export function addLogListener(callback: Function): void {
+export function addLogListener(callback: (event: CameraLogEvent) => void): void {
   // Remove the previous listener if it exists
   if (state.eventListener) {
     state.eventListener.remove();

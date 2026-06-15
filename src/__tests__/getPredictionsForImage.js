@@ -128,4 +128,24 @@ describe('getPredictionsForImage result handling', () => {
       'native failure',
     );
   });
+
+  it('returns scaled best-branch predictions', async () => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockResolvedValueOnce(
+      {
+        predictions: [
+          {
+            rank_level: 10,
+            score: 0.8,
+            vision_score: 0.8,
+            taxon_id: '1',
+          },
+        ],
+      },
+    );
+
+    const result = await getPredictionsForImage(baseOptions);
+
+    expect(result.predictions).toHaveLength(1);
+    expect(result.predictions[0].score).toBe(80);
+  });
 });

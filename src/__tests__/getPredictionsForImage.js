@@ -1,4 +1,6 @@
-import { getPredictionsForImage } from '../index';
+import { NativeModules } from 'react-native';
+
+import { getPredictionsForImage, MODE } from '../index';
 
 const correctOptions = {
   uri: 'testUri',
@@ -100,5 +102,82 @@ describe('cropRatio', () => {
     expect(() => getPredictionsForImage(options)).toThrowError(
       'cropRatio must be a number between 0 and 1.',
     );
+  });
+});
+
+describe('getPredictionsForImage result handling', () => {
+  const baseOptions = {
+    uri: 'testUri',
+    version: '1.0',
+    modelPath: 'testModelPath',
+    taxonomyPath: 'testTaxonomyPath',
+    confidenceThreshold: 0,
+  };
+
+  beforeEach(() => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockReset();
+  });
+
+  it('propagates native promise rejections', async () => {
+    const nativeError = new Error('native failure');
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockRejectedValueOnce(
+      nativeError,
+    );
+
+    await expect(getPredictionsForImage(baseOptions)).rejects.toThrow(
+      'native failure',
+    );
+  });
+
+  it('returns scaled best-branch predictions', async () => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockResolvedValueOnce(
+      {
+        predictions: [
+          {
+            rank_level: 10,
+            score: 0.8,
+            vision_score: 0.8,
+            taxon_id: '1',
+          },
+        ],
+      },
+    );
+
+    const result = await getPredictionsForImage(baseOptions);
+
+    expect(result.predictions).toHaveLength(1);
+    expect(result.predictions[0].score).toBe(80);
+  });
+
+  it('returns common-ancestor results in common ancestor mode', async () => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockResolvedValueOnce(
+      {
+        predictions: [
+          {
+            leaf_id: 1,
+            rank_level: 10,
+            score: 0.8,
+            vision_score: 0.8,
+            taxon_id: 101,
+            ancestor_ids: [20],
+          },
+          {
+            rank_level: 20,
+            score: 0,
+            vision_score: 0,
+            taxon_id: 20,
+            ancestor_ids: [],
+          },
+        ],
+      },
+    );
+
+    const result = await getPredictionsForImage({
+      ...baseOptions,
+      mode: MODE.COMMON_ANCESTOR,
+    });
+
+    expect(result.predictions[0].score).toBe(80);
+    expect(result.commonAncestor?.taxon_id).toBe(20);
   });
 });

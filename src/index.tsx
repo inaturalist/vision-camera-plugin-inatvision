@@ -43,9 +43,18 @@ export function resetStoredResults(): void {
 }
 
 /**
+ * Payload emitted on the `CameraLog` event (Android only).
+ */
+export interface CameraLogEvent {
+  log: string;
+}
+
+/**
  *  Adds a listener for the camera log event
  */
-export function addLogListener(callback: Function): void {
+export function addLogListener(
+  callback: (event: CameraLogEvent) => void,
+): void {
   // Remove the previous listener if it exists
   if (state.eventListener) {
     state.eventListener.remove();
@@ -66,6 +75,7 @@ export function removeLogListener(): void {
     return;
   }
   state.eventListener.remove();
+  state.eventListener = null;
 }
 
 enum RANK {
@@ -204,7 +214,19 @@ const supportedVersions = ['1.0', '2.3', '2.4', '2.13', '2.20', 'small_2'];
 
 function locationIsValid(location: Location): boolean {
   'worklet';
-  if (!location || !location.latitude || !location.longitude) {
+  if (!location) {
+    throw new Error('location must have latitude and longitude set.');
+  }
+  if (
+    typeof location.latitude !== 'number' ||
+    Number.isNaN(location.latitude)
+  ) {
+    throw new Error('location must have latitude and longitude set.');
+  }
+  if (
+    typeof location.longitude !== 'number' ||
+    Number.isNaN(location.longitude)
+  ) {
     throw new Error('location must have latitude and longitude set.');
   }
   return true;
@@ -268,7 +290,7 @@ function optionsAreValidForImage(options: OptionsForImage): boolean {
  * @param prediction A prediction object
  * @returns A copy of the prediction object with scaled scores
  */
-function scalePrediction(p: Prediction): Prediction {
+export function scalePrediction(p: Prediction): Prediction {
   'worklet';
 
   const prediction = { ...p };
@@ -318,33 +340,36 @@ function handleResult(result: any, options: Options): Result {
 
   // Store the result to module-wide state
   state.storedResults.value.push(result);
-  const maxNumStoredResults = options.numStoredResults || 5;
+  const maxNumStoredResults = options.numStoredResults ?? 5;
   while (state.storedResults.value.length > maxNumStoredResults) {
     state.storedResults.value.shift();
   }
 
   let current: Result = result;
-  const currentLastPrediction =
-    current.predictions[current.predictions.length - 1];
-  let currentScore = currentLastPrediction?.score || 0;
 
-  const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
-  // Select the best result from the stored results
-  for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
-    const candidateResult = state.storedResults.value[i];
-    if (!candidateResult) {
-      break;
-    }
-    const candidateLastPrediction =
-      candidateResult.predictions[candidateResult.predictions.length - 1];
-    const candidateScore = candidateLastPrediction?.score || 0;
+  if (maxNumStoredResults > 1) {
+    const currentLastPrediction =
+      current.predictions[current.predictions.length - 1];
+    let currentScore = currentLastPrediction?.score || 0;
 
-    const penalty =
-      1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+    const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
+    // Select the best result from the stored results
+    for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
+      const candidateResult = state.storedResults.value[i];
+      if (!candidateResult) {
+        break;
+      }
+      const candidateLastPrediction =
+        candidateResult.predictions[candidateResult.predictions.length - 1];
+      const candidateScore = candidateLastPrediction?.score || 0;
 
-    if (candidateScore * penalty > currentScore) {
-      current = candidateResult;
-      currentScore = candidateScore;
+      const penalty =
+        1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+
+      if (candidateScore * penalty > currentScore) {
+        current = candidateResult;
+        currentScore = candidateScore;
+      }
     }
   }
 
@@ -376,7 +401,12 @@ export interface Location {
   longitude: number;
   /**
    *
-   * The elevation of the location.
+   * The elevation of the location in meters.
+   *
+   * Optional for `getPredictionsForImage` and `getPredictionsForLocation`
+   * (elevation is looked up automatically). Required on the frame processor
+   * path when `useGeomodel` is true — call `getCellLocation` on the JS thread
+   * before passing `location` into `inatVision`.
    */
   elevation?: number;
 }
@@ -417,7 +447,10 @@ interface BaseOptions {
   useGeomodel?: boolean;
   /**
    *
-   * The location object used for geomodel prediction.
+   * The location used for geomodel prediction. When using the frame processor
+   * with `useGeomodel`, pass a location that includes `elevation` (typically
+   * from `getCellLocation`). The image API snaps coordinates and fills in
+   * elevation automatically via `lookUpLocation`.
    */
   location?: Location;
   /**
@@ -462,12 +495,23 @@ interface Options extends BaseOptions {
   negativeFilter?: null | boolean;
 }
 
+/**
+ * Snap a coordinate to its H3 cell centroid and look up elevation. Call on the
+ * JS thread and pass the result as `options.location` when using the frame
+ * processor with `useGeomodel`.
+ */
 export function getCellLocation(location: Location): LocationLookup {
   return lookUpLocation(location);
 }
 
 /**
- * Function to call the computer vision model with a frame from the camera
+ * Function to call the computer vision model with a frame from the camera.
+ *
+ * When `useGeomodel` is enabled, `options.location` must include `elevation`.
+ * The frame worklet cannot run `lookUpLocation` (it loads a large JSON file),
+ * so compute the cell centroid and elevation with `getCellLocation` on the JS
+ * thread and pass the result as `options.location`.
+ *
  * @param frame The frame to predict on.
  * @param options The options for the prediction.
  */
@@ -510,7 +554,7 @@ interface OptionsForImage extends BaseOptions {
 }
 
 const HUMAN_TAXON_ID = 43584;
-function limitLeafPredictionsThatIncludeHumans(
+export function limitLeafPredictionsThatIncludeHumans(
   predictions: Prediction[],
 ): Prediction[] {
   // If only one prediction, return original array
@@ -549,7 +593,7 @@ function limitLeafPredictionsThatIncludeHumans(
   return [];
 }
 
-function commonAncestorFromPredictions(
+export function commonAncestorFromPredictions(
   predictions: Prediction[],
   top15Leaves: Prediction[],
   commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
@@ -608,7 +652,7 @@ function commonAncestorFromPredictions(
 const commonAncestorScoreThreshold = 0.78;
 const commonAncestorRankLevelMin = 20;
 const commonAncestorRankLevelMax = 33;
-function commonAncestorFromAggregatedScores(
+export function commonAncestorFromAggregatedScores(
   predictions: Prediction[],
   commonAncestorRankType: COMMON_ANCESTOR_RANK_TYPE | undefined,
 ): Prediction | undefined {
@@ -656,59 +700,54 @@ export function getPredictionsForImage(
     const locationLookup = lookUpLocation(options.location);
     newOptions.location = locationLookup;
   }
-  return new Promise((resolve, reject) => {
-    VisionCameraPluginInatVision.getPredictionsForImage(newOptions)
-      .then((result: ResultForImage) => {
-        if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
-          // From native we get all predictions (leaves and ancestors) that have
-          // score > top score * 0.001, score & vision score is normalized
-          const leafPredictions = result.predictions
-            .filter((p) => p?.leaf_id !== undefined)
-            .sort((a, b) => b.score - a.score);
-          // max 100 (s > ts * 0.001), not normalized, leaf only
-          const top100Leaves = leafPredictions.slice(0, 100);
-          const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
-          // max 15 (s > ts * 0.001), not normalized, leaf only
-          const top15Leaves = top100.slice(0, 15);
-          const commonAncestor = commonAncestorFromPredictions(
-            result.predictions,
-            top15Leaves,
-            newOptions.commonAncestorRankType,
-          );
-          // max 10 (s > ts * 0.001), not normalized, leaf only
-          const top10 = top100.slice(0, 10);
-          const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
-            scalePrediction(prediction),
-          );
-          const commonAncestorWithScaledScores = commonAncestor
-            ? scalePrediction(commonAncestor)
-            : undefined;
-          const resultWithCommonAncestor = Object.assign({}, result, {
-            predictions: top10WithScaledScores,
-            commonAncestor: commonAncestorWithScaledScores,
-          });
-          resolve(resultWithCommonAncestor);
-        } else {
-          const predictions = result.predictions
-            // only KPCOFGS ranks qualify as "top" predictions
-            // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-            .filter((prediction) => prediction.rank_level % 10 === 0)
-            .map((prediction) => scalePrediction(prediction))
-            .filter(
-              (prediction) =>
-                prediction.score > (newOptions.confidenceThreshold || 70),
-            );
-          const handledResult = {
-            ...result,
-            predictions,
-          };
-          resolve(handledResult);
-        }
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+  return VisionCameraPluginInatVision.getPredictionsForImage(newOptions).then(
+    (result: ResultForImage) => {
+      if (newOptions?.mode === MODE.COMMON_ANCESTOR) {
+        // From native we get all predictions (leaves and ancestors) that have
+        // score > top score * 0.001, score & vision score is normalized
+        const leafPredictions = result.predictions
+          .filter((p) => p?.leaf_id !== undefined)
+          .sort((a, b) => b.score - a.score);
+        // max 100 (s > ts * 0.001), not normalized, leaf only
+        const top100Leaves = leafPredictions.slice(0, 100);
+        const top100 = limitLeafPredictionsThatIncludeHumans(top100Leaves);
+        // max 15 (s > ts * 0.001), not normalized, leaf only
+        const top15Leaves = top100.slice(0, 15);
+        const commonAncestor = commonAncestorFromPredictions(
+          result.predictions,
+          top15Leaves,
+          newOptions.commonAncestorRankType,
+        );
+        // max 10 (s > ts * 0.001), not normalized, leaf only
+        const top10 = top100.slice(0, 10);
+        const top10WithScaledScores: Prediction[] = top10.map((prediction) =>
+          scalePrediction(prediction),
+        );
+        const commonAncestorWithScaledScores = commonAncestor
+          ? scalePrediction(commonAncestor)
+          : undefined;
+        return Object.assign({}, result, {
+          predictions: top10WithScaledScores,
+          commonAncestor: commonAncestorWithScaledScores,
+        });
+      }
+
+      const predictions = result.predictions
+        // only KPCOFGS ranks qualify as "top" predictions
+        // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+        .filter((prediction) => prediction.rank_level % 10 === 0)
+        .map((prediction) => scalePrediction(prediction))
+        .filter(
+          (prediction) =>
+            prediction.score > (newOptions.confidenceThreshold || 70),
+        );
+
+      return {
+        ...result,
+        predictions,
+      };
+    },
+  );
 }
 
 interface OptionsForLocation {

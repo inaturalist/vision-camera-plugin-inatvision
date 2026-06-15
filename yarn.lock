@@ -3309,15 +3309,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-native@npm:0.70.0":
-  version: 0.70.0
-  resolution: "@types/react-native@npm:0.70.0"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 10c0/c443c86bb1f2401725919c0f2c9974ea5bfbcda3bc85cc78e2ad28c00871df3a4fde91e91eb81ccf63f8d46deee5192e935ea5f61e358607c78a3387c8e4b70c
-  languageName: node
-  linkType: hard
-
 "@types/react-test-renderer@npm:^19.1.0":
   version: 19.1.0
   resolution: "@types/react-test-renderer@npm:19.1.0"
@@ -13215,7 +13206,6 @@ __metadata:
     "@release-it/conventional-changelog": "npm:^9.0.2"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^19.2.0"
-    "@types/react-native": "npm:0.70.0"
     csv-parser: "npm:^3.2.0"
     del-cli: "npm:^5.1.0"
     download: "npm:^8.0.0"

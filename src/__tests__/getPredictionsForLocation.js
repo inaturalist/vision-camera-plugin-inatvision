@@ -19,7 +19,7 @@ describe('getPredictionsForLocation', () => {
 
 describe('location', () => {
   it('should not throw an error when elevation which is optional is given', () => {
-    const options = correctOptions;
+    const options = { ...correctOptions };
     options.location.elevation = 12.123;
 
     expect(() => getPredictionsForLocation(options)).not.toThrowError();

@@ -62,8 +62,9 @@
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
-    // Log arguments
+#ifdef DEBUG
     NSLog(@"inatVision arguments: %@", arguments);
+#endif
     // Destructure version out of options
     NSString *version = arguments[@"version"];
     // Destructure model path out of options
@@ -92,7 +93,9 @@
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
     } else {
+#ifdef DEBUG
         NSLog(@"Not using geomodel for this frame.");
+#endif
     }
 
     CMSampleBufferRef buffer = frame.buffer;
@@ -128,7 +131,9 @@
 
     // End timestamp
     NSTimeInterval timeElapsed = [[NSDate date] timeIntervalSinceDate:startDate];
+#ifdef DEBUG
     NSLog(@"inatVision took %f seconds", timeElapsed);
+#endif
 
     // Create a new dictionary with the predictions under the key "predictions"
     NSDictionary *response = [NSDictionary dictionary];

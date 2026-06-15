@@ -121,9 +121,10 @@
         }
     }
 
-    // Log length of scores
+#ifdef DEBUG
     NSLog(@"Length of scores: %lu", (unsigned long)scores.count);
     NSLog(@"Length of filteredOutScores: %lu", (unsigned long)filteredOutScores.count);
+#endif
 
     return [NSArray arrayWithArray:scores];
 }
@@ -149,8 +150,9 @@
     NSDictionary *visionScoresDict = aggregatedScores[@"aggregatedVisionScores"];
     NSDictionary *geoScoresDict = aggregatedScores[@"aggregatedGeoScores"];
     NSDictionary *geoThresholdsDict = aggregatedScores[@"aggregatedGeoThresholds"];
-    // Log number of nodes in combinedScoresDict
+#ifdef DEBUG
     NSLog(@"Number of nodes in combinedScoresDict: %lu", (unsigned long)combinedScoresDict.count);
+#endif
     NSMutableArray *scoresArray = [NSMutableArray array];
     for (NSNumber *taxonId in combinedScoresDict.allKeys) {
         VCPNode *node = self.nodesByTaxonId[taxonId];
@@ -288,8 +290,9 @@
     NSDictionary *visionScores = allScoresDict[@"aggregatedVisionScores"];
     NSDictionary *geoScores = allScoresDict[@"aggregatedGeoScores"];
     NSDictionary *geoThresholds = allScoresDict[@"aggregatedGeoThresholds"];
-    // Log number of nodes in combinedScores
+#ifdef DEBUG
     NSLog(@"Number of nodes in combinedScores: %lu", (unsigned long)combinedScores.count);
+#endif
 
     // start from life
     VCPNode *currentNode = self.life;

@@ -148,4 +148,36 @@ describe('getPredictionsForImage result handling', () => {
     expect(result.predictions).toHaveLength(1);
     expect(result.predictions[0].score).toBe(80);
   });
+
+  it('returns common-ancestor results in common ancestor mode', async () => {
+    NativeModules.VisionCameraPluginInatVision.getPredictionsForImage.mockResolvedValueOnce(
+      {
+        predictions: [
+          {
+            leaf_id: 1,
+            rank_level: 10,
+            score: 0.8,
+            vision_score: 0.8,
+            taxon_id: 101,
+            ancestor_ids: [20],
+          },
+          {
+            rank_level: 20,
+            score: 0,
+            vision_score: 0,
+            taxon_id: 20,
+            ancestor_ids: [],
+          },
+        ],
+      },
+    );
+
+    const result = await getPredictionsForImage({
+      ...baseOptions,
+      mode: MODE.COMMON_ANCESTOR,
+    });
+
+    expect(result.predictions[0].score).toBe(80);
+    expect(result.commonAncestor?.taxon_id).toBe(20);
+  });
 });

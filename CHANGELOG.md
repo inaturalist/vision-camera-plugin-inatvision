@@ -22,6 +22,7 @@ in case of vulnerabilities.
 ### Changed
 - Breaking: Changed to use LiteRT instead of tensorflow-lite on Android. Set version with `litertVersion` property instead of `tensorflowVersion`.
 - Updated peer dependencies to latest versions.
+- Fixed: Model being put into memory twice in one session on iOS
 ## [5.3.0] - 2025-08-29
 ### Changed
 - Updated react-native-vision-camera dependency to >= v4.1.0 this includes native handling of camera orientation

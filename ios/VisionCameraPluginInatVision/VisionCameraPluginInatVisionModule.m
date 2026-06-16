@@ -9,6 +9,7 @@
 #import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
 #import "VCPMLUtils.h"
+#import "VCPModelProvider.h"
 
 #import <React/RCTBridgeModule.h>
 
@@ -16,43 +17,10 @@
 // maybe there is some kind of name conflict somewhere. So I changed the name to AwesomeModule
 // because it doesn't matter what the name is and it is quite awesome.
 @interface AwesomeModule : NSObject <RCTBridgeModule>
-
-+ (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
-+ (VCPGeomodel *)geomodelWithModelFile:(NSString *)geomodelPath;
-+ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
-
 @end
 
 @implementation AwesomeModule
 RCT_EXPORT_MODULE(VisionCameraPluginInatVision)
-
-+ (VCPTaxonomy *)taxonomyWithTaxonomyFile:(NSString *)taxonomyPath {
-    static VCPTaxonomy *taxonomy = nil;
-    if (taxonomy == nil) {
-        taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
-    }
-    return taxonomy;
-}
-
-+ (VCPGeomodel *)geomodelWithModelFile:(NSString *)modelPath {
-    static VCPGeomodel *geomodel = nil;
-
-    if (geomodel == nil) {
-        geomodel = [[VCPGeomodel alloc] initWithModelPath:modelPath];
-    }
-
-    return geomodel;
-}
-
-+ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
-    static VCPVisionModel *cvModel = nil;
-
-    if (cvModel == nil) {
-        cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
-    }
-
-    return cvModel;
-}
 
 RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
                   resolve:(RCTPromiseResolveBlock)resolve
@@ -88,7 +56,7 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     if ([options objectForKey:@"useGeomodel"] &&
         [[options objectForKey:@"useGeomodel"] boolValue])
     {
-        VCPGeomodel *geomodel = [AwesomeModule geomodelWithModelFile:geomodelPath];
+        VCPGeomodel *geomodel = [VCPModelProvider geomodelWithModelFile:geomodelPath];
         geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
@@ -97,10 +65,10 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
     }
 
     // Setup taxonomy
-    VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
+    VCPTaxonomy *taxonomy = [VCPModelProvider taxonomyWithTaxonomyFile:taxonomyPath];
 
     // Setup vision model
-    VCPVisionModel *cvModel = [AwesomeModule visionModelWithModelFile:modelPath];
+    VCPVisionModel *cvModel = [VCPModelProvider visionModelWithModelFile:modelPath];
 
     // If uri starts with ph://, it's a photo library asset
     if ([uri hasPrefix:@"ph://"]) {
@@ -249,10 +217,10 @@ RCT_EXPORT_METHOD(getPredictionsForLocation:(NSDictionary *)options
     NSNumber *elevation = location[@"elevation"];
 
     // Setup taxonomy
-    VCPTaxonomy *taxonomy = [AwesomeModule taxonomyWithTaxonomyFile:taxonomyPath];
+    VCPTaxonomy *taxonomy = [VCPModelProvider taxonomyWithTaxonomyFile:taxonomyPath];
 
     MLMultiArray *geomodelPreds = nil;
-    VCPGeomodel *geomodel = [AwesomeModule geomodelWithModelFile:geomodelPath];
+    VCPGeomodel *geomodel = [VCPModelProvider geomodelWithModelFile:geomodelPath];
     geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                             lng:longitude.floatValue
                                       elevation:elevation.floatValue];

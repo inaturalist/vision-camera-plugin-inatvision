@@ -13,44 +13,12 @@
 #import "VCPGeomodel.h"
 #import "VCPVisionModel.h"
 #import "VCPMLUtils.h"
+#import "VCPModelProvider.h"
 
 @interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
-
-+ (VCPTaxonomy *) taxonomyWithTaxonomyFile:(NSString *)taxonomyPath;
-+ (VCPGeomodel *)geomodelWithModelFile:(NSString *)geomodelPath;
-+ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath;
-
 @end
 
 @implementation VisionCameraPluginInatVisionPlugin
-
-+ (VCPTaxonomy *)taxonomyWithTaxonomyFile:(NSString *)taxonomyPath {
-    static VCPTaxonomy *taxonomy = nil;
-    if (taxonomy == nil) {
-        taxonomy = [[VCPTaxonomy alloc] initWithTaxonomyFile:taxonomyPath];
-    }
-    return taxonomy;
-}
-
-+ (VCPGeomodel *)geomodelWithModelFile:(NSString *)modelPath {
-    static VCPGeomodel *geomodel = nil;
-
-    if (geomodel == nil) {
-        geomodel = [[VCPGeomodel alloc] initWithModelPath:modelPath];
-    }
-
-    return geomodel;
-}
-
-+ (VCPVisionModel *)visionModelWithModelFile:(NSString *)modelPath {
-    static VCPVisionModel *cvModel = nil;
-
-    if (cvModel == nil) {
-        cvModel = [[VCPVisionModel alloc] initWithModelPath:modelPath];
-    }
-
-    return cvModel;
-}
 
 - (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
                   withOptions:(NSDictionary* _Nullable)options {
@@ -88,7 +56,7 @@
     if ([arguments objectForKey:@"useGeomodel"] &&
         [[arguments objectForKey:@"useGeomodel"] boolValue])
     {
-        VCPGeomodel *geomodel = [VisionCameraPluginInatVisionPlugin geomodelWithModelFile:geomodelPath];
+        VCPGeomodel *geomodel = [VCPModelProvider geomodelWithModelFile:geomodelPath];
         geomodelPreds = [geomodel predictionsForLat:latitude.floatValue
                                                 lng:longitude.floatValue
                                           elevation:elevation.floatValue];
@@ -102,7 +70,7 @@
     CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
     UIImageOrientation orientation = frame.orientation;
 
-    VCPVisionModel *cvModel = [VisionCameraPluginInatVisionPlugin visionModelWithModelFile:modelPath];
+    VCPVisionModel *cvModel = [VCPModelProvider visionModelWithModelFile:modelPath];
     MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];
 
     MLMultiArray *results = nil;
@@ -116,7 +84,7 @@
     }
 
     // Setup taxonomy
-    VCPTaxonomy *taxonomy = [VisionCameraPluginInatVisionPlugin taxonomyWithTaxonomyFile:taxonomyPath];
+    VCPTaxonomy *taxonomy = [VCPModelProvider taxonomyWithTaxonomyFile:taxonomyPath];
     [taxonomy deriveTopScoreRatioCutoff:results];
     if (taxonomyRollupCutoff) {
       [taxonomy setTaxonomyRollupCutoff:taxonomyRollupCutoff.floatValue];
@@ -148,4 +116,4 @@
 VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
 
 @end
-
+ 

@@ -232,6 +232,30 @@ function locationIsValid(location: Location): boolean {
   return true;
 }
 
+/**
+ * URI scheme matcher, e.g. `file://`, `ph://`, `content://`, `assets-library://`.
+ * Per RFC 3986 a scheme is `ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )`.
+ */
+const uriSchemeRegex = /^[a-z][a-z0-9+.-]*:\/\//i;
+
+function uriIsValid(uri: string): boolean {
+  'worklet';
+  if (typeof uri !== 'string' || uri.trim().length === 0) {
+    throw new Error('uri must be a non-empty string.');
+  }
+  // Require a URI scheme. A bare path like "/foo/bar" is parsed to a relative,
+  // schemeless NSURL on iOS, where the classification then completes with blank
+  // results instead of failing. Reject it here with an informative error rather
+  // than letting it silently produce empty predictions. Both platforms expect a
+  // scheme such as `file://` (or `ph://` for the iOS photo library).
+  if (!uriSchemeRegex.test(uri)) {
+    throw new Error(
+      'uri must include a scheme, e.g. "file:///path/to/image.jpg" or "ph://...".',
+    );
+  }
+  return true;
+}
+
 function optionsAreValid(options: Options | OptionsForImage): boolean {
   'worklet';
   if (!supportedVersions.includes(options.version)) {
@@ -282,6 +306,7 @@ function optionsAreValidForFrame(options: Options): boolean {
 
 function optionsAreValidForImage(options: OptionsForImage): boolean {
   'worklet';
+  uriIsValid(options.uri);
   return optionsAreValid(options);
 }
 

@@ -3,7 +3,7 @@ import { NativeModules } from 'react-native';
 import { getPredictionsForImage, MODE } from '../index';
 
 const correctOptions = {
-  uri: 'testUri',
+  uri: 'file:///test/photo.jpg',
   version: '1.0',
   modelPath: 'testModelPath',
   taxonomyPath: 'testTaxonomyPath',
@@ -105,9 +105,66 @@ describe('cropRatio', () => {
   });
 });
 
+describe('uri', () => {
+  it('should not throw for a file:// uri', () => {
+    const options = { ...correctOptions, uri: 'file:///foo/bar.jpg' };
+
+    expect(() => getPredictionsForImage(options)).not.toThrowError();
+  });
+
+  it('should not throw for a ph:// uri', () => {
+    const options = {
+      ...correctOptions,
+      uri: 'ph://CC95F08C-88C3-4012-9D6D-64A413D254B3',
+    };
+
+    expect(() => getPredictionsForImage(options)).not.toThrowError();
+  });
+
+  it('should throw an error when uri is missing', () => {
+    const { uri, ...options } = correctOptions;
+
+    expect(() => getPredictionsForImage(options)).toThrowError(
+      'uri must be a non-empty string.',
+    );
+  });
+
+  it('should throw an error when uri is an empty string', () => {
+    const options = { ...correctOptions, uri: '   ' };
+
+    expect(() => getPredictionsForImage(options)).toThrowError(
+      'uri must be a non-empty string.',
+    );
+  });
+
+  it('should throw an error when uri is not a string', () => {
+    const options = { ...correctOptions, uri: 42 };
+
+    expect(() => getPredictionsForImage(options)).toThrowError(
+      'uri must be a non-empty string.',
+    );
+  });
+
+  it('should throw an error when uri is a bare path without a scheme', () => {
+    const options = { ...correctOptions, uri: '/foo/bar.jpg' };
+
+    expect(() => getPredictionsForImage(options)).toThrowError(
+      'uri must include a scheme',
+    );
+  });
+
+  it('should throw an error when uri is a relative path without a scheme', () => {
+    const options = { ...correctOptions, uri: 'testUri' };
+
+    expect(() => getPredictionsForImage(options)).toThrowError(
+      'uri must include a scheme',
+    );
+  });
+});
+
 describe('getPredictionsForImage result handling', () => {
   const baseOptions = {
-    uri: 'testUri',
+    uri: 'file:///test/photo.jpg',
     version: '1.0',
     modelPath: 'testModelPath',
     taxonomyPath: 'testTaxonomyPath',

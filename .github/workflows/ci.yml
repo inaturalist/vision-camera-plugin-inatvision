@@ -46,3 +46,33 @@ jobs:
 
       - name: Build package
         run: yarn prepack
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: example/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('example/ios/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-
+
+      - name: Install Pods
+        run: pod install --project-directory=example/ios
+
+      - name: Build example app for simulator
+        run: |
+          xcodebuild \
+            -workspace example/ios/VisionCameraPluginInatVisionExample.xcworkspace \
+            -scheme VisionCameraPluginInatVisionExample \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build

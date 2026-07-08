@@ -19,6 +19,7 @@ for any bug fixes.
 in case of vulnerabilities.
 
 ## [Unreleased] - YYYY-MM-DD
+## [6.0.0] - 2026-07-08
 ### Changed
 - Breaking: Changed to use LiteRT instead of tensorflow-lite on Android. Set version with `litertVersion` property instead of `tensorflowVersion`.
 - Updated peer dependencies to latest versions.

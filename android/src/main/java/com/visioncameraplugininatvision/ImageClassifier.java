@@ -163,15 +163,18 @@ public class ImageClassifier {
         for (int x = 0; x < ImageClassifier.DIM_IMG_SIZE_X; x++) {
             for (int y = 0; y < ImageClassifier.DIM_IMG_SIZE_Y; y++) {
                 int pixel = bitmap.getPixel(x, y);
+                // getPixel(x, y) takes (column, row); store at [row][col] = [y][x] so the
+                // tensor matches the model's expected NHWC layout. Storing at [x][y]
+                // transposed the image, which the iOS Vision/CoreML path never did.
                 if (mModelVersion.equals("1.0")) {
                   // Normalize channel values to [0.0, 1.0] for version 1.0
-                  input[0][x][y][0] = Color.red(pixel) / 255.0f;
-                  input[0][x][y][1] = Color.green(pixel) / 255.0f;
-                  input[0][x][y][2] = Color.blue(pixel) / 255.0f;
+                  input[0][y][x][0] = Color.red(pixel) / 255.0f;
+                  input[0][y][x][1] = Color.green(pixel) / 255.0f;
+                  input[0][y][x][2] = Color.blue(pixel) / 255.0f;
                 } else {
-                  input[0][x][y][0] = Color.red(pixel);
-                  input[0][x][y][1] = Color.green(pixel);
-                  input[0][x][y][2] = Color.blue(pixel);
+                  input[0][y][x][0] = Color.red(pixel);
+                  input[0][y][x][1] = Color.green(pixel);
+                  input[0][y][x][2] = Color.blue(pixel);
                 }
             }
         }

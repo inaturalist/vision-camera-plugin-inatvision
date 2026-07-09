@@ -169,6 +169,7 @@ public class VisionCameraPluginInatVisionModule extends ReactContextBaseJavaModu
                 String msg = String.format("Couldn't read image '%s'", uri.toString());
                 Timber.tag(TAG).w(msg);
                 promise.reject("E_IO_EXCEPTION", msg);
+                return;
             }
             Log.d(TAG, "originalBitmap: " + bitmap + ": " + bitmap.getWidth() + " x " + bitmap.getHeight());
             // Crop the center square of the frame with the given crop ratio

@@ -134,7 +134,17 @@ RCT_EXPORT_METHOD(getPredictionsForImage:(NSDictionary *)options
           resolve(response);
       }];
     } else {
-        NSURL *imageURL = [NSURL URLWithString:uri];
+        // `uri` may be a `file://` URL or a bare filesystem path. `URLWithString:`
+        // only parses the former; for a bare path it returns a scheme-less URL that
+        // later fails `CGImageSourceCreateWithURL`, and it returns nil for paths
+        // containing characters that are invalid in a URL (e.g. spaces). Use
+        // `fileURLWithPath:` for anything that isn't already a `file://` URL.
+        NSURL *imageURL;
+        if ([uri hasPrefix:@"file://"]) {
+            imageURL = [NSURL URLWithString:uri];
+        } else {
+            imageURL = [NSURL fileURLWithPath:uri];
+        }
         if (!imageURL) {
             reject(@"invalid_uri", @"Invalid image URI format", nil);
             return;

@@ -175,9 +175,10 @@ export default function App(): React.JSX.Element {
     }
   }, []);
 
-
   const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation,
+  );
+
   const handleResults = useMemo(
     () =>
       Worklets.createRunOnJS((predictions: InatVision.Prediction[]) => {

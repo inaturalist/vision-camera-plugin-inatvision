@@ -23,7 +23,7 @@ import {
 } from 'react-native-vision-camera';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
-import { Worklets } from 'react-native-worklets-core';
+import { useSharedValue, Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 import {
   copyFileAssets,
@@ -178,6 +178,23 @@ export default function App(): React.JSX.Element {
   const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation,
   );
+  const confidenceThresholdSV = useSharedValue(confidenceThreshold);
+  const filterByTaxonIdSV = useSharedValue(filterByTaxonId);
+  const negativeFilterSV = useSharedValue(negativeFilter);
+  const useGeomodelSV = useSharedValue(useGeomodel);
+
+  useEffect(() => {
+    confidenceThresholdSV.value = confidenceThreshold;
+  }, [confidenceThreshold, confidenceThresholdSV]);
+  useEffect(() => {
+    filterByTaxonIdSV.value = filterByTaxonId;
+  }, [filterByTaxonId, filterByTaxonIdSV]);
+  useEffect(() => {
+    negativeFilterSV.value = negativeFilter;
+  }, [negativeFilter, negativeFilterSV]);
+  useEffect(() => {
+    useGeomodelSV.value = useGeomodel;
+  }, [useGeomodel, useGeomodelSV]);
 
   const handleResults = useMemo(
     () =>
@@ -199,12 +216,12 @@ export default function App(): React.JSX.Element {
             version: modelVersion,
             modelPath,
             taxonomyPath,
-            confidenceThreshold,
-            filterByTaxonId,
-            negativeFilter,
+            confidenceThreshold: confidenceThresholdSV.value,
+            filterByTaxonId: filterByTaxonIdSV.value,
+            negativeFilter: negativeFilterSV.value,
             numStoredResults: 4,
             cropRatio: 0.9,
-            useGeomodel,
+            useGeomodel: useGeomodelSV.value,
             geomodelPath,
             location: {
               latitude: geoModelCellLocation.latitude,
@@ -223,11 +240,11 @@ export default function App(): React.JSX.Element {
       });
     },
     [
-      confidenceThreshold,
-      filterByTaxonId,
-      negativeFilter,
+      confidenceThresholdSV,
+      filterByTaxonIdSV,
+      negativeFilterSV,
+      useGeomodelSV,
       handleResults,
-      useGeomodel,
       geoModelCellLocation,
     ],
   );

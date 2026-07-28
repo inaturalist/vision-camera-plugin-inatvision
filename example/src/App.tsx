@@ -221,7 +221,6 @@ export default function App(): React.JSX.Element {
       });
     },
     [
-      patchedRunAsync,
       confidenceThreshold,
       filterByTaxonId,
       negativeFilter,

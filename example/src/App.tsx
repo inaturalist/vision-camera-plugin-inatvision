@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -175,14 +175,15 @@ export default function App(): React.JSX.Element {
     }
   }, []);
 
-  const handleResults = Worklets.createRunOnJS(
-    (predictions: InatVision.Prediction[]) => {
-      setResult(predictions);
-    },
-  );
 
   const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation,
+  const handleResults = useMemo(
+    () =>
+      Worklets.createRunOnJS((predictions: InatVision.Prediction[]) => {
+        setResult(predictions);
+      }),
+    [],
   );
 
   const frameProcessor = useFrameProcessor(

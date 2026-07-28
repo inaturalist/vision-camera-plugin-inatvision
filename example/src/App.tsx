@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Camera,
+  runAtTargetFps,
   useCameraDevice,
   useFrameProcessor,
   useCameraPermission,
@@ -30,9 +31,6 @@ import {
   MainBundlePath,
   readDir,
 } from '@dr.pogodin/react-native-fs';
-
-// @ts-ignore
-import usePatchedRunAsync from './visionCameraPatches';
 
 const testLocationEurope = {
   latitude: 54.29,
@@ -187,11 +185,10 @@ export default function App(): React.JSX.Element {
     testLocationEuropeNoElevation,
   );
 
-  const patchedRunAsync = usePatchedRunAsync();
   const frameProcessor = useFrameProcessor(
     (frame) => {
       'worklet';
-      patchedRunAsync(frame, () => {
+      runAtTargetFps(3, () => {
         'worklet';
         try {
           const timeBefore = new Date().getTime();

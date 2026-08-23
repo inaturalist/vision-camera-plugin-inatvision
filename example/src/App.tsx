@@ -175,13 +175,19 @@ export default function App(): React.JSX.Element {
     }
   }, []);
 
-  const geoModelCellLocation = InatVision.getCellLocation(
-    testLocationEuropeNoElevation,
-  );
+  // Keep options in shared values so the frame processor deps stay stable.
+  // VisionCamera runAsync retains frames and leaks memory on this stack;
+  // use synchronous runAtTargetFps instead.
+  // In real clients, location often comes from props — mirror that by syncing
+  // a shared value whenever the source location changes.
+  const locationForGeomodel = testLocationEuropeNoElevation;
   const confidenceThresholdSV = useSharedValue(confidenceThreshold);
   const filterByTaxonIdSV = useSharedValue(filterByTaxonId);
   const negativeFilterSV = useSharedValue(negativeFilter);
   const useGeomodelSV = useSharedValue(useGeomodel);
+  const geoModelCellLocationSV = useSharedValue(
+    InatVision.getCellLocation(locationForGeomodel),
+  );
 
   useEffect(() => {
     confidenceThresholdSV.value = confidenceThreshold;
@@ -195,6 +201,10 @@ export default function App(): React.JSX.Element {
   useEffect(() => {
     useGeomodelSV.value = useGeomodel;
   }, [useGeomodel, useGeomodelSV]);
+  useEffect(() => {
+    geoModelCellLocationSV.value =
+      InatVision.getCellLocation(locationForGeomodel);
+  }, [locationForGeomodel, geoModelCellLocationSV]);
 
   const handleResults = useMemo(
     () =>
@@ -211,6 +221,7 @@ export default function App(): React.JSX.Element {
         'worklet';
         try {
           const timeBefore = new Date().getTime();
+          const geoModelCellLocation = geoModelCellLocationSV.value;
 
           const cvResult: InatVision.Result = InatVision.inatVision(frame, {
             version: modelVersion,
@@ -244,8 +255,8 @@ export default function App(): React.JSX.Element {
       filterByTaxonIdSV,
       negativeFilterSV,
       useGeomodelSV,
+      geoModelCellLocationSV,
       handleResults,
-      geoModelCellLocation,
     ],
   );
 

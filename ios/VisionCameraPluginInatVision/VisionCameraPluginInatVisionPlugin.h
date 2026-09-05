@@ -3,6 +3,6 @@
 
 @interface VisionCameraPluginInatVisionPlugin : NSObject
 
-- (id)callback:(CVImageBufferRef *)pixelBuffer withArguments:(NSDictionary *)arguments;
+- (id)callback:(CVPixelBufferRef)pixelBuffer withArguments:(NSDictionary *)arguments;
 
 @end

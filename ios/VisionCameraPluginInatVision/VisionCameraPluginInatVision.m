@@ -14,7 +14,7 @@
 
 @implementation VisionCameraPluginInatVisionPlugin
 
-- (id)callback:(CVImageBufferRef*)pixelBuffer withArguments:(NSDictionary*)arguments {
+- (id)callback:(CVPixelBufferRef)pixelBuffer withArguments:(NSDictionary*)arguments {
     // Start timestamp
     NSDate *startDate = [NSDate date];
 

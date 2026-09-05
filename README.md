@@ -1,6 +1,6 @@
 # vision-camera-plugin-inatvision
 
-A [VisionCamera](https://github.com/mrousavy/react-native-vision-camera) Frame Processor Plugin to label images using iNaturalist's computer vision model on device.
+A [VisionCamera](https://github.com/margelo/react-native-vision-camera) Frame Processor Plugin to label images using iNaturalist's computer vision model on device.
 
 ## Installation
 
@@ -19,18 +19,6 @@ A [VisionCamera](https://github.com/mrousavy/react-native-vision-camera) Frame P
 npm install
 cd ios && pod install
 ```
-
-3. Add the plugin to your `babel.config.js`:
-
-```js
-module.exports = {
-  plugins: [
-    ['react-native-worklets-core/plugin'],
-
-    // ...
-```
-
-> Note: You have to restart metro-bundler for changes in the `babel.config.js` file to take effect.
 
 ## Usage
 

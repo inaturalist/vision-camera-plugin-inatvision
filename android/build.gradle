@@ -81,7 +81,11 @@ dependencies {
   implementation "com.facebook.react:react-native"
   // Basic dependencies for the frame processor using vision camera
   implementation project(":react-native-vision-camera")
-  implementation "androidx.camera:camera-core:1.1.0-alpha08"
+
+  // Add minimal dependency on CameraX
+  def camerax_version = "1.7.0-alpha01"
+  implementation "androidx.camera:camera-core:${camerax_version}"
+
   // Requirements for our custom image labeling and processing
   implementation 'androidx.exifinterface:exifinterface:1.2.0'
   // CV model 1.0 works with TF Lite 1.15.0

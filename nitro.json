@@ -1,11 +1,11 @@
 {
   "$schema": "https://nitro.margelo.com/nitro.schema.json",
-  "cxxNamespace": ["com", "visioncameraplugininatvision"],
+  "cxxNamespace": ["visioncameraplugininatvision"],
   "ios": {
     "iosModuleName": "VisionCameraPluginInatVision"
   },
   "android": {
-    "androidNamespace": ["com", "visioncameraplugininatvision"],
+    "androidNamespace": ["visioncameraplugininatvision"],
     "androidCxxLibName": "VisionCameraPluginInatVision"
   },
   "autolinking": {

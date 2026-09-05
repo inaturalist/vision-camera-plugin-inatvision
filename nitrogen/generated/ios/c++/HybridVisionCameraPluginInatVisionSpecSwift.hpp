@@ -21,7 +21,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 
 #include "VisionCameraPluginInatVision-Swift-Cxx-Umbrella.hpp"
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   /**
    * The C++ part of HybridVisionCameraPluginInatVisionSpec_cxx.swift.
@@ -82,4 +82,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
     VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionSpec_cxx _swiftPart;
   };
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

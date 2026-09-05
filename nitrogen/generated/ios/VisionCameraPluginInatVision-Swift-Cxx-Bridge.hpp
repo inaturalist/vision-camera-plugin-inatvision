@@ -11,7 +11,7 @@
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
-namespace margelo::nitro::com::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
+namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridFrameSpec_cxx` to properly resolve imports.
@@ -31,7 +31,7 @@ namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisio
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
  * as well as helper functions to interact with those C++ types from Swift.
  */
-namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
+namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
 
   // pragma MARK: std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>
   /**
@@ -66,4 +66,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
     return Result<std::shared_ptr<AnyMap>>::withError(error);
   }
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift
+} // namespace margelo::nitro::visioncameraplugininatvision::bridge::swift

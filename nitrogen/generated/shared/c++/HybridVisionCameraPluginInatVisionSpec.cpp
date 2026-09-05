@@ -7,7 +7,7 @@
 
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   void HybridVisionCameraPluginInatVisionSpec::loadHybridMethods() {
     // load base methods/properties
@@ -18,4 +18,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
     });
   }
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

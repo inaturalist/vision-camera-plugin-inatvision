@@ -19,7 +19,7 @@
 
 + (void) load {
   using namespace margelo::nitro;
-  using namespace margelo::nitro::com::visioncameraplugininatvision;
+  using namespace margelo::nitro::visioncameraplugininatvision;
 
   HybridObjectRegistry::registerHybridObjectConstructor(
     "VisionCameraPluginInatVision",

@@ -11,7 +11,7 @@
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
-namespace margelo::nitro::com::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
+namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
 
 // Include C++ defined types
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"

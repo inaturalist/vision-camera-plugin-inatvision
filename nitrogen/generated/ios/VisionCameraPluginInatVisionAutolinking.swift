@@ -10,7 +10,7 @@ import NitroModules
 // TODO: Use empty enums once Swift supports exporting them as namespaces
 //       See: https://github.com/swiftlang/swift/pull/83616
 public final class VisionCameraPluginInatVisionAutolinking {
-  public typealias bridge = margelo.nitro.com.visioncameraplugininatvision.bridge.swift
+  public typealias bridge = margelo.nitro.visioncameraplugininatvision.bridge.swift
 
   public static func createVisionCameraPluginInatVision() -> bridge.std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ {
     let hybridObject = HybridVisionCameraPluginInatVision()

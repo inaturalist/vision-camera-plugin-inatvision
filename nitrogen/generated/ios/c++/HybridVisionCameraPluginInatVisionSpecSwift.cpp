@@ -7,5 +7,5 @@
 
 #include "HybridVisionCameraPluginInatVisionSpecSwift.hpp"
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+namespace margelo::nitro::visioncameraplugininatvision {
+} // namespace margelo::nitro::visioncameraplugininatvision

@@ -13,7 +13,7 @@
 #include <NitroModules/NitroDefines.hpp>
 #include <VisionCamera/VisionCamera-Swift-Cxx-Bridge.hpp>
 
-namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
+namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
 
   // pragma MARK: std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>
   std::shared_ptr<margelo::nitro::camera::HybridFrameSpec> create_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
@@ -28,10 +28,10 @@ namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
   // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>
   std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionSpec_cxx swiftPart = VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionSpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::com::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift>(swiftPart);
+    return std::make_shared<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift>(swiftPart);
   }
   void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ cppType) {
-    std::shared_ptr<margelo::nitro::com::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::com::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift>(cppType);
+    std::shared_ptr<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionSpecSwift>(cppType);
     #ifdef NITRO_DEBUG
     if (swiftWrapper == nullptr) [[unlikely]] {
       throw std::runtime_error("Class \"HybridVisionCameraPluginInatVisionSpec\" is not implemented in Swift!");
@@ -41,4 +41,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
     return swiftPart.toUnsafe();
   }
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift
+} // namespace margelo::nitro::visioncameraplugininatvision::bridge::swift

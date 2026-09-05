@@ -16,7 +16,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <VisionCamera/JHybridFrameSpec.hpp>
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   std::shared_ptr<JHybridVisionCameraPluginInatVisionSpec> JHybridVisionCameraPluginInatVisionSpec::JavaPart::getJHybridVisionCameraPluginInatVisionSpec() {
     auto hybridObject = JHybridObject::JavaPart::getJHybridObject();
@@ -55,4 +55,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
     return __result->cthis()->getMap();
   }
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

@@ -14,18 +14,18 @@
 
 
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   using namespace facebook;
 
   class JHybridVisionCameraPluginInatVisionSpec: public virtual HybridVisionCameraPluginInatVisionSpec, public virtual JHybridObject {
   public:
     struct JavaPart: public jni::JavaClass<JavaPart, JHybridObject::JavaPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/com/visioncameraplugininatvision/HybridVisionCameraPluginInatVisionSpec;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/visioncameraplugininatvision/HybridVisionCameraPluginInatVisionSpec;";
       std::shared_ptr<JHybridVisionCameraPluginInatVisionSpec> getJHybridVisionCameraPluginInatVisionSpec();
     };
     struct CxxPart: public jni::HybridClass<CxxPart, JHybridObject::CxxPart> {
-      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/com/visioncameraplugininatvision/HybridVisionCameraPluginInatVisionSpec$CxxPart;";
+      static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/visioncameraplugininatvision/HybridVisionCameraPluginInatVisionSpec$CxxPart;";
       static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject> jThis);
       static void registerNatives();
       using HybridBase::HybridBase;
@@ -60,4 +60,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
     jni::global_ref<JHybridVisionCameraPluginInatVisionSpec::JavaPart> _javaPart;
   };
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

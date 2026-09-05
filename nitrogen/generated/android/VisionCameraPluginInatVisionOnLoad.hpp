@@ -9,7 +9,7 @@
 #include <functional>
 #include <NitroModules/NitroDefines.hpp>
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   [[deprecated("Use registerNatives() instead.")]]
   int initialize(JavaVM* vm);
@@ -23,7 +23,7 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
    * JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
    *   return facebook::jni::initialize(vm, []() {
    *     // register all VisionCameraPluginInatVision HybridObjects
-   *     margelo::nitro::com::visioncameraplugininatvision::registerNatives();
+   *     margelo::nitro::visioncameraplugininatvision::registerNatives();
    *     // any other custom registrations go here.
    *   });
    * }
@@ -31,4 +31,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
    */
   void registerAllNatives();
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

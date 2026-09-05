@@ -20,7 +20,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
   using namespace margelo::nitro;
 
@@ -62,4 +62,4 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
       static constexpr auto TAG = "VisionCameraPluginInatVision";
   };
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

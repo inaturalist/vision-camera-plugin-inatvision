@@ -18,16 +18,16 @@
 #include "JHybridVisionCameraPluginInatVisionSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
-namespace margelo::nitro::com::visioncameraplugininatvision {
+namespace margelo::nitro::visioncameraplugininatvision {
 
 int initialize(JavaVM* vm) {
   return facebook::jni::initialize(vm, []() {
-    ::margelo::nitro::com::visioncameraplugininatvision::registerAllNatives();
+    ::margelo::nitro::visioncameraplugininatvision::registerAllNatives();
   });
 }
 
 struct JHybridVisionCameraPluginInatVisionSpecImpl: public jni::JavaClass<JHybridVisionCameraPluginInatVisionSpecImpl, JHybridVisionCameraPluginInatVisionSpec::JavaPart> {
-  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/com/visioncameraplugininatvision/HybridVisionCameraPluginInatVision;";
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/visioncameraplugininatvision/HybridVisionCameraPluginInatVision;";
   static std::shared_ptr<JHybridVisionCameraPluginInatVisionSpec> create() {
     static const auto constructorFn = javaClassStatic()->getConstructor<JHybridVisionCameraPluginInatVisionSpecImpl::javaobject()>();
     jni::local_ref<JHybridVisionCameraPluginInatVisionSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
@@ -37,10 +37,10 @@ struct JHybridVisionCameraPluginInatVisionSpecImpl: public jni::JavaClass<JHybri
 
 void registerAllNatives() {
   using namespace margelo::nitro;
-  using namespace margelo::nitro::com::visioncameraplugininatvision;
+  using namespace margelo::nitro::visioncameraplugininatvision;
 
   // Register native JNI methods
-  margelo::nitro::com::visioncameraplugininatvision::JHybridVisionCameraPluginInatVisionSpec::CxxPart::registerNatives();
+  margelo::nitro::visioncameraplugininatvision::JHybridVisionCameraPluginInatVisionSpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(
@@ -51,4 +51,4 @@ void registerAllNatives() {
   );
 }
 
-} // namespace margelo::nitro::com::visioncameraplugininatvision
+} // namespace margelo::nitro::visioncameraplugininatvision

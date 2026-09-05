@@ -5,7 +5,7 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-package com.margelo.nitro.com.visioncameraplugininatvision
+package com.margelo.nitro.visioncameraplugininatvision
 
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData

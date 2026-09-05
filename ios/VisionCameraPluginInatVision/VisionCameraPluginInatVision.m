@@ -26,7 +26,7 @@
     return self;
 }
 
-- (id)callback:(Frame*)frame withArguments:(NSDictionary*)arguments {
+- (id)callback:(CVImageBufferRef*)pixelBuffer withArguments:(NSDictionary*)arguments {
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
@@ -66,8 +66,6 @@
 #endif
     }
 
-    CMSampleBufferRef buffer = frame.buffer;
-    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
     UIImageOrientation orientation = frame.orientation;
 
     VCPVisionModel *cvModel = [VCPModelProvider visionModelWithModelFile:modelPath];

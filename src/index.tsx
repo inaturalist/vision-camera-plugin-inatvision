@@ -2,8 +2,8 @@ import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import { NitroModules } from 'react-native-nitro-modules';
 import type { Frame } from 'react-native-vision-camera';
-// import { Worklets } from 'react-native-worklets-core';
-// import type { ISharedValue } from 'react-native-worklets-core';
+import { createSynchronizable } from 'react-native-worklets';
+import type { Synchronizable } from 'react-native-worklets';
 
 import type { VisionCameraPluginInatVision } from './specs/VisionCameraPluginInatVision.nitro';
 import { lookUpLocation } from './lookUpLocation';
@@ -26,12 +26,12 @@ const VisionCameraPluginInatVision = NativeModules.VisionCameraPluginInatVision
 
 interface State {
   eventListener: null | EmitterSubscription;
-  // storedResults: ISharedValue<Result[]>;
+  storedResults: Synchronizable<Result[]>;
 }
 
 const state: State = {
   eventListener: null,
-  // storedResults: Worklets.createSharedValue([]),
+  storedResults: createSynchronizable<Result[]>([]),
 };
 
 /**

@@ -21,6 +21,7 @@ namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisio
 
 // Include C++ defined types
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"
+#include <NitroModules/AnyMap.hpp>
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
@@ -56,13 +57,13 @@ namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
   using std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>;
   inline std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ weakify_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: Result<void>
-  using Result_void_ = Result<void>;
-  inline Result_void_ create_Result_void_() noexcept {
-    return Result<void>::withValue();
+  // pragma MARK: Result<std::shared_ptr<AnyMap>>
+  using Result_std__shared_ptr_AnyMap__ = Result<std::shared_ptr<AnyMap>>;
+  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::shared_ptr<AnyMap>& value) noexcept {
+    return Result<std::shared_ptr<AnyMap>>::withValue(value);
   }
-  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
-    return Result<void>::withError(error);
+  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<AnyMap>>::withError(error);
   }
 
 } // namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift

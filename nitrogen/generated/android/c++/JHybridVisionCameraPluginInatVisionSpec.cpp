@@ -10,11 +10,11 @@
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
 
+#include <NitroModules/AnyMap.hpp>
+#include <NitroModules/JAnyMap.hpp>
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <VisionCamera/JHybridFrameSpec.hpp>
-#include <NitroModules/AnyMap.hpp>
-#include <NitroModules/JAnyMap.hpp>
 
 namespace margelo::nitro::com::visioncameraplugininatvision {
 
@@ -49,9 +49,10 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
   
 
   // Methods
-  void JHybridVisionCameraPluginInatVisionSpec::call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<margelo::nitro::camera::JHybridFrameSpec::JavaPart> /* frame */, jni::alias_ref<JAnyMap::javaobject> /* options */)>("call");
-    method(_javaPart, std::dynamic_pointer_cast<margelo::nitro::camera::JHybridFrameSpec>(frame)->getJavaPart(), JAnyMap::create(options));
+  std::shared_ptr<AnyMap> JHybridVisionCameraPluginInatVisionSpec::call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JAnyMap::javaobject>(jni::alias_ref<margelo::nitro::camera::JHybridFrameSpec::JavaPart> /* frame */, jni::alias_ref<JAnyMap::javaobject> /* options */)>("call");
+    auto __result = method(_javaPart, std::dynamic_pointer_cast<margelo::nitro::camera::JHybridFrameSpec>(frame)->getJavaPart(), JAnyMap::create(options));
+    return __result->cthis()->getMap();
   }
 
 } // namespace margelo::nitro::com::visioncameraplugininatvision

@@ -10,8 +10,8 @@ package com.margelo.nitro.com.visioncameraplugininatvision
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
-import com.margelo.nitro.camera.HybridFrameSpec
 import com.margelo.nitro.core.AnyMap
+import com.margelo.nitro.camera.HybridFrameSpec
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -32,7 +32,7 @@ abstract class HybridVisionCameraPluginInatVisionSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun call(frame: com.margelo.nitro.camera.HybridFrameSpec, options: AnyMap): Unit
+  abstract fun call(frame: com.margelo.nitro.camera.HybridFrameSpec, options: AnyMap): AnyMap
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

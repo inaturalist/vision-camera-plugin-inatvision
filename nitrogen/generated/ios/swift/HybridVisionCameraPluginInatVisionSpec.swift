@@ -5,8 +5,8 @@
 /// Copyright © Marc Rousavy @ Margelo
 ///
 
-import VisionCamera
 import NitroModules
+import VisionCamera
 
 /// See ``HybridVisionCameraPluginInatVisionSpec``
 public protocol HybridVisionCameraPluginInatVisionSpec_protocol: HybridObject {
@@ -14,7 +14,7 @@ public protocol HybridVisionCameraPluginInatVisionSpec_protocol: HybridObject {
   
 
   // Methods
-  func call(frame: (any HybridFrameSpec), options: AnyMap) throws -> Void
+  func call(frame: (any HybridFrameSpec), options: AnyMap) throws -> AnyMap
 }
 
 public extension HybridVisionCameraPluginInatVisionSpec_protocol {

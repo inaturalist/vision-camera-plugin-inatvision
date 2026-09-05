@@ -109,7 +109,8 @@
     "react": "*",
     "react-native": ">=0.73.0",
     "react-native-nitro-modules": "*",
-    "react-native-vision-camera": ">=5.0.0"
+    "react-native-vision-camera": ">=5.0.0",
+    "react-native-worklets": "*"
   },
   "peerDependenciesMeta": {
     "react-native-nitro-modules": {

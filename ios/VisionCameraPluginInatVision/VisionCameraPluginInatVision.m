@@ -1,7 +1,4 @@
 #import <Foundation/Foundation.h>
-#import <VisionCamera/FrameProcessorPlugin.h>
-#import <VisionCamera/FrameProcessorPluginRegistry.h>
-#import <VisionCamera/Frame.h>
 
 @import UIKit;
 @import Vision;
@@ -15,16 +12,7 @@
 #import "VCPMLUtils.h"
 #import "VCPModelProvider.h"
 
-@interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
-@end
-
 @implementation VisionCameraPluginInatVisionPlugin
-
-- (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
-                  withOptions:(NSDictionary* _Nullable)options {
-    self = [super initWithProxy:proxy withOptions:options];
-    return self;
-}
 
 - (id)callback:(CVImageBufferRef*)pixelBuffer withArguments:(NSDictionary*)arguments {
     // Start timestamp
@@ -111,7 +99,5 @@
     return response;
 }
 
-VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
-
 @end
- 
+

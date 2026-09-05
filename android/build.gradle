@@ -14,7 +14,7 @@ def isNewArchitectureEnabled() {
 }
 
 apply plugin: "com.android.library"
-apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: "org.jetbrains.kotlin.android"
 apply from: '../nitrogen/generated/android/VisionCameraPluginInatVision+autolinking.gradle'
 
 if (isNewArchitectureEnabled()) {

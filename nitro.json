@@ -13,6 +13,10 @@
       "ios": {
         "language": "swift",
         "implementationClassName": "HybridVisionCameraPluginInatVision"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridVisionCameraPluginInatVision"
       }
     }
   },

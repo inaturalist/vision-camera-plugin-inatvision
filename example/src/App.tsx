@@ -74,7 +74,7 @@ const taxonomyPath =
 
 export default function App(): React.JSX.Element {
   const { hasPermission, requestPermission } = useCameraPermission();
-  const location = useLocationPermission();
+  const location = useLocation();
 
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
   const [commonAncestor, setCommonAncestor] = useState<InatVision.Prediction>();

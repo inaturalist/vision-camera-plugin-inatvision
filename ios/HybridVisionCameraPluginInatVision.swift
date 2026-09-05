@@ -1,6 +1,5 @@
 import AVFoundation
 import NitroModules
-import UIKit
 import VisionCamera
 
 class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec {
@@ -11,11 +10,34 @@ class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec
     let sampleBuffer = try sampleBuffer(from: frame)
     let pixelBuffer = try pixelBuffer(from: sampleBuffer)
 
+    let args = options.toDictionary()
     let response = plugin.callback(
       pixelBuffer,
-      withArguments: options.toDictionary() as [String: Any]
+      withArguments: args as [String: Any]
     )
-    return AnyMap.fromDictionaryIgnoreIncompatible(response as? [String: Any] ?? [:])
+    let dict = jsonSafe(response) as? [String: Any] ?? [:]
+    return AnyMap.fromDictionaryIgnoreIncompatible(
+      dict.mapValues { $0 as Any? }
+    )
+  }
+
+  private func jsonSafe(_ value: Any?) -> Any? {
+    switch value {
+    case nil, is NSNull:
+      return nil
+    case let dict as NSDictionary:
+      var out: [String: Any] = [:]
+      for (key, nested) in dict {
+        if let key = key as? String, let safe = jsonSafe(nested) {
+          out[key] = safe
+        }
+      }
+      return out
+    case let arr as NSArray:
+      return arr.compactMap { jsonSafe($0) }
+    default:
+      return value
+    }
   }
 
   private func sampleBuffer(from frame: any HybridFrameSpec) throws -> CMSampleBuffer {

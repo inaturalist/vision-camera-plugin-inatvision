@@ -9,8 +9,11 @@ jest.mock('react-native-vision-camera', () => ({
   Camera: mockCamera,
   sortDevices: mockSortDevices,
   useCameraDevice: mockUseCameraDevice,
-  VisionCameraProxy: {
-    initFrameProcessorPlugin: jest.fn(() => ({
+}));
+
+jest.mock('react-native-nitro-modules', () => ({
+  NitroModules: {
+    createHybridObject: jest.fn(() => ({
       call: jest.fn(),
     })),
   },

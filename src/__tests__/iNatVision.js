@@ -1,4 +1,4 @@
-import { VisionCameraProxy } from 'react-native-vision-camera';
+import { NitroModules } from 'react-native-nitro-modules';
 
 import { inatVision, resetStoredResults } from '../index';
 
@@ -17,7 +17,7 @@ const baseOptions = {
 };
 
 const pluginCall = () =>
-  VisionCameraProxy.initFrameProcessorPlugin.mock.results[0].value.call;
+  NitroModules.createHybridObject.mock.results[0].value.call;
 
 const mockNativeResult = (score) => ({
   predictions: [

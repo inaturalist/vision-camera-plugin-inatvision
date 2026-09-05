@@ -19,10 +19,18 @@ jest.mock('react-native-nitro-modules', () => ({
   },
 }));
 
-jest.mock('react-native-worklets-core', () => ({
-  Worklets: {
-    createRunInJsFn: jest.fn(),
-    createSharedValue: jest.fn((initial) => ({ value: initial })),
+jest.mock('react-native-worklets', () => ({
+  createSynchronizable: (initial) => {
+    let value = initial;
+    return {
+      getBlocking: () => value,
+      getDirty: () => value,
+      setBlocking: (next) => {
+        value = typeof next === 'function' ? next(value) : next;
+      },
+      lock: () => {},
+      unlock: () => {},
+    };
   },
 }));
 

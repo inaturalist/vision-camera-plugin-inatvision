@@ -5,6 +5,8 @@ package com.visioncameraplugininatvision
 import com.margelo.nitro.camera.HybridFrameSpec
 // import com.margelo.nitro.camera.public.NativeFrame
 import com.margelo.nitro.core.AnyMap
+import com.margelo.nitro.visioncameraplugininatvision.HybridVisionCameraPluginInatVisionSpec
+
 // import com.visioncameraplugininatvision.VisionCameraPluginInatVisionPlugin
 
 class HybridVisionCameraPluginInatVision : HybridVisionCameraPluginInatVisionSpec() {

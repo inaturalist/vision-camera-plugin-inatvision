@@ -18,12 +18,12 @@ import {
   useCameraDevice,
   useFrameProcessor,
   useCameraPermission,
-  useLocationPermission,
 } from 'react-native-vision-camera';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
 import { Worklets } from 'react-native-worklets-core';
 import * as InatVision from 'vision-camera-plugin-inatvision';
+import { useLocation } from 'react-native-vision-camera-location';
 import {
   copyFileAssets,
   DocumentDirectoryPath,
@@ -116,13 +116,10 @@ export default function App(): React.JSX.Element {
   }, [hasPermission, requestPermission]);
 
   useEffect(() => {
-    location.requestPermission();
-  }, [location]);
-
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      return;
+    if (!location.hasPermission) {
+      location.requestPermission();
     }
+  }, [location.hasPermission]);
 
     InatVision.addLogListener((event: any) => {
       console.log('event', event);

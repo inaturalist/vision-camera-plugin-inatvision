@@ -181,11 +181,14 @@ export default function App(): React.JSX.Element {
   );
 
   const frameOutput = useFrameOutput({
+    allowDeferredStart: true,
+    enablePhysicalBufferRotation: true,
     pixelFormat: 'yuv',
     onFrame(frame) {
       'worklet';
       try {
         console.log(`Received ${frame.width}x${frame.height} Frame!`);
+        console.log(frame.pixelFormat);
         const timeBefore = new Date().getTime();
         // const cvResult: InatVision.Result = InatVision.inatVision(frame, {
         //   version: modelVersion,

@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+#import "VisionCameraPluginInatVisionPlugin.h"
 
 @import UIKit;
 @import Vision;

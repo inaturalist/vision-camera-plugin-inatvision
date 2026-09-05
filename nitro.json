@@ -8,6 +8,13 @@
     "androidNamespace": ["com", "visioncameraplugininatvision"],
     "androidCxxLibName": "VisionCameraPluginInatVision"
   },
-  "autolinking": {},
+  "autolinking": {
+    "VisionCameraPluginInatVision": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridVisionCameraPluginInatVision"
+      }
+    }
+  },
   "ignorePaths": ["**/node_modules"]
 }

@@ -66,7 +66,7 @@
 #endif
     }
 
-    UIImageOrientation orientation = frame.orientation;
+    UIImageOrientation orientation = UIImageOrientationUp;
 
     VCPVisionModel *cvModel = [VCPModelProvider visionModelWithModelFile:modelPath];
     MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];

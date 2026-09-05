@@ -2763,6 +2763,37 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - VisionCameraLocation (5.0.9):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - NitroModules
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - VisionCamera
+    - Yoga
   - VisionCameraPluginInatVision (6.0.0):
     - boost
     - DoubleConversion
@@ -2881,6 +2912,7 @@ DEPENDENCIES:
   - "ReactNativeFs (from `../node_modules/@dr.pogodin/react-native-fs`)"
   - SocketRocket (~> 0.7.1)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
+  - VisionCameraLocation (from `../node_modules/react-native-vision-camera-location`)
   - VisionCameraPluginInatVision (from `../..`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -3058,6 +3090,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@dr.pogodin/react-native-fs"
   VisionCamera:
     :path: "../node_modules/react-native-vision-camera"
+  VisionCameraLocation:
+    :path: "../node_modules/react-native-vision-camera-location"
   VisionCameraPluginInatVision:
     :path: "../.."
   Yoga:
@@ -3149,6 +3183,7 @@ SPEC CHECKSUMS:
   ReactNativeFs: 8ee52268099f843309fac2d0e291d254116d1df2
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 433061777a7a2f4436be5369ccaba0f24e0ff7b3
+  VisionCameraLocation: 689f363dd33b05e78c6fdceef1eddeed57e235bb
   VisionCameraPluginInatVision: 39107f17fe6d12ca36e35f1307e3e76c53b21424
   Yoga: d2ed98551adb569fc38be0148666854e1ff60692
 

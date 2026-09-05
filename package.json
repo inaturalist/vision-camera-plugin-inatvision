@@ -96,6 +96,7 @@
     "react-native-nitro-image": "0.14.0",
     "react-native-nitro-modules": "0.35.6",
     "react-native-vision-camera": "5.0.9",
+    "react-native-vision-camera-location": "5.0.9",
     "release-it": "^17.10.0",
     "typescript": "^5.9.3"
   },

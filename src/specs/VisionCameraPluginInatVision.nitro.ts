@@ -5,5 +5,5 @@ export interface VisionCameraPluginInatVision extends HybridObject<{
   ios: 'swift';
   android: 'kotlin';
 }> {
-  call(frame: Frame, options: AnyMap): void;
+  call(frame: Frame, options: AnyMap): AnyMap;
 }

@@ -503,20 +503,11 @@ export default function App(): React.JSX.Element {
           photoQualityBalance="quality"
           enableLocation={location.hasPermission}
           outputOrientation="device"
+          outputs={[frameOutput]}
           onStarted={() => console.log('Camera started!')}
           onStopped={() => console.log('Camera stopped!')}
-          onOutputOrientationChanged={(o) =>
-            console.log(`Output orientation changed to ${o}!`)
-          }
-          onPreviewOrientationChanged={(o) =>
-            console.log(`Preview orientation changed to ${o}!`)
-          }
           onPreviewStarted={() => console.log('Preview started!')}
           onPreviewStopped={() => console.log('Preview stopped!')}
-          onUIRotationChanged={(degrees) =>
-            console.log(`UI Rotation changed: ${degrees}°`)
-          }
-          outputs={[frameOutput]}
         />
         <View style={styles.row}>
           <Button

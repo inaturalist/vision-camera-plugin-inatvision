@@ -710,12 +710,14 @@ function handleResult(result: any, options: Options): Result {
     };
   });
 
-  // // Store the result to module-wide state
-  // state.storedResults.value.push(result);
-  // const maxNumStoredResults = options.numStoredResults ?? 5;
-  // while (state.storedResults.value.length > maxNumStoredResults) {
-  //   state.storedResults.value.shift();
-  // }
+  // Store the result to module-wide state
+  const storedResults = state.storedResults.getBlocking().slice();
+  storedResults.push(result);
+  const maxNumStoredResults = options.numStoredResults ?? 5;
+  while (storedResults.length > maxNumStoredResults) {
+    storedResults.shift();
+  }
+  state.storedResults.setBlocking(storedResults);
 
   let current: Result = result;
 

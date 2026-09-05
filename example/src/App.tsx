@@ -194,27 +194,28 @@ export default function App(): React.JSX.Element {
         console.log(`Received ${frame.width}x${frame.height} Frame!`);
         console.log(frame.pixelFormat);
         const timeBefore = new Date().getTime();
-        // const cvResult: InatVision.Result = InatVision.inatVision(frame, {
-        //   version: modelVersion,
-        //   modelPath,
-        //   taxonomyPath,
-        //   confidenceThreshold,
-        //   filterByTaxonId,
-        //   negativeFilter,
-        //   numStoredResults: 4,
-        //   cropRatio: 0.9,
-        //   useGeomodel,
-        //   geomodelPath,
-        //   location: {
-        //     latitude: geoModelCellLocation.latitude,
-        //     longitude: geoModelCellLocation.longitude,
-        //     elevation: geoModelCellLocation.elevation,
-        //   },
-        // });
+        const cvResult: InatVision.Result = InatVision.inatVision(frame, {
+          version: modelVersion,
+          modelPath,
+          taxonomyPath,
+          confidenceThreshold,
+          filterByTaxonId,
+          negativeFilter,
+          numStoredResults: 4,
+          cropRatio: 0.9,
+          useGeomodel,
+          geomodelPath,
+          location: {
+            latitude: geoModelCellLocation.latitude,
+            longitude: geoModelCellLocation.longitude,
+            elevation: geoModelCellLocation.elevation,
+          },
+        });
         const timeAfter = new Date().getTime();
         console.log('time taken ms: ', timeAfter - timeBefore);
-        // console.log('age of result: ', timeAfter - cvResult.timestamp);
-        // console.log('cvResult.timeElapsed', cvResult.timeElapsed);
+        console.log('age of result: ', timeAfter - cvResult.timestamp);
+        console.log('cvResult.timeElapsed', cvResult.timeElapsed);
+        console.log('cvResult.predictions', cvResult.predictions);
         // handleResults(cvResult.predictions);
       } catch (classifierError) {
         console.log(`Error: ${classifierError}`);

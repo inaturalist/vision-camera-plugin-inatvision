@@ -10,17 +10,17 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
-// Forward declaration of `HybridInatVisionSpec` to properly resolve imports.
-namespace margelo::nitro::com::visioncameraplugininatvision { class HybridInatVisionSpec; }
+// Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
+namespace margelo::nitro::com::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridFrameSpec_cxx` to properly resolve imports.
 namespace VisionCamera { class HybridFrameSpec_cxx; }
-// Forward declaration of `HybridInatVisionSpec_cxx` to properly resolve imports.
-namespace VisionCameraPluginInatVision { class HybridInatVisionSpec_cxx; }
+// Forward declaration of `HybridVisionCameraPluginInatVisionSpec_cxx` to properly resolve imports.
+namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionSpec_cxx; }
 
 // Include C++ defined types
-#include "HybridInatVisionSpec.hpp"
+#include "HybridVisionCameraPluginInatVisionSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
@@ -44,17 +44,17 @@ namespace margelo::nitro::com::visioncameraplugininatvision::bridge::swift {
   using std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::weak_ptr<margelo::nitro::camera::HybridFrameSpec>;
   inline std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ weakify_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: std::shared_ptr<HybridInatVisionSpec>
+  // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>
   /**
-   * Specialized version of `std::shared_ptr<HybridInatVisionSpec>`.
+   * Specialized version of `std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>`.
    */
-  using std__shared_ptr_HybridInatVisionSpec_ = std::shared_ptr<HybridInatVisionSpec>;
-  std::shared_ptr<HybridInatVisionSpec> create_std__shared_ptr_HybridInatVisionSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridInatVisionSpec_(std__shared_ptr_HybridInatVisionSpec_ cppType);
+  using std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>;
+  std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ cppType);
   
-  // pragma MARK: std::weak_ptr<HybridInatVisionSpec>
-  using std__weak_ptr_HybridInatVisionSpec_ = std::weak_ptr<HybridInatVisionSpec>;
-  inline std__weak_ptr_HybridInatVisionSpec_ weakify_std__shared_ptr_HybridInatVisionSpec_(const std::shared_ptr<HybridInatVisionSpec>& strong) noexcept { return strong; }
+  // pragma MARK: std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>
+  using std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>;
+  inline std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ weakify_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: Result<void>
   using Result_void_ = Result<void>;

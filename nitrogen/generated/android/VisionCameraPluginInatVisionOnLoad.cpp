@@ -15,7 +15,7 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
-#include "JHybridInatVisionSpec.hpp"
+#include "JHybridVisionCameraPluginInatVisionSpec.hpp"
 
 namespace margelo::nitro::com::visioncameraplugininatvision {
 
@@ -32,7 +32,7 @@ void registerAllNatives() {
   using namespace margelo::nitro::com::visioncameraplugininatvision;
 
   // Register native JNI methods
-  margelo::nitro::com::visioncameraplugininatvision::JHybridInatVisionSpec::CxxPart::registerNatives();
+  margelo::nitro::com::visioncameraplugininatvision::JHybridVisionCameraPluginInatVisionSpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects
   

@@ -33,9 +33,9 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/VisionCameraPluginInatVisionOnLoad.cpp
   # Shared Nitrogen C++ sources
-  ../nitrogen/generated/shared/c++/HybridInatVisionSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridVisionCameraPluginInatVisionSpec.cpp
   # Android-specific Nitrogen C++ sources
-  ../nitrogen/generated/android/c++/JHybridInatVisionSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridVisionCameraPluginInatVisionSpec.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

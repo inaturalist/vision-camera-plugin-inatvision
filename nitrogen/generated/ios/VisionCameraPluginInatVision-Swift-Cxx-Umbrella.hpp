@@ -10,11 +10,11 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
-// Forward declaration of `HybridInatVisionSpec` to properly resolve imports.
-namespace margelo::nitro::com::visioncameraplugininatvision { class HybridInatVisionSpec; }
+// Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
+namespace margelo::nitro::com::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
 
 // Include C++ defined types
-#include "HybridInatVisionSpec.hpp"
+#include "HybridVisionCameraPluginInatVisionSpec.hpp"
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
@@ -32,8 +32,8 @@ namespace margelo::nitro::com::visioncameraplugininatvision { class HybridInatVi
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridFrameSpec_cxx` to properly resolve imports.
 namespace VisionCamera { class HybridFrameSpec_cxx; }
-// Forward declaration of `HybridInatVisionSpec_cxx` to properly resolve imports.
-namespace VisionCameraPluginInatVision { class HybridInatVisionSpec_cxx; }
+// Forward declaration of `HybridVisionCameraPluginInatVisionSpec_cxx` to properly resolve imports.
+namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionSpec_cxx; }
 
 // Include Swift defined types
 #if __has_include("VisionCameraPluginInatVision-Swift.h")

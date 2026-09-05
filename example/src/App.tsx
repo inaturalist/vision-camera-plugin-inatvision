@@ -181,6 +181,7 @@ export default function App(): React.JSX.Element {
   );
 
   const frameOutput = useFrameOutput({
+    pixelFormat: 'yuv',
     onFrame(frame) {
       'worklet';
       try {
@@ -489,7 +490,6 @@ export default function App(): React.JSX.Element {
           device={device}
           isActive={true}
           enableZoomGesture
-          pixelFormat={'yuv'}
           resizeMode="contain"
           enableFpsGraph={true}
           photoQualityBalance="quality"

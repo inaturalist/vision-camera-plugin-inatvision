@@ -1,8 +1,13 @@
-import VisionCamera
+import AVFoundation
 import NitroModules
+import UIKit
+import VisionCamera
 
 class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec {
-  func call(frame: any HybridFrameSpec, options: AnyMap) -> AnyMap {
+  func call(frame: any HybridFrameSpec, options: AnyMap) throws -> AnyMap {
+
+    let sampleBuffer = try sampleBuffer(from: frame)
+    let pixelBuffer = try pixelBuffer(from: sampleBuffer)
     return options;
   }
 

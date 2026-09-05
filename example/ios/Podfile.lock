@@ -2890,6 +2890,7 @@ PODS:
     - fmt
     - glog
     - hermes-engine
+    - NitroModules
     - RCT-Folly
     - RCT-Folly/Fabric
     - RCTRequired
@@ -3312,7 +3313,7 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: f17d631afe029837a124b808399b6e49fe222a8b
   VisionCameraLocation: 5da65d0781c41c408fef7c6e530cfdc1c5c23273
-  VisionCameraPluginInatVision: 39107f17fe6d12ca36e35f1307e3e76c53b21424
+  VisionCameraPluginInatVision: 33c4095342034e055c8f20fcf07b51c3c7d08498
   VisionCameraWorklets: e528da2a1ff89c95d45cf75800e43348cecde715
   Yoga: d2ed98551adb569fc38be0148666854e1ff60692
 

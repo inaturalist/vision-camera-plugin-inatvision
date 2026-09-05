@@ -15,6 +15,7 @@ namespace margelo::nitro::com::visioncameraplugininatvision { class HybridVision
 
 // Include C++ defined types
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"
+#include <NitroModules/AnyMap.hpp>
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>

@@ -17,6 +17,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
+#include <NitroModules/AnyMap.hpp>
 
 #include "VisionCameraPluginInatVision-Swift-Cxx-Umbrella.hpp"
 
@@ -68,8 +69,8 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
 
   public:
     // Methods
-    inline void call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override {
-      auto __result = _swiftPart.call(frame);
+    inline void call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) override {
+      auto __result = _swiftPart.call(frame, options);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

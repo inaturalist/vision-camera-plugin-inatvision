@@ -18,6 +18,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
+#include <NitroModules/AnyMap.hpp>
 
 namespace margelo::nitro::com::visioncameraplugininatvision {
 
@@ -50,7 +51,7 @@ namespace margelo::nitro::com::visioncameraplugininatvision {
 
     public:
       // Methods
-      virtual void call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) = 0;
+      virtual void call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) = 0;
 
     protected:
       // Hybrid Setup

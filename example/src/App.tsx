@@ -77,7 +77,7 @@ export default function App(): React.JSX.Element {
   const [commonAncestor, setCommonAncestor] = useState<InatVision.Prediction>();
   const [filterByTaxonId, setFilterByTaxonId] = useState<
     undefined | string | null
-  >(undefined);
+  >(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
   const [useGeomodel, setUseGeomodel] = useState(false);
   const [useCommonAncestor, setUseCommonAncestor] = useState(false);

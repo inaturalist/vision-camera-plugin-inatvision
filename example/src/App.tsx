@@ -118,6 +118,11 @@ export default function App(): React.JSX.Element {
     }
   }, [location.hasPermission]);
 
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      return;
+    }
+
     InatVision.addLogListener((event: any) => {
       console.log('event', event);
     });

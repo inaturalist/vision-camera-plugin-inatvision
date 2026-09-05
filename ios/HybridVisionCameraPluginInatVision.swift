@@ -4,11 +4,18 @@ import UIKit
 import VisionCamera
 
 class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec {
+  private let plugin = VisionCameraPluginInatVisionPlugin()
+
   func call(frame: any HybridFrameSpec, options: AnyMap) throws -> AnyMap {
 
     let sampleBuffer = try sampleBuffer(from: frame)
     let pixelBuffer = try pixelBuffer(from: sampleBuffer)
-    return options;
+
+    let response = plugin.callback(
+      pixelBuffer,
+      withArguments: options.toDictionary() as [String: Any]
+    )
+    return AnyMap.fromDictionaryIgnoreIncompatible(response as? [String: Any] ?? [:])
   }
 
   private func sampleBuffer(from frame: any HybridFrameSpec) throws -> CMSampleBuffer {

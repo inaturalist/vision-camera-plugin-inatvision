@@ -22,7 +22,7 @@ import {
 import { useLocation } from 'react-native-vision-camera-location';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
-import { Worklets } from 'react-native-worklets-core';
+import { scheduleOnRN } from 'react-native-worklets';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 import {
   copyFileAssets,
@@ -174,12 +174,6 @@ export default function App(): React.JSX.Element {
     }
   }, []);
 
-  const handleResults = Worklets.createRunOnJS(
-    (predictions: InatVision.Prediction[]) => {
-      setResult(predictions);
-    },
-  );
-
   const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation,
   );
@@ -216,7 +210,7 @@ export default function App(): React.JSX.Element {
         console.log('age of result: ', timeAfter - cvResult.timestamp);
         console.log('cvResult.timeElapsed', cvResult.timeElapsed);
         console.log('cvResult.predictions', cvResult.predictions);
-        // handleResults(cvResult.predictions);
+        scheduleOnRN(setResult, cvResult.predictions);
       } catch (classifierError) {
         console.log(`Error: ${classifierError}`);
       } finally {

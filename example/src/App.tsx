@@ -112,10 +112,8 @@ export default function App(): React.JSX.Element {
   };
 
   useEffect(() => {
-    (async () => {
-      requestPermission();
-    })();
-  }, [requestPermission]);
+    if (!hasPermission) requestPermission();
+  }, [hasPermission, requestPermission]);
 
   useEffect(() => {
     location.requestPermission();

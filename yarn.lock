@@ -13365,6 +13365,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: ">=0.73.0"
+    react-native-nitro-modules: ">=0.35.4"
     react-native-vision-camera: ">=5.0.0"
   languageName: unknown
   linkType: soft

@@ -5,7 +5,7 @@
     "iosModuleName": "VisionCameraPluginInatVision"
   },
   "android": {
-    "androidNamespace": ["com.visioncameraplugininatvision"],
+    "androidNamespace": ["visioncameraplugininatvision"],
     "androidCxxLibName": "VisionCameraPluginInatVision"
   },
   "autolinking": {},

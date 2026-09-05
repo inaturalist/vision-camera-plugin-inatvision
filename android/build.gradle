@@ -78,7 +78,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native"
   // Basic dependencies for the frame processor using vision camera
-  implementation project(':react-native-vision-camera')
+  implementation project(":react-native-vision-camera")
   implementation "androidx.camera:camera-core:1.1.0-alpha08"
   // Requirements for our custom image labeling and processing
   implementation 'androidx.exifinterface:exifinterface:1.2.0'

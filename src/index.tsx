@@ -1,14 +1,12 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
-import { VisionCameraProxy } from 'react-native-vision-camera';
-import type { Frame } from 'react-native-vision-camera';
-import { Worklets } from 'react-native-worklets-core';
-import type { ISharedValue } from 'react-native-worklets-core';
+// import { VisionCameraProxy } from 'react-native-vision-camera';
+// import type { Frame } from 'react-native-vision-camera';
+// import { Worklets } from 'react-native-worklets-core';
+// import type { ISharedValue } from 'react-native-worklets-core';
 
 import { lookUpLocation } from './lookUpLocation';
 import type { LocationLookup } from './lookUpLocation';
-
-const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
 
 const LINKING_ERROR =
   `The package 'vision-camera-plugin-inatvision' doesn't seem to be linked. Make sure: \n\n` +
@@ -27,20 +25,13 @@ const VisionCameraPluginInatVision = NativeModules.VisionCameraPluginInatVision
 
 interface State {
   eventListener: null | EmitterSubscription;
-  storedResults: ISharedValue<Result[]>;
+  // storedResults: ISharedValue<Result[]>;
 }
 
 const state: State = {
   eventListener: null,
-  storedResults: Worklets.createSharedValue([]),
+  // storedResults: Worklets.createSharedValue([]),
 };
-
-/**
- *  Reset the stored results to an empty array
- */
-export function resetStoredResults(): void {
-  state.storedResults.value = [];
-}
 
 /**
  * Payload emitted on the `CameraLog` event (Android only).
@@ -274,20 +265,6 @@ function optionsAreValid(options: Options | OptionsForImage): boolean {
   return true;
 }
 
-function optionsAreValidForFrame(options: Options): boolean {
-  'worklet';
-  if (options.taxonomyRollupCutoff) {
-    if (
-      isNaN(options.taxonomyRollupCutoff) ||
-      options.taxonomyRollupCutoff < 0 ||
-      options.taxonomyRollupCutoff > 1
-    ) {
-      throw new Error('taxonomyRollupCutoff must be a number between 0 and 1.');
-    }
-  }
-  return optionsAreValid(options);
-}
-
 function optionsAreValidForImage(options: OptionsForImage): boolean {
   'worklet';
   return optionsAreValid(options);
@@ -316,84 +293,6 @@ export function scalePrediction(p: Prediction): Prediction {
     prediction.geo_threshold = prediction.geo_threshold * 100;
   }
   return prediction;
-}
-
-function handleResult(result: any, options: Options): Result {
-  'worklet';
-
-  // Add the options to the result
-  result.options = options;
-  // Add timestamp to the result
-  result.timestamp = new Date().getTime();
-  // Add the rank to the predictions if not present
-  result.predictions = result.predictions.map((prediction: Prediction) => {
-    // If there is ancestor_ids set, i.e. currently Android only use it
-    let ancestorIds = prediction.ancestor_ids;
-    // If not, get the ancestor ids for this prediction
-    if (!ancestorIds) {
-      ancestorIds = result.predictions
-        // Filter to all predictions with higher rank level
-        .filter((p: Prediction) => p.rank_level > prediction.rank_level)
-        // Map their taxon_id
-        .map((p: Prediction) => Number(p.taxon_id));
-    }
-    return {
-      ...prediction,
-      rank: prediction.rank
-        ? prediction.rank
-        : mapLevelToRank[prediction.rank_level],
-      ancestor_ids: ancestorIds,
-    };
-  });
-
-  // Store the result to module-wide state
-  state.storedResults.value.push(result);
-  const maxNumStoredResults = options.numStoredResults ?? 5;
-  while (state.storedResults.value.length > maxNumStoredResults) {
-    state.storedResults.value.shift();
-  }
-
-  let current: Result = result;
-
-  if (maxNumStoredResults > 1) {
-    const currentLastPrediction =
-      current.predictions[current.predictions.length - 1];
-    let currentScore = currentLastPrediction?.score || 0;
-
-    const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
-    // Select the best result from the stored results
-    for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
-      const candidateResult = state.storedResults.value[i];
-      if (!candidateResult) {
-        break;
-      }
-      const candidateLastPrediction =
-        candidateResult.predictions[candidateResult.predictions.length - 1];
-      const candidateScore = candidateLastPrediction?.score || 0;
-
-      const penalty =
-        1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
-
-      if (candidateScore * penalty > currentScore) {
-        current = candidateResult;
-        currentScore = candidateScore;
-      }
-    }
-  }
-
-  const predictions = current.predictions
-    // only KPCOFGS ranks qualify as "top" predictions
-    // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
-    .filter((prediction) => prediction.rank_level % 10 === 0)
-    .map((prediction) => scalePrediction(prediction))
-    .filter(
-      (prediction) => prediction.score > (options.confidenceThreshold || 0),
-    );
-  const handledResult = {
-    ...current,
-    predictions,
-  };
-  return handledResult;
 }
 
 export interface Location {
@@ -510,29 +409,6 @@ interface Options extends BaseOptions {
  */
 export function getCellLocation(location: Location): LocationLookup {
   return lookUpLocation(location);
-}
-
-/**
- * Function to call the computer vision model with a frame from the camera.
- *
- * When `useGeomodel` is enabled, `options.location` must include `elevation`.
- * The frame worklet cannot run `lookUpLocation` (it loads a large JSON file),
- * so compute the cell centroid and elevation with `getCellLocation` on the JS
- * thread and pass the result as `options.location`.
- *
- * @param frame The frame to predict on.
- * @param options The options for the prediction.
- */
-export function inatVision(frame: Frame, options: Options): Result {
-  'worklet';
-  if (plugin === undefined) {
-    throw new Error("Couldn't find the 'inatVision' plugin.");
-  }
-  optionsAreValidForFrame(options);
-  // @ts-expect-error Frame Processors are not typed.
-  const result = plugin.call(frame, options);
-  const handledResult: Result = handleResult(result, options);
-  return handledResult;
 }
 
 export enum MODE {
@@ -779,3 +655,127 @@ export function getPredictionsForLocation(
   };
   return VisionCameraPluginInatVision.getPredictionsForLocation(newOptions);
 }
+
+// const plugin = VisionCameraProxy.initFrameProcessorPlugin('inatVision', {});
+
+// /**
+//  *  Reset the stored results to an empty array
+//  */
+// export function resetStoredResults(): void {
+//   state.storedResults.value = [];
+// }
+
+// function optionsAreValidForFrame(options: Options): boolean {
+//   'worklet';
+//   if (options.taxonomyRollupCutoff) {
+//     if (
+//       isNaN(options.taxonomyRollupCutoff) ||
+//       options.taxonomyRollupCutoff < 0 ||
+//       options.taxonomyRollupCutoff > 1
+//     ) {
+//       throw new Error('taxonomyRollupCutoff must be a number between 0 and 1.');
+//     }
+//   }
+//   return optionsAreValid(options);
+// }
+
+// function handleResult(result: any, options: Options): Result {
+//   'worklet';
+
+//   // Add the options to the result
+//   result.options = options;
+//   // Add timestamp to the result
+//   result.timestamp = new Date().getTime();
+//   // Add the rank to the predictions if not present
+//   result.predictions = result.predictions.map((prediction: Prediction) => {
+//     // If there is ancestor_ids set, i.e. currently Android only use it
+//     let ancestorIds = prediction.ancestor_ids;
+//     // If not, get the ancestor ids for this prediction
+//     if (!ancestorIds) {
+//       ancestorIds = result.predictions
+//         // Filter to all predictions with higher rank level
+//         .filter((p: Prediction) => p.rank_level > prediction.rank_level)
+//         // Map their taxon_id
+//         .map((p: Prediction) => Number(p.taxon_id));
+//     }
+//     return {
+//       ...prediction,
+//       rank: prediction.rank
+//         ? prediction.rank
+//         : mapLevelToRank[prediction.rank_level],
+//       ancestor_ids: ancestorIds,
+//     };
+//   });
+
+//   // Store the result to module-wide state
+//   state.storedResults.value.push(result);
+//   const maxNumStoredResults = options.numStoredResults ?? 5;
+//   while (state.storedResults.value.length > maxNumStoredResults) {
+//     state.storedResults.value.shift();
+//   }
+
+//   let current: Result = result;
+
+//   if (maxNumStoredResults > 1) {
+//     const currentLastPrediction =
+//       current.predictions[current.predictions.length - 1];
+//     let currentScore = currentLastPrediction?.score || 0;
+
+//     const penaltyIncrement = 0.5 / (maxNumStoredResults - 1);
+//     // Select the best result from the stored results
+//     for (let i = state.storedResults.value.length - 1; i >= 0; i--) {
+//       const candidateResult = state.storedResults.value[i];
+//       if (!candidateResult) {
+//         break;
+//       }
+//       const candidateLastPrediction =
+//         candidateResult.predictions[candidateResult.predictions.length - 1];
+//       const candidateScore = candidateLastPrediction?.score || 0;
+
+//       const penalty =
+//         1 - penaltyIncrement * (state.storedResults.value.length - 1 - i);
+
+//       if (candidateScore * penalty > currentScore) {
+//         current = candidateResult;
+//         currentScore = candidateScore;
+//       }
+//     }
+//   }
+
+//   const predictions = current.predictions
+//     // only KPCOFGS ranks qualify as "top" predictions
+//     // in the iNat taxonomy, KPCOFGS ranks are 70,60,50,40,30,20,10
+//     .filter((prediction) => prediction.rank_level % 10 === 0)
+//     .map((prediction) => scalePrediction(prediction))
+//     .filter(
+//       (prediction) => prediction.score > (options.confidenceThreshold || 0),
+//     );
+//   const handledResult = {
+//     ...current,
+//     predictions,
+//   };
+//   return handledResult;
+// }
+
+// /**
+//  * Function to call the computer vision model with a frame from the camera.
+//  *
+//  * When `useGeomodel` is enabled, `options.location` must include `elevation`.
+//  * The frame worklet cannot run `lookUpLocation` (it loads a large JSON file),
+//  * so compute the cell centroid and elevation with `getCellLocation` on the JS
+//  * thread and pass the result as `options.location`.
+//  *
+//  * @param frame The frame to predict on.
+//  * @param options The options for the prediction.
+//  */
+// export function inatVision(frame: Frame, options: Options): Result {
+//   'worklet';
+//   if (plugin === undefined) {
+//     throw new Error("Couldn't find the 'inatVision' plugin.");
+//   }
+//   optionsAreValidForFrame(options);
+//   // @ts-expect-error Frame Processors are not typed.
+//   const result = plugin.call(frame, options);
+//   const handledResult: Result = handleResult(result, options);
+//   return handledResult;
+// }

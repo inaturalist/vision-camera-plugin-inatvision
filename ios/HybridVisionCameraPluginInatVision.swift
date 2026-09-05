@@ -1,7 +1,7 @@
 import VisionCamera
 import NitroModules
 
-class HybridInatVision: HybridInatVisionSpec {
+class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec {
   func call(frame: any HybridFrameSpec) {
     // TODO: Implementation
   }

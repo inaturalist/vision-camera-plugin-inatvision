@@ -16,7 +16,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Camera,
   useCameraDevice,
-  // useFrameProcessor,
   useCameraPermission,
   useFrameOutput,
 } from 'react-native-vision-camera';

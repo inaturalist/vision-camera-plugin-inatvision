@@ -16,8 +16,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Camera,
   useCameraDevice,
-  useFrameProcessor,
+  // useFrameProcessor,
   useCameraPermission,
+  useFrameOutput,
 } from 'react-native-vision-camera';
 import { useLocation } from 'react-native-vision-camera-location';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -179,51 +180,41 @@ export default function App(): React.JSX.Element {
     testLocationEuropeNoElevation,
   );
 
-  const frameProcessor = useFrameProcessor(
-    (frame) => {
+  const frameOutput = useFrameOutput({
+    onFrame(frame) {
       'worklet';
-      patchedRunAsync(frame, () => {
-        'worklet';
-        try {
-          const timeBefore = new Date().getTime();
-
-          const cvResult: InatVision.Result = InatVision.inatVision(frame, {
-            version: modelVersion,
-            modelPath,
-            taxonomyPath,
-            confidenceThreshold,
-            filterByTaxonId,
-            negativeFilter,
-            numStoredResults: 4,
-            cropRatio: 0.9,
-            useGeomodel,
-            geomodelPath,
-            location: {
-              latitude: geoModelCellLocation.latitude,
-              longitude: geoModelCellLocation.longitude,
-              elevation: geoModelCellLocation.elevation,
-            },
-          });
-          const timeAfter = new Date().getTime();
-          console.log('time taken ms: ', timeAfter - timeBefore);
-          console.log('age of result: ', timeAfter - cvResult.timestamp);
-          console.log('cvResult.timeElapsed', cvResult.timeElapsed);
-          handleResults(cvResult.predictions);
-        } catch (classifierError) {
-          console.log(`Error: ${classifierError}`);
-        }
-      });
+      try {
+        console.log(`Received ${frame.width}x${frame.height} Frame!`);
+        const timeBefore = new Date().getTime();
+        // const cvResult: InatVision.Result = InatVision.inatVision(frame, {
+        //   version: modelVersion,
+        //   modelPath,
+        //   taxonomyPath,
+        //   confidenceThreshold,
+        //   filterByTaxonId,
+        //   negativeFilter,
+        //   numStoredResults: 4,
+        //   cropRatio: 0.9,
+        //   useGeomodel,
+        //   geomodelPath,
+        //   location: {
+        //     latitude: geoModelCellLocation.latitude,
+        //     longitude: geoModelCellLocation.longitude,
+        //     elevation: geoModelCellLocation.elevation,
+        //   },
+        // });
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        // console.log('age of result: ', timeAfter - cvResult.timestamp);
+        // console.log('cvResult.timeElapsed', cvResult.timeElapsed);
+        // handleResults(cvResult.predictions);
+      } catch (classifierError) {
+        console.log(`Error: ${classifierError}`);
+      } finally {
+        frame.dispose();
+      }
     },
-    [
-      patchedRunAsync,
-      confidenceThreshold,
-      filterByTaxonId,
-      negativeFilter,
-      handleResults,
-      useGeomodel,
-      geoModelCellLocation,
-    ],
-  );
+  });
 
   function selectImage() {
     launchImageLibrary(
@@ -497,7 +488,6 @@ export default function App(): React.JSX.Element {
           style={styles.flex}
           device={device}
           isActive={true}
-          frameProcessor={frameProcessor}
           enableZoomGesture
           pixelFormat={'yuv'}
           resizeMode="contain"
@@ -518,6 +508,7 @@ export default function App(): React.JSX.Element {
           onUIRotationChanged={(degrees) =>
             console.log(`UI Rotation changed: ${degrees}°`)
           }
+          outputs={[frameOutput]}
         />
         <View style={styles.row}>
           <Button

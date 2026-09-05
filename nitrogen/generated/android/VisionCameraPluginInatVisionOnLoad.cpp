@@ -16,6 +16,7 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridVisionCameraPluginInatVisionSpec.hpp"
+#include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::com::visioncameraplugininatvision {
 
@@ -25,7 +26,14 @@ int initialize(JavaVM* vm) {
   });
 }
 
-
+struct JHybridVisionCameraPluginInatVisionSpecImpl: public jni::JavaClass<JHybridVisionCameraPluginInatVisionSpecImpl, JHybridVisionCameraPluginInatVisionSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/com/visioncameraplugininatvision/HybridVisionCameraPluginInatVision;";
+  static std::shared_ptr<JHybridVisionCameraPluginInatVisionSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridVisionCameraPluginInatVisionSpecImpl::javaobject()>();
+    jni::local_ref<JHybridVisionCameraPluginInatVisionSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridVisionCameraPluginInatVisionSpec();
+  }
+};
 
 void registerAllNatives() {
   using namespace margelo::nitro;
@@ -35,7 +43,12 @@ void registerAllNatives() {
   margelo::nitro::com::visioncameraplugininatvision::JHybridVisionCameraPluginInatVisionSpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects
-  
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "VisionCameraPluginInatVision",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridVisionCameraPluginInatVisionSpecImpl::create();
+    }
+  );
 }
 
 } // namespace margelo::nitro::com::visioncameraplugininatvision

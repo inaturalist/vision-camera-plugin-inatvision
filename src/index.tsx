@@ -661,12 +661,12 @@ const plugin = NitroModules.createHybridObject<VisionCameraPluginInatVision>(
   'VisionCameraPluginInatVision',
 );
 
-// /**
-//  *  Reset the stored results to an empty array
-//  */
-// export function resetStoredResults(): void {
-//   state.storedResults.value = [];
-// }
+/**
+ *  Reset the stored results to an empty array
+ */
+export function resetStoredResults(): void {
+  state.storedResults.setBlocking([]);
+}
 
 function optionsAreValidForFrame(options: Options): boolean {
   'worklet';

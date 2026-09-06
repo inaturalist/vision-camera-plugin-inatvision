@@ -5,8 +5,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin;
-import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry;
+import com.margelo.nitro.visioncameraplugininatvision.VisionCameraPluginInatVisionOnLoad;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +14,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 public class VisionCameraPluginInatVisionPackage implements ReactPackage {
   static {
-    FrameProcessorPluginRegistry.addFrameProcessorPlugin("inatVision", VisionCameraPluginInatVisionPlugin::new);
+    VisionCameraPluginInatVisionOnLoad.initializeNative();
   }
 
   @NonNull

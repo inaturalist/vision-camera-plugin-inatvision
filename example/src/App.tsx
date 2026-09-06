@@ -16,13 +16,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Camera,
   useCameraDevice,
-  useFrameProcessor,
   useCameraPermission,
-  useLocationPermission,
+  useFrameOutput,
 } from 'react-native-vision-camera';
+import { useLocation } from 'react-native-vision-camera-location';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraRoll } from '@react-native-camera-roll/camera-roll';
-import { Worklets } from 'react-native-worklets-core';
+import { scheduleOnRN } from 'react-native-worklets';
 import * as InatVision from 'vision-camera-plugin-inatvision';
 import {
   copyFileAssets,
@@ -30,9 +30,6 @@ import {
   MainBundlePath,
   readDir,
 } from '@dr.pogodin/react-native-fs';
-
-// @ts-ignore
-import usePatchedRunAsync from './visionCameraPatches';
 
 const testLocationEurope = {
   latitude: 54.29,
@@ -74,13 +71,13 @@ const taxonomyPath =
 
 export default function App(): React.JSX.Element {
   const { hasPermission, requestPermission } = useCameraPermission();
-  const location = useLocationPermission();
+  const location = useLocation();
 
   const [results, setResult] = useState<InatVision.Prediction[]>([]);
   const [commonAncestor, setCommonAncestor] = useState<InatVision.Prediction>();
   const [filterByTaxonId, setFilterByTaxonId] = useState<
     undefined | string | null
-  >(undefined);
+  >(null);
   const [negativeFilter, setNegativeFilter] = useState(false);
   const [useGeomodel, setUseGeomodel] = useState(false);
   const [useCommonAncestor, setUseCommonAncestor] = useState(false);
@@ -112,14 +109,14 @@ export default function App(): React.JSX.Element {
   };
 
   useEffect(() => {
-    (async () => {
-      requestPermission();
-    })();
-  }, [requestPermission]);
+    if (!hasPermission) requestPermission();
+  }, [hasPermission, requestPermission]);
 
   useEffect(() => {
-    location.requestPermission();
-  }, [location]);
+    if (!location.hasPermission) {
+      location.requestPermission();
+    }
+  }, [location.hasPermission]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -177,62 +174,50 @@ export default function App(): React.JSX.Element {
     }
   }, []);
 
-  const handleResults = Worklets.createRunOnJS(
-    (predictions: InatVision.Prediction[]) => {
-      setResult(predictions);
-    },
-  );
-
   const geoModelCellLocation = InatVision.getCellLocation(
     testLocationEuropeNoElevation,
   );
 
-  const patchedRunAsync = usePatchedRunAsync();
-  const frameProcessor = useFrameProcessor(
-    (frame) => {
+  const frameOutput = useFrameOutput({
+    allowDeferredStart: true,
+    enablePhysicalBufferRotation: true,
+    pixelFormat: 'yuv',
+    onFrame(frame) {
       'worklet';
-      patchedRunAsync(frame, () => {
-        'worklet';
-        try {
-          const timeBefore = new Date().getTime();
-
-          const cvResult: InatVision.Result = InatVision.inatVision(frame, {
-            version: modelVersion,
-            modelPath,
-            taxonomyPath,
-            confidenceThreshold,
-            filterByTaxonId,
-            negativeFilter,
-            numStoredResults: 4,
-            cropRatio: 0.9,
-            useGeomodel,
-            geomodelPath,
-            location: {
-              latitude: geoModelCellLocation.latitude,
-              longitude: geoModelCellLocation.longitude,
-              elevation: geoModelCellLocation.elevation,
-            },
-          });
-          const timeAfter = new Date().getTime();
-          console.log('time taken ms: ', timeAfter - timeBefore);
-          console.log('age of result: ', timeAfter - cvResult.timestamp);
-          console.log('cvResult.timeElapsed', cvResult.timeElapsed);
-          handleResults(cvResult.predictions);
-        } catch (classifierError) {
-          console.log(`Error: ${classifierError}`);
-        }
-      });
+      try {
+        console.log(`Received ${frame.width}x${frame.height} Frame!`);
+        console.log(frame.pixelFormat);
+        const timeBefore = new Date().getTime();
+        const cvResult: InatVision.Result = InatVision.inatVision(frame, {
+          version: modelVersion,
+          modelPath,
+          taxonomyPath,
+          confidenceThreshold,
+          filterByTaxonId,
+          negativeFilter,
+          numStoredResults: 4,
+          cropRatio: 0.9,
+          useGeomodel,
+          geomodelPath,
+          location: {
+            latitude: geoModelCellLocation.latitude,
+            longitude: geoModelCellLocation.longitude,
+            elevation: geoModelCellLocation.elevation,
+          },
+        });
+        const timeAfter = new Date().getTime();
+        console.log('time taken ms: ', timeAfter - timeBefore);
+        console.log('age of result: ', timeAfter - cvResult.timestamp);
+        console.log('cvResult.timeElapsed', cvResult.timeElapsed);
+        console.log('cvResult.predictions', cvResult.predictions);
+        scheduleOnRN(setResult, cvResult.predictions);
+      } catch (classifierError) {
+        console.log(`Error: ${classifierError}`);
+      } finally {
+        frame.dispose();
+      }
     },
-    [
-      patchedRunAsync,
-      confidenceThreshold,
-      filterByTaxonId,
-      negativeFilter,
-      handleResults,
-      useGeomodel,
-      geoModelCellLocation,
-    ],
-  );
+  });
 
   function selectImage() {
     launchImageLibrary(
@@ -506,27 +491,12 @@ export default function App(): React.JSX.Element {
           style={styles.flex}
           device={device}
           isActive={true}
-          frameProcessor={frameProcessor}
-          enableZoomGesture
-          pixelFormat={'yuv'}
+          outputs={[frameOutput]}
           resizeMode="contain"
-          enableFpsGraph={true}
-          photoQualityBalance="quality"
-          enableLocation={location.hasPermission}
-          outputOrientation="device"
           onStarted={() => console.log('Camera started!')}
           onStopped={() => console.log('Camera stopped!')}
-          onOutputOrientationChanged={(o) =>
-            console.log(`Output orientation changed to ${o}!`)
-          }
-          onPreviewOrientationChanged={(o) =>
-            console.log(`Preview orientation changed to ${o}!`)
-          }
           onPreviewStarted={() => console.log('Preview started!')}
           onPreviewStopped={() => console.log('Preview stopped!')}
-          onUIRotationChanged={(degrees) =>
-            console.log(`UI Rotation changed: ${degrees}°`)
-          }
         />
         <View style={styles.row}>
           <Button

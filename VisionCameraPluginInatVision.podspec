@@ -15,6 +15,11 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
 
+  s.public_header_files = "ios/VisionCameraPluginInatVision/VisionCameraPluginInatVisionPlugin.h"
+
+  load 'nitrogen/generated/ios/VisionCameraPluginInatVision+autolinking.rb'
+  add_nitrogen_files(s)
+
   s.dependency "VisionCamera"
 
   install_modules_dependencies(s)

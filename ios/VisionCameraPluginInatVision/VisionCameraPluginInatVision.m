@@ -1,7 +1,4 @@
-#import <Foundation/Foundation.h>
-#import <VisionCamera/FrameProcessorPlugin.h>
-#import <VisionCamera/FrameProcessorPluginRegistry.h>
-#import <VisionCamera/Frame.h>
+#import "VisionCameraPluginInatVisionPlugin.h"
 
 @import UIKit;
 @import Vision;
@@ -15,18 +12,9 @@
 #import "VCPMLUtils.h"
 #import "VCPModelProvider.h"
 
-@interface VisionCameraPluginInatVisionPlugin : FrameProcessorPlugin
-@end
-
 @implementation VisionCameraPluginInatVisionPlugin
 
-- (instancetype)initWithProxy:(VisionCameraProxyHolder*)proxy
-                  withOptions:(NSDictionary* _Nullable)options {
-    self = [super initWithProxy:proxy withOptions:options];
-    return self;
-}
-
-- (id)callback:(Frame*)frame withArguments:(NSDictionary*)arguments {
+- (id)callback:(CVPixelBufferRef)pixelBuffer withArguments:(NSDictionary*)arguments {
     // Start timestamp
     NSDate *startDate = [NSDate date];
 
@@ -66,9 +54,7 @@
 #endif
     }
 
-    CMSampleBufferRef buffer = frame.buffer;
-    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
-    UIImageOrientation orientation = frame.orientation;
+    UIImageOrientation orientation = UIImageOrientationUp;
 
     VCPVisionModel *cvModel = [VCPModelProvider visionModelWithModelFile:modelPath];
     MLMultiArray *visionScores = [cvModel visionPredictionsForPixelBuffer:pixelBuffer orientation:orientation];
@@ -113,7 +99,5 @@
     return response;
 }
 
-VISION_EXPORT_FRAME_PROCESSOR(VisionCameraPluginInatVisionPlugin, inatVision)
-
 @end
- 
+

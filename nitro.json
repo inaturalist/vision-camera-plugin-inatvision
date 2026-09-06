@@ -1,0 +1,24 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["visioncameraplugininatvision"],
+  "ios": {
+    "iosModuleName": "VisionCameraPluginInatVision"
+  },
+  "android": {
+    "androidNamespace": ["visioncameraplugininatvision"],
+    "androidCxxLibName": "VisionCameraPluginInatVision"
+  },
+  "autolinking": {
+    "VisionCameraPluginInatVision": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridVisionCameraPluginInatVision"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridVisionCameraPluginInatVision"
+      }
+    }
+  },
+  "ignorePaths": ["**/node_modules"]
+}

@@ -9,11 +9,19 @@ buildscript {
   }
 }
 
+def reactNativeArchitectures() {
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
 def isNewArchitectureEnabled() {
   return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
 }
 
 apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply from: '../nitrogen/generated/android/VisionCameraPluginInatVision+autolinking.gradle'
+apply from: "./fix-prefab.gradle"
 
 if (isNewArchitectureEnabled()) {
   apply plugin: "com.facebook.react"
@@ -30,15 +38,40 @@ def getExtOrIntegerDefault(name) {
 android {
   namespace "com.visioncameraplugininatvision"
 
+  ndkVersion getExtOrDefault("ndkVersion")
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+
+    externalNativeBuild {
+      cmake {
+        cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
+        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        abiFilters (*reactNativeArchitectures())
+
+        buildTypes {
+          debug {
+            cppFlags "-O1 -g"
+          }
+          release {
+            cppFlags "-O2"
+          }
+        }
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
   }
 
   buildFeatures {
     buildConfig true
+    prefab true
   }
 
   buildTypes {
@@ -77,11 +110,19 @@ dependencies {
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native"
+
   // Basic dependencies for the frame processor using vision camera
-  implementation project(':react-native-vision-camera')
-  implementation "androidx.camera:camera-core:1.1.0-alpha08"
+  // Add a dependency on NitroModules
+  implementation project(":react-native-nitro-modules")
+
+  // Add a dependency on VisionCamera (for HybridFrameSpec and HybridCameraOutputSpec)
+  implementation project(":react-native-vision-camera")
+
+  // Add minimal dependency on CameraX
+  def camerax_version = "1.7.0-alpha02"
+  implementation "androidx.camera:camera-core:${camerax_version}"
+
   // Requirements for our custom image labeling and processing
-  implementation 'androidx.exifinterface:exifinterface:1.2.0'
   // CV model 1.0 works with TF Lite 1.15.0
   // CV model 2.3 works with TF Lite 2.?
   implementation "com.google.ai.edge.litert:litert:${getExtOrDefault("litertVersion")}"

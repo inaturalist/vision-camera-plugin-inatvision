@@ -15,12 +15,12 @@
     "react": "19.2.0",
     "react-native": "0.83.10",
     "react-native-image-picker": "8.2.1",
-    "react-native-nitro-image": "0.14.0",
-    "react-native-nitro-modules": "0.35.5",
+    "react-native-nitro-image": "0.15.0",
+    "react-native-nitro-modules": "0.35.9",
     "react-native-safe-area-context": "5.8.0",
-    "react-native-vision-camera": "5.0.7",
-    "react-native-vision-camera-location": "5.0.7",
-    "react-native-vision-camera-worklets": "5.0.7",
+    "react-native-vision-camera": "5.0.11",
+    "react-native-vision-camera-location": "5.0.11",
+    "react-native-vision-camera-worklets": "5.0.11",
     "react-native-worklets": "0.8.1"
   },
   "devDependencies": {

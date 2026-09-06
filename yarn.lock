@@ -660,7 +660,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-arrow-functions@npm:^7.29.7":
+"@babel/plugin-transform-arrow-functions@npm:^7.27.1, @babel/plugin-transform-arrow-functions@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-arrow-functions@npm:7.29.7"
   dependencies:
@@ -1257,7 +1257,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-shorthand-properties@npm:^7.29.7":
+"@babel/plugin-transform-shorthand-properties@npm:^7.27.1, @babel/plugin-transform-shorthand-properties@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-shorthand-properties@npm:7.29.7"
   dependencies:
@@ -13305,8 +13305,10 @@ __metadata:
     react-native-nitro-image: "npm:0.15.1"
     react-native-nitro-modules: "npm:0.36.5"
     react-native-safe-area-context: "npm:5.8.0"
-    react-native-vision-camera: "npm:4.7.3"
-    react-native-worklets-core: "npm:1.6.3"
+    react-native-vision-camera: "npm:5.2.2"
+    react-native-vision-camera-location: "npm:5.2.2"
+    react-native-vision-camera-worklets: "npm:5.2.2"
+    react-native-worklets: "npm:0.9.1"
     react-test-renderer: "npm:19.2.3"
     typescript: "npm:^5.8.3"
   languageName: unknown

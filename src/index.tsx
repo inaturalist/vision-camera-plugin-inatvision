@@ -779,7 +779,6 @@ export function inatVision(frame: Frame, options: Options): Result {
   }
   optionsAreValidForFrame(options);
   const result = plugin.call(frame, options);
-  console.log('result', result);
   const handledResult: Result = handleResult(result, options);
   return handledResult;
 }

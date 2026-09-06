@@ -38,7 +38,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - NitroModules (0.35.9):
+  - NitroModules (0.36.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2731,7 +2731,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.8.1):
+  - RNWorklets (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2758,11 +2758,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/apple (= 0.8.1)
-    - RNWorklets/common (= 0.8.1)
+    - RNWorklets/apple (= 0.9.1)
+    - RNWorklets/common (= 0.9.1)
     - SocketRocket
     - Yoga
-  - RNWorklets/apple (0.8.1):
+  - RNWorklets/apple (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2791,7 +2791,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets/common (0.8.1):
+  - RNWorklets/common (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2821,7 +2821,7 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
-  - VisionCamera (5.0.11):
+  - VisionCamera (5.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2852,7 +2852,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - VisionCameraLocation (5.0.11):
+  - VisionCameraLocation (5.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2913,7 +2913,7 @@ PODS:
     - SocketRocket
     - VisionCamera
     - Yoga
-  - VisionCameraWorklets (5.0.11):
+  - VisionCameraWorklets (5.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3234,7 +3234,7 @@ SPEC CHECKSUMS:
   glog: 0456694f3aaf09460b660ea327cfc11defbeea4c
   hermes-engine: f37e1d6f1eb198649a60b3f17b6f685a6ac12470
   NitroImage: cef8d9c91d6d9247ec0569bb68148f7fba717026
-  NitroModules: 8ab2b6936d6d3b6283d22b3e1394ab141c6cb8c2
+  NitroModules: 8d376059cb66130ebac6a84982c068d69012b567
   RCT-Folly: b29feb752b08042c62badaef7d453f3bb5e6ae23
   RCTDeprecation: f05668eea7b0e209e77e8ab1dc6a5e3b342f6f65
   RCTRequired: c1ddbcb9ab4d51c36bda2a96556d064cb8825357
@@ -3309,12 +3309,12 @@ SPEC CHECKSUMS:
   ReactCodegen: def1d229e98dfa107fa837df57870ee7b9114a63
   ReactCommon: d71e3b6d0134b09c1ec8e656f81daefae6902a97
   ReactNativeFs: 8ee52268099f843309fac2d0e291d254116d1df2
-  RNWorklets: 6daa3975bebe6047822c7485666d501a716674ca
+  RNWorklets: c8478950982ef7542807c9219a9f86b561fa8bd1
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  VisionCamera: 76859d9130b74fbfb2f46abec4c60c403416f858
-  VisionCameraLocation: 6d95da9944d5ddc2452b31a6e62521936f3690a3
+  VisionCamera: 8407cd5a5a61543e8b35b1a9dab1ee39dc025130
+  VisionCameraLocation: 5e9429cae4e248bdc9d5d9d39e458788c0b894a5
   VisionCameraPluginInatVision: ab4979d339c0a6434c8c8a4a26816ca0eb027e9b
-  VisionCameraWorklets: 5665ea1e85aad720840f65fdb08eb38560e7a29a
+  VisionCameraWorklets: 425cff0639eaf1669efd11d02b89b969fe3b4fbc
   Yoga: d2ed98551adb569fc38be0148666854e1ff60692
 
 PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73

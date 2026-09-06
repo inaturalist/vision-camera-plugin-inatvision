@@ -719,7 +719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-class-properties@npm:^7.25.4, @babel/plugin-transform-class-properties@npm:^7.27.1, @babel/plugin-transform-class-properties@npm:^7.29.7":
+"@babel/plugin-transform-class-properties@npm:^7.25.4, @babel/plugin-transform-class-properties@npm:^7.28.6, @babel/plugin-transform-class-properties@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-class-properties@npm:7.29.7"
   dependencies:
@@ -743,7 +743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-classes@npm:^7.25.4, @babel/plugin-transform-classes@npm:^7.28.4, @babel/plugin-transform-classes@npm:^7.29.7":
+"@babel/plugin-transform-classes@npm:^7.25.4, @babel/plugin-transform-classes@npm:^7.28.6, @babel/plugin-transform-classes@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-classes@npm:7.29.7"
   dependencies:
@@ -1017,7 +1017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-nullish-coalescing-operator@npm:^7.24.7, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.27.1, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.29.7":
+"@babel/plugin-transform-nullish-coalescing-operator@npm:^7.24.7, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.28.6, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-nullish-coalescing-operator@npm:7.29.7"
   dependencies:
@@ -1077,7 +1077,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-optional-chaining@npm:^7.24.8, @babel/plugin-transform-optional-chaining@npm:^7.27.1, @babel/plugin-transform-optional-chaining@npm:^7.29.7":
+"@babel/plugin-transform-optional-chaining@npm:^7.24.8, @babel/plugin-transform-optional-chaining@npm:^7.28.6, @babel/plugin-transform-optional-chaining@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-optional-chaining@npm:7.29.7"
   dependencies:
@@ -1496,7 +1496,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.24.7, @babel/preset-typescript@npm:^7.27.1":
+"@babel/preset-typescript@npm:^7.24.7, @babel/preset-typescript@npm:^7.28.5":
   version: 7.29.7
   resolution: "@babel/preset-typescript@npm:7.29.7"
   dependencies:
@@ -3171,14 +3171,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-morph/common@npm:~0.28.1":
-  version: 0.28.1
-  resolution: "@ts-morph/common@npm:0.28.1"
+"@ts-morph/common@npm:~0.29.0":
+  version: 0.29.0
+  resolution: "@ts-morph/common@npm:0.29.0"
   dependencies:
     minimatch: "npm:^10.0.1"
     path-browserify: "npm:^1.0.1"
     tinyglobby: "npm:^0.2.14"
-  checksum: 10c0/d51276d840997e0f8f83e04f8b1689135bb12588a7ddbed575f87848d5737eeae31e242685d6449de27573e8ed30892157fea643393cb875e175f2711200bc50
+  checksum: 10c0/97ab8ca66558b817e5475a8893ee1476ab760a3ac71fa9868413d95ddbaaf909eda81716e3a8d14291cbf449e624af66de81bcddd3ec2e36525728b4edf5e8ee
   languageName: node
   linkType: hard
 
@@ -10189,18 +10189,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitrogen@npm:0.35.4":
-  version: 0.35.4
-  resolution: "nitrogen@npm:0.35.4"
+"nitrogen@npm:0.36.1":
+  version: 0.36.1
+  resolution: "nitrogen@npm:0.36.1"
   dependencies:
     chalk: "npm:^5.3.0"
-    react-native-nitro-modules: "npm:^0.35.4"
-    ts-morph: "npm:^27.0.0"
+    react-native-nitro-modules: "npm:^0.36.1"
+    ts-morph: "npm:^28.0.0"
     yargs: "npm:^18.0.0"
-    zod: "npm:^4.0.5"
+    zod: "npm:^4.4.3"
   bin:
     nitrogen: lib/index.js
-  checksum: 10c0/d8c7eed4e08c107475e8a3154f7d5ddf9876448032f0986b0e8d9e58abeb3dbc8ecd7cdb45190f12ab0fbafc815bb1b31209e93910e7f5d671e892d794449631
+  checksum: 10c0/a639dbadeca131be7dc059558b599fc2a1d45a88c4260d936a77e9402d1f81208f770c6085c4f5f13f48a10ec1cba04425278558dc0cfd41434e41d1a555cacb
   languageName: node
   linkType: hard
 
@@ -11302,23 +11302,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.35.9":
-  version: 0.35.9
-  resolution: "react-native-nitro-modules@npm:0.35.9"
+"react-native-nitro-modules@npm:0.36.1":
+  version: 0.36.1
+  resolution: "react-native-nitro-modules@npm:0.36.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/2e5c1b3eed1d187e7c2bbbf661e6405cb69c6a20b01427ea4c8a3bfe07a4baf2efbeb170a21f8c17fb0e18f022244f4b1fe1ce69a7ec824a7a4cf72441893cf1
+  checksum: 10c0/8f0a56371d2de36531208794f81c457bbd00f00ae8f9c914fb752606585297607cbc1ad38681a1efb7d8cf4322537f300e0a822954a4b15c8d8c8f2c9d61cd12
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:^0.35.4":
-  version: 0.35.10
-  resolution: "react-native-nitro-modules@npm:0.35.10"
+"react-native-nitro-modules@npm:^0.36.1":
+  version: 0.36.5
+  resolution: "react-native-nitro-modules@npm:0.36.5"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/55c117c418abfb1223053eb93b8604bd7b6edc22ee9568a7017888a78f51dfa8ae5f2d11906c4cf6c87ae41b05ba099dc8958082b8aa1cfe8e1c7c1f3e9aff0e
+  checksum: 10c0/c7b2133f924967b68c0f0f678b5a5dce1a784a7e22f57ebf203ef5803a5c9c745b6d4dda8c9bcedd13f7c5ca53a8707784e98572a2ca8a864fe0b905163a34b5
   languageName: node
   linkType: hard
 
@@ -11332,64 +11332,64 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-location@npm:5.0.11":
-  version: 5.0.11
-  resolution: "react-native-vision-camera-location@npm:5.0.11"
+"react-native-vision-camera-location@npm:5.1.0":
+  version: 5.1.0
+  resolution: "react-native-vision-camera-location@npm:5.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
-  checksum: 10c0/b4ea14f1e4ed2571e39c7c816c5948f05d97ca2754ea5425436f872887acce0d3b456e654d49d930edc19d068b48ab42131cf5f8bfc1d72dcdf44246e9d43e41
+  checksum: 10c0/f5fa031194aa1d03263601aeb3193e5e4e89e8178e8bfdcc160ffd043670377fe4be18c1c14f006ce1e040e34f3114bc08d3f363f8ca03d57ab1b6f65708c085
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-worklets@npm:5.0.11":
-  version: 5.0.11
-  resolution: "react-native-vision-camera-worklets@npm:5.0.11"
+"react-native-vision-camera-worklets@npm:5.1.0":
+  version: 5.1.0
+  resolution: "react-native-vision-camera-worklets@npm:5.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
     react-native-worklets: "*"
-  checksum: 10c0/4580c37198247c0253e228e2a93eadadbd7b8468d44350dc14e1a09d637a85d2f444fbf32417ef85cf2bfaba7869b73723ac97db82b3d36ada3fa1de86b9234b
+  checksum: 10c0/fe58b63dc2ed5442c0196286e3343bf17f0698d98dc746315156086e65bc203cb467d07e91eb9ac9ae18ab2b54cf65582a00ec598d43307473b76154556d76f6
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:5.0.11":
-  version: 5.0.11
-  resolution: "react-native-vision-camera@npm:5.0.11"
+"react-native-vision-camera@npm:5.1.0":
+  version: 5.1.0
+  resolution: "react-native-vision-camera@npm:5.1.0"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-image: "*"
     react-native-nitro-modules: "*"
-  checksum: 10c0/b13bd297eaf98a6db7f9e3c084c02b138b229132fb65a69b0d200fd793b782743981671f1c5287d8c91afcb8695aabeb3260d7c061079f638ecdc8ec1613e6d1
+  checksum: 10c0/6fbac55b041048fbc5ffd96f3df87bd9b07a4b8dc79a16d0bfb55aa08f790d8cd322b754b84f8714787cd910c9b9e4920d9cbe24ab7674fdb0ed9e1bc42e6285
   languageName: node
   linkType: hard
 
-"react-native-worklets@npm:0.8.1":
-  version: 0.8.1
-  resolution: "react-native-worklets@npm:0.8.1"
+"react-native-worklets@npm:0.9.1":
+  version: 0.9.1
+  resolution: "react-native-worklets@npm:0.9.1"
   dependencies:
     "@babel/plugin-transform-arrow-functions": "npm:^7.27.1"
-    "@babel/plugin-transform-class-properties": "npm:^7.27.1"
-    "@babel/plugin-transform-classes": "npm:^7.28.4"
-    "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.27.1"
-    "@babel/plugin-transform-optional-chaining": "npm:^7.27.1"
+    "@babel/plugin-transform-class-properties": "npm:^7.28.6"
+    "@babel/plugin-transform-classes": "npm:^7.28.6"
+    "@babel/plugin-transform-nullish-coalescing-operator": "npm:^7.28.6"
+    "@babel/plugin-transform-optional-chaining": "npm:^7.28.6"
     "@babel/plugin-transform-shorthand-properties": "npm:^7.27.1"
     "@babel/plugin-transform-template-literals": "npm:^7.27.1"
     "@babel/plugin-transform-unicode-regex": "npm:^7.27.1"
-    "@babel/preset-typescript": "npm:^7.27.1"
+    "@babel/preset-typescript": "npm:^7.28.5"
     convert-source-map: "npm:^2.0.0"
-    semver: "npm:^7.7.3"
+    semver: "npm:^7.7.4"
   peerDependencies:
     "@babel/core": "*"
     "@react-native/metro-config": "*"
     react: "*"
-    react-native: 0.81 - 0.85
-  checksum: 10c0/a82edbd65b09a31d973497dac899adcd618677b56f7e5c460fd9f3b1b4ef1547b7bfd2edaa644d1ebf866bf70658bdbd1314c9d0ab2856e98c6975d0e97fd449
+    react-native: 0.83 - 0.86
+  checksum: 10c0/a3612d9c2b3613c789dc0b15ffe4e200681b8e64a715029748d29fb4176930765f1afb9fa4d625c02a2c136f3c331ab488e28fbb75e28295fa15edd4000195f3
   languageName: node
   linkType: hard
 
@@ -12003,6 +12003,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/81b7c296fd7927b80f67fa516b75fa1017caac8167795320de28e76ccbc6f7f01763c30ecd10d6a0d8fd089708ab0548a5aebb94b0870e99c2a2b4600a46389b
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.7.4":
+  version: 7.8.5
+  resolution: "semver@npm:7.8.5"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/b1f3127a5be8125a94f37188b361c212466c292c6910adce3ec106cff5dc211ccaedc4739c11bb70fda59d6fc1f040a9bca289f4e093451521a2372e5231fe0c
   languageName: node
   linkType: hard
 
@@ -12898,13 +12907,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-morph@npm:^27.0.0":
-  version: 27.0.2
-  resolution: "ts-morph@npm:27.0.2"
+"ts-morph@npm:^28.0.0":
+  version: 28.0.0
+  resolution: "ts-morph@npm:28.0.0"
   dependencies:
-    "@ts-morph/common": "npm:~0.28.1"
+    "@ts-morph/common": "npm:~0.29.0"
     code-block-writer: "npm:^13.0.3"
-  checksum: 10c0/224715cc6d97b8ff5afd3986f9629f912a0ebd83eaecbdca91c35cf10a98f607c663f666e7ea5e6afab00563d00dc80fa7a13552cc7f1cef735261c3217d0863
+  checksum: 10c0/969570a5e983b4193735fff43878ce7b78787b4860bf3d23f330c86d7de707286969e5a82d486dce333eea27bf9d373a46f9de58a80c0bf86d2a462620563a55
   languageName: node
   linkType: hard
 
@@ -13315,12 +13324,12 @@ __metadata:
     react-native: "npm:0.83.10"
     react-native-image-picker: "npm:8.2.1"
     react-native-nitro-image: "npm:0.15.0"
-    react-native-nitro-modules: "npm:0.35.9"
+    react-native-nitro-modules: "npm:0.36.1"
     react-native-safe-area-context: "npm:5.8.0"
-    react-native-vision-camera: "npm:5.0.11"
-    react-native-vision-camera-location: "npm:5.0.11"
-    react-native-vision-camera-worklets: "npm:5.0.11"
-    react-native-worklets: "npm:0.8.1"
+    react-native-vision-camera: "npm:5.1.0"
+    react-native-vision-camera-location: "npm:5.1.0"
+    react-native-vision-camera-worklets: "npm:5.1.0"
+    react-native-worklets: "npm:0.9.1"
     react-test-renderer: "npm:19.2.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -13347,7 +13356,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.4"
     h3-js: "npm:^4.4.0"
     jest: "npm:^28.1.1"
-    nitrogen: "npm:0.35.4"
+    nitrogen: "npm:0.36.1"
     pod-install: "npm:^0.1.0"
     prettier: "npm:^3.0.3"
     react: "npm:19.2.0"
@@ -13355,11 +13364,11 @@ __metadata:
     react-native-builder-bob: "npm:^0.40.17"
     react-native-monorepo-config: "npm:^0.3.1"
     react-native-nitro-image: "npm:0.15.0"
-    react-native-nitro-modules: "npm:0.35.9"
-    react-native-vision-camera: "npm:5.0.11"
-    react-native-vision-camera-location: "npm:5.0.11"
-    react-native-vision-camera-worklets: "npm:5.0.11"
-    react-native-worklets: "npm:0.8.1"
+    react-native-nitro-modules: "npm:0.36.1"
+    react-native-vision-camera: "npm:5.1.0"
+    react-native-vision-camera-location: "npm:5.1.0"
+    react-native-vision-camera-worklets: "npm:5.1.0"
+    react-native-worklets: "npm:0.9.1"
     release-it: "npm:^17.10.0"
     typescript: "npm:^5.9.3"
   peerDependencies:
@@ -13804,7 +13813,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.0.5":
+"zod@npm:^4.4.3":
   version: 4.5.4
   resolution: "zod@npm:4.5.4"
   checksum: 10c0/511a2a4d1a6f875dfdd70a1586989a8b14ef126776cd6218a2c760b9f65f14ef389ec20d92ee1aa4fcb4566d4ff3fa012956044f9dc503510d82e4c756a8ba92

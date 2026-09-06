@@ -10189,18 +10189,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitrogen@npm:0.36.1":
-  version: 0.36.1
-  resolution: "nitrogen@npm:0.36.1"
+"nitrogen@npm:0.36.5":
+  version: 0.36.5
+  resolution: "nitrogen@npm:0.36.5"
   dependencies:
     chalk: "npm:^5.3.0"
-    react-native-nitro-modules: "npm:^0.36.1"
+    react-native-nitro-modules: "npm:^0.36.5"
     ts-morph: "npm:^28.0.0"
     yargs: "npm:^18.0.0"
     zod: "npm:^4.4.3"
   bin:
     nitrogen: lib/index.js
-  checksum: 10c0/a639dbadeca131be7dc059558b599fc2a1d45a88c4260d936a77e9402d1f81208f770c6085c4f5f13f48a10ec1cba04425278558dc0cfd41434e41d1a555cacb
+  checksum: 10c0/c3241b92ea5e3823a5edc8107f39dafd1b7b2ddbf1842cb7f365c68dbc82c02d57d38c1c79fb39d8a81e4c0beb1f58469f3372c5543faa06dfc0c28fe73a9516
   languageName: node
   linkType: hard
 
@@ -11291,28 +11291,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-image@npm:0.15.0":
-  version: 0.15.0
-  resolution: "react-native-nitro-image@npm:0.15.0"
+"react-native-nitro-image@npm:0.15.1":
+  version: 0.15.1
+  resolution: "react-native-nitro-image@npm:0.15.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
-  checksum: 10c0/7af289336f0340a387f723a38e2533d7b121db5c146a339f0c0c49a3d2d9cd40935c06dff5a6dd8ab5eb633515d959211f727dddafd648f957476ee36903ea5c
+  checksum: 10c0/c8599543167ce1f53c838c2ec4a38923b617945d6dbea9717383a21688fa30d409f91a03a4d2645efa2fcd3523a4f06bdc97484507e99ebf10ac7236da55d735
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.36.1":
-  version: 0.36.1
-  resolution: "react-native-nitro-modules@npm:0.36.1"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/8f0a56371d2de36531208794f81c457bbd00f00ae8f9c914fb752606585297607cbc1ad38681a1efb7d8cf4322537f300e0a822954a4b15c8d8c8f2c9d61cd12
-  languageName: node
-  linkType: hard
-
-"react-native-nitro-modules@npm:^0.36.1":
+"react-native-nitro-modules@npm:0.36.5, react-native-nitro-modules@npm:^0.36.5":
   version: 0.36.5
   resolution: "react-native-nitro-modules@npm:0.36.5"
   peerDependencies:
@@ -11332,40 +11322,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-location@npm:5.1.1":
-  version: 5.1.1
-  resolution: "react-native-vision-camera-location@npm:5.1.1"
+"react-native-vision-camera-location@npm:5.2.1":
+  version: 5.2.1
+  resolution: "react-native-vision-camera-location@npm:5.2.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
-  checksum: 10c0/436f29ae62523254e42bde6c0bd68778d083654480a39db43ebbd5a1ff60022764a320c28236077ffbf2132de658217bec35d536f4ae49555061b9b59df16d83
+  checksum: 10c0/c98dfd2706a1fe8fe4edb05bdcaab98f4215a4f0c358cb2246228d191974f26c27d2e30af70b9336bfb8d6aa01c671389480733ba19a82a61773cee9f53e2da7
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-worklets@npm:5.1.1":
-  version: 5.1.1
-  resolution: "react-native-vision-camera-worklets@npm:5.1.1"
+"react-native-vision-camera-worklets@npm:5.2.1":
+  version: 5.2.1
+  resolution: "react-native-vision-camera-worklets@npm:5.2.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
     react-native-worklets: "*"
-  checksum: 10c0/aa648293fff20ee6daba91eed5dc2eeea99cb55e00b6e8954673f7d8c984bd47521bd78fe7b4a3a9949232d0c2228fdb0f4b242007142ac47662b4a76c27d818
+  checksum: 10c0/c1c5d70220722d468b8b4bde4e11aa42414810618c8e969b2edf475fbc835bc51c83095f040c51d556916b3b586146272fb4a7d7592ee9e2084e0a5d2870a7aa
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:5.1.1":
-  version: 5.1.1
-  resolution: "react-native-vision-camera@npm:5.1.1"
+"react-native-vision-camera@npm:5.2.1":
+  version: 5.2.1
+  resolution: "react-native-vision-camera@npm:5.2.1"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-image: "*"
     react-native-nitro-modules: "*"
-  checksum: 10c0/2c1d68cf079a61c52ee04ac706235ccab7715c878ef57442e30fb36591302bb8c6d1e3e9876b1f0d62844c511f3598f9a3b98a021d134a7a78701146aeaed2ff
+  checksum: 10c0/58e6d11ef9456f54f4b3efb770aaecec966f15798c12b5ca01863b65190df71f734d89f81b78450dad14767432a5769555c6a8bb2f3a923e1dba296319bf4a9a
   languageName: node
   linkType: hard
 
@@ -13323,12 +13313,12 @@ __metadata:
     react: "npm:19.2.0"
     react-native: "npm:0.83.10"
     react-native-image-picker: "npm:8.2.1"
-    react-native-nitro-image: "npm:0.15.0"
-    react-native-nitro-modules: "npm:0.36.1"
+    react-native-nitro-image: "npm:0.15.1"
+    react-native-nitro-modules: "npm:0.36.5"
     react-native-safe-area-context: "npm:5.8.0"
-    react-native-vision-camera: "npm:5.1.1"
-    react-native-vision-camera-location: "npm:5.1.1"
-    react-native-vision-camera-worklets: "npm:5.1.1"
+    react-native-vision-camera: "npm:5.2.1"
+    react-native-vision-camera-location: "npm:5.2.1"
+    react-native-vision-camera-worklets: "npm:5.2.1"
     react-native-worklets: "npm:0.9.1"
     react-test-renderer: "npm:19.2.0"
     typescript: "npm:^5.8.3"
@@ -13356,18 +13346,18 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.4"
     h3-js: "npm:^4.4.0"
     jest: "npm:^28.1.1"
-    nitrogen: "npm:0.36.1"
+    nitrogen: "npm:0.36.5"
     pod-install: "npm:^0.1.0"
     prettier: "npm:^3.0.3"
     react: "npm:19.2.0"
     react-native: "npm:0.83.10"
     react-native-builder-bob: "npm:^0.40.17"
     react-native-monorepo-config: "npm:^0.3.1"
-    react-native-nitro-image: "npm:0.15.0"
-    react-native-nitro-modules: "npm:0.36.1"
-    react-native-vision-camera: "npm:5.1.1"
-    react-native-vision-camera-location: "npm:5.1.1"
-    react-native-vision-camera-worklets: "npm:5.1.1"
+    react-native-nitro-image: "npm:0.15.1"
+    react-native-nitro-modules: "npm:0.36.5"
+    react-native-vision-camera: "npm:5.2.1"
+    react-native-vision-camera-location: "npm:5.2.1"
+    react-native-vision-camera-worklets: "npm:5.2.1"
     react-native-worklets: "npm:0.9.1"
     release-it: "npm:^17.10.0"
     typescript: "npm:^5.9.3"

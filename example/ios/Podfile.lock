@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.14.1):
     - hermes-engine/Pre-built (= 0.14.1)
   - hermes-engine/Pre-built (0.14.1)
-  - NitroImage (0.15.0):
+  - NitroImage (0.15.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -38,7 +38,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - NitroModules (0.36.1):
+  - NitroModules (0.36.5):
     - boost
     - DoubleConversion
     - fast_float
@@ -2821,7 +2821,7 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
-  - VisionCamera (5.1.1):
+  - VisionCamera (5.2.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2852,7 +2852,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - VisionCameraLocation (5.1.1):
+  - VisionCameraLocation (5.2.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2913,7 +2913,7 @@ PODS:
     - SocketRocket
     - VisionCamera
     - Yoga
-  - VisionCameraWorklets (5.1.1):
+  - VisionCameraWorklets (5.2.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3233,8 +3233,8 @@ SPEC CHECKSUMS:
   fmt: 530618a01105dae0fa3a2f27c81ae11fa8f67eac
   glog: 0456694f3aaf09460b660ea327cfc11defbeea4c
   hermes-engine: f37e1d6f1eb198649a60b3f17b6f685a6ac12470
-  NitroImage: cef8d9c91d6d9247ec0569bb68148f7fba717026
-  NitroModules: 8d376059cb66130ebac6a84982c068d69012b567
+  NitroImage: 1030847adcaad2f2fe74ea8c0b97e31c0bad2313
+  NitroModules: ab089a25876d6510138cc21fbf2e36e872f7d607
   RCT-Folly: b29feb752b08042c62badaef7d453f3bb5e6ae23
   RCTDeprecation: f05668eea7b0e209e77e8ab1dc6a5e3b342f6f65
   RCTRequired: c1ddbcb9ab4d51c36bda2a96556d064cb8825357
@@ -3311,10 +3311,10 @@ SPEC CHECKSUMS:
   ReactNativeFs: 8ee52268099f843309fac2d0e291d254116d1df2
   RNWorklets: c8478950982ef7542807c9219a9f86b561fa8bd1
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  VisionCamera: 3d7158c0de0fddf6ce1ec3493484a2ce680524e7
-  VisionCameraLocation: 5d1e3e15aa2f61beb6ef7dbf5fa68192d2287c65
+  VisionCamera: 13dcd8d9a99edfaf6152c11998d0d67aa9417c72
+  VisionCameraLocation: e646ebd673d1b8e7367bd95653e5130bf4bea870
   VisionCameraPluginInatVision: ab4979d339c0a6434c8c8a4a26816ca0eb027e9b
-  VisionCameraWorklets: 95872424f7c77a020d7732823c88c225eb4182a3
+  VisionCameraWorklets: 82a26fb02ce62f6743baf512d23a442025e4424f
   Yoga: d2ed98551adb569fc38be0148666854e1ff60692
 
 PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73

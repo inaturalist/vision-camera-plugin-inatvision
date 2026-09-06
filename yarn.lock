@@ -11291,24 +11291,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-nitro-image@npm:0.13.1":
-  version: 0.13.1
-  resolution: "react-native-nitro-image@npm:0.13.1"
+"react-native-nitro-image@npm:0.14.0":
+  version: 0.14.0
+  resolution: "react-native-nitro-image@npm:0.14.0"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
-  checksum: 10c0/cbbc736b89249aeb2edc59ec928adb6becf5b9efd056e4de10ea6f3277365a889bfdb32a52cdc19bbfca4edaacdc47e7fa8a15209de8c24ae49c557f5b1b500b
+  checksum: 10c0/5bd4d553acb354cfdbaec2a40d34285cc96b67a3ad045e77f11f24762a0028b3259c8464d546d1aad7bd5fee418673f7e0bfcd1ec61484a9ed7fb524da8a08c5
   languageName: node
   linkType: hard
 
-"react-native-nitro-modules@npm:0.35.4":
-  version: 0.35.4
-  resolution: "react-native-nitro-modules@npm:0.35.4"
+"react-native-nitro-modules@npm:0.35.5":
+  version: 0.35.5
+  resolution: "react-native-nitro-modules@npm:0.35.5"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/dffb64c1b349d21feb8a33546cde48e3c5d92e04e120f733c178d4afa26ef6de652c6236a4eed0da7ca842ac9815afaa0708f57ae1454d881397e5d0575031c2
+  checksum: 10c0/fa6869f50345a33597b9c15aee4fa5a1c65794166946d470fad6d02d77bf467cc414934890e4e44644f2338303a4ec7b5127bf21824473e86e347aef83d20101
   languageName: node
   linkType: hard
 
@@ -11332,40 +11332,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-location@npm:5.0.0":
-  version: 5.0.0
-  resolution: "react-native-vision-camera-location@npm:5.0.0"
+"react-native-vision-camera-location@npm:5.0.7":
+  version: 5.0.7
+  resolution: "react-native-vision-camera-location@npm:5.0.7"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
-  checksum: 10c0/d36d40463714b97121865789e655068d867270f7ce5eb9fafc1976beb629d569dc1bc6b806efac22886c2f8e1f475672d316cb885f977e12943574db52fbcf3a
+  checksum: 10c0/dee8d538cb88f77e175c24ea7b9e727c3957ae5cab818270452a191de535bd4d04d30a23014381a460e5520f29c501471051ccac065089fbba81ad063f906497
   languageName: node
   linkType: hard
 
-"react-native-vision-camera-worklets@npm:5.0.0":
-  version: 5.0.0
-  resolution: "react-native-vision-camera-worklets@npm:5.0.0"
+"react-native-vision-camera-worklets@npm:5.0.7":
+  version: 5.0.7
+  resolution: "react-native-vision-camera-worklets@npm:5.0.7"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: "*"
     react-native-vision-camera: "*"
     react-native-worklets: "*"
-  checksum: 10c0/c4c72741575bb720b27dfbf951ca207f409e1cc107ac1139eb937de924c94c7fb69fc90e260cbec8302b10a27256e09fb37153d0e705ec3fbf5d57b4f1dc0448
+  checksum: 10c0/327cd282bb68fa2f08dc92e4ac2b0856367965b1d9b1bc732797644abf516bf22f3d1f86028b671cd082b12f8c910d4e1c45308a1aefe468eec766b809e02bf9
   languageName: node
   linkType: hard
 
-"react-native-vision-camera@npm:5.0.0":
-  version: 5.0.0
-  resolution: "react-native-vision-camera@npm:5.0.0"
+"react-native-vision-camera@npm:5.0.7":
+  version: 5.0.7
+  resolution: "react-native-vision-camera@npm:5.0.7"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-nitro-image: "*"
     react-native-nitro-modules: "*"
-  checksum: 10c0/e58bf15de0005e582fbdce2ae8dbac1dd878aa9a8a285120e92b73019b3b4f3dd9e77d7ac6b03c80df8b7eb3ae828f95190d498b711a6e8ae239bfea9c891427
+  checksum: 10c0/9b4ed724c63ebdefd17815da617effb2081251d03699c5cfa4385c8bebdf20f8476ddd769889c08539f49336228feb88808c3632401aa3a6773b299a5dd9d5dd
   languageName: node
   linkType: hard
 
@@ -13314,12 +13314,12 @@ __metadata:
     react: "npm:19.2.0"
     react-native: "npm:0.83.10"
     react-native-image-picker: "npm:8.2.1"
-    react-native-nitro-image: "npm:0.13.1"
-    react-native-nitro-modules: "npm:0.35.4"
+    react-native-nitro-image: "npm:0.14.0"
+    react-native-nitro-modules: "npm:0.35.5"
     react-native-safe-area-context: "npm:5.8.0"
-    react-native-vision-camera: "npm:5.0.0"
-    react-native-vision-camera-location: "npm:5.0.0"
-    react-native-vision-camera-worklets: "npm:5.0.0"
+    react-native-vision-camera: "npm:5.0.7"
+    react-native-vision-camera-location: "npm:5.0.7"
+    react-native-vision-camera-worklets: "npm:5.0.7"
     react-native-worklets: "npm:0.8.1"
     react-test-renderer: "npm:19.2.0"
     typescript: "npm:^5.8.3"
@@ -13354,11 +13354,11 @@ __metadata:
     react-native: "npm:0.83.10"
     react-native-builder-bob: "npm:^0.40.17"
     react-native-monorepo-config: "npm:^0.3.1"
-    react-native-nitro-image: "npm:0.13.1"
-    react-native-nitro-modules: "npm:0.35.4"
-    react-native-vision-camera: "npm:5.0.0"
-    react-native-vision-camera-location: "npm:5.0.0"
-    react-native-vision-camera-worklets: "npm:5.0.0"
+    react-native-nitro-image: "npm:0.14.0"
+    react-native-nitro-modules: "npm:0.35.5"
+    react-native-vision-camera: "npm:5.0.7"
+    react-native-vision-camera-location: "npm:5.0.7"
+    react-native-vision-camera-worklets: "npm:5.0.7"
     react-native-worklets: "npm:0.8.1"
     release-it: "npm:^17.10.0"
     typescript: "npm:^5.9.3"
@@ -13367,6 +13367,7 @@ __metadata:
     react-native: ">=0.73.0"
     react-native-nitro-modules: "*"
     react-native-vision-camera: ">=5.0.0"
+    react-native-worklets: "*"
   peerDependenciesMeta:
     react-native-nitro-modules:
       optional: true

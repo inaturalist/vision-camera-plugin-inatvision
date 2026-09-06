@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.14.1):
     - hermes-engine/Pre-built (= 0.14.1)
   - hermes-engine/Pre-built (0.14.1)
-  - NitroImage (0.13.1):
+  - NitroImage (0.14.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -38,7 +38,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - NitroModules (0.35.4):
+  - NitroModules (0.35.5):
     - boost
     - DoubleConversion
     - fast_float
@@ -2821,7 +2821,7 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
-  - VisionCamera (5.0.0):
+  - VisionCamera (5.0.7):
     - boost
     - DoubleConversion
     - fast_float
@@ -2852,7 +2852,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - VisionCameraLocation (5.0.0):
+  - VisionCameraLocation (5.0.7):
     - boost
     - DoubleConversion
     - fast_float
@@ -2913,7 +2913,7 @@ PODS:
     - SocketRocket
     - VisionCamera
     - Yoga
-  - VisionCameraWorklets (5.0.0):
+  - VisionCameraWorklets (5.0.7):
     - boost
     - DoubleConversion
     - fast_float
@@ -3233,8 +3233,8 @@ SPEC CHECKSUMS:
   fmt: 530618a01105dae0fa3a2f27c81ae11fa8f67eac
   glog: 0456694f3aaf09460b660ea327cfc11defbeea4c
   hermes-engine: f37e1d6f1eb198649a60b3f17b6f685a6ac12470
-  NitroImage: dfec7a8d5e6ba8228ed780bc70041e762cbbbd0b
-  NitroModules: b24827b7772f5a030aef074547a2393a6e03579e
+  NitroImage: 4ffcf183d975de179ae1662b7c3b4b3b37747c7e
+  NitroModules: ea5dc6c43666f4a75e71e372eaca6d3605856e51
   RCT-Folly: b29feb752b08042c62badaef7d453f3bb5e6ae23
   RCTDeprecation: f05668eea7b0e209e77e8ab1dc6a5e3b342f6f65
   RCTRequired: c1ddbcb9ab4d51c36bda2a96556d064cb8825357
@@ -3311,10 +3311,10 @@ SPEC CHECKSUMS:
   ReactNativeFs: 8ee52268099f843309fac2d0e291d254116d1df2
   RNWorklets: 6daa3975bebe6047822c7485666d501a716674ca
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  VisionCamera: f17d631afe029837a124b808399b6e49fe222a8b
-  VisionCameraLocation: 5da65d0781c41c408fef7c6e530cfdc1c5c23273
+  VisionCamera: a838e9c80208e17b742232e9be156211a2a325c6
+  VisionCameraLocation: 505c4f660cb11ace21c6e6169f724c177a814f6d
   VisionCameraPluginInatVision: ab4979d339c0a6434c8c8a4a26816ca0eb027e9b
-  VisionCameraWorklets: e528da2a1ff89c95d45cf75800e43348cecde715
+  VisionCameraWorklets: 83b3f6f0850ec88cccbf812183cbb0bb14c7f9ca
   Yoga: d2ed98551adb569fc38be0148666854e1ff60692
 
 PODFILE CHECKSUM: 9d2863fdedd3f1d77a94a7f91356cb814273af73

@@ -9,7 +9,7 @@ import com.visioncameraplugininatvision.VisionCameraPluginInatVisionPlugin
 class HybridVisionCameraPluginInatVision : HybridVisionCameraPluginInatVisionSpec() {
   private val plugin = VisionCameraPluginInatVisionPlugin()
 
-  override fun call(frame: HybridFrameSpec, options: AnyMap): AnyMap {
+  override fun call(frame: HybridFrameSpec, options: VisionCameraPluginInatVisionOptions): AnyMap {
     val image = frame.toImage()
     val response = plugin.callback(image, options.toHashMap())
     val dict = jsonSafe(response) as? Map<String, Any> ?: emptyMap()

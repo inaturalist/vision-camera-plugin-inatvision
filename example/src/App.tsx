@@ -491,13 +491,8 @@ export default function App(): React.JSX.Element {
           style={styles.flex}
           device={device}
           isActive={true}
-          enableZoomGesture
-          resizeMode="contain"
-          enableFpsGraph={true}
-          photoQualityBalance="quality"
-          enableLocation={location.hasPermission}
-          outputOrientation="device"
           outputs={[frameOutput]}
+          resizeMode="contain"
           onStarted={() => console.log('Camera started!')}
           onStopped={() => console.log('Camera stopped!')}
           onPreviewStarted={() => console.log('Preview started!')}

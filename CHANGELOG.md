@@ -19,6 +19,18 @@ for any bug fixes.
 in case of vulnerabilities.
 
 ## [Unreleased] - YYYY-MM-DD
+## [7.0.0-alpha.0] - 2026-09-06
+### Added
+- Nitro hybrid frame processor for Vision Camera 5
+- `getCellLocation` helper for geomodel use with the frame processor
+### Changed
+- Breaking: Migrated to Vision Camera 5 (`useFrameOutput` instead of `useFrameProcessor`)
+- Breaking: Replaced `react-native-worklets-core` with `react-native-worklets`
+- Breaking: Added `react-native-nitro-modules` peer dependency for the frame processor path
+- Breaking: Node.js >= 22.11.0 required
+### Removed
+- Vision Camera 4 frame processor plugin registration
+- `react-native-worklets-core` peer dependency
 ## [6.0.0] - 2026-07-08
 ### Changed
 - Breaking: Changed to use LiteRT instead of tensorflow-lite on Android. Set version with `litertVersion` property instead of `tensorflowVersion`.

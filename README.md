@@ -20,18 +20,33 @@ npm install
 cd ios && pod install
 ```
 
-## Usage
+### Babel
+
+Add the worklets plugin to your app's `babel.config.js`:
 
 ```js
 import { inatVision } from "vision-camera-plugin-inatvision";
-
-// ...
-
-const frameProcessor = useFrameProcessor((frame) => {
-  'worklet';
-  const labels = inatVision(frame);
-}, []);
+module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: ['react-native-worklets/plugin'],
+};
 ```
+
+## Usage
+
+```js
+// ...
+const frameOutput = useFrameOutput({
+  onFrame(frame) {
+    'worklet';
+    const labels = inatVision(frame, options);
+  }
+});
+```
+
+## Migration
+
+See [MIGRATION.md](./MIGRATION.md) for a checklist when upgrading from 6.x to 7.0.
 
 ## Contributing
 

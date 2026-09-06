@@ -59,7 +59,6 @@ public class BitmapUtils {
 
       stream.close();
       return bmp;
-      // return rotateBitmap(bmp, metadata.getRotation(), false, false);
     } catch (Exception e) {
       Log.e("VisionProcessorBase", "Error: " + e.getMessage());
     }
@@ -80,26 +79,6 @@ public class BitmapUtils {
     ByteBuffer nv21Buffer =
         yuv420ThreePlanesToNV21(image.getPlanes(), image.getWidth(), image.getHeight());
     return getBitmap(nv21Buffer, frameMetadata);
-  }
-
-  /** Rotates a bitmap if it is converted from a bytebuffer. */
-  private static Bitmap rotateBitmap(
-      Bitmap bitmap, int rotationDegrees, boolean flipX, boolean flipY) {
-    Matrix matrix = new Matrix();
-
-    // Rotate the image back to straight.
-    matrix.postRotate(rotationDegrees);
-
-    // Mirror the image along the X or Y axis.
-    matrix.postScale(flipX ? -1.0f : 1.0f, flipY ? -1.0f : 1.0f);
-    Bitmap rotatedBitmap =
-        Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-    // Recycle the old bitmap if it has changed.
-    if (rotatedBitmap != bitmap) {
-      bitmap.recycle();
-    }
-    return rotatedBitmap;
   }
 
   /**

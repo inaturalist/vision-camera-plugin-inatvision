@@ -45,9 +45,6 @@ public class VisionCameraPluginInatVisionPlugin {
 
   public Object callback(@NonNull Image image, @Nullable Map<String, Object> arguments) {
     long startTime = SystemClock.uptimeMillis();
-    // This should give the orientation of the passed in frame, as of vision-camera v3.2.2 this is not working though
-    // instead we use a string passed in via the arguments to signify the device orientation
-    // String orientation = frame.getOrientation();
     Log.d(TAG, "1: " + image.getWidth() + " x " + image.getHeight() + " Image with format #" + image.getFormat() + ". Logging " + arguments.size());
 
     for (String key : arguments.keySet()) {

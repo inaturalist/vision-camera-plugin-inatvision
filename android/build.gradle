@@ -119,7 +119,7 @@ dependencies {
   implementation project(":react-native-vision-camera")
 
   // Add minimal dependency on CameraX
-  def camerax_version = "1.7.0-alpha01"
+  def camerax_version = "1.7.0-alpha02"
   implementation "androidx.camera:camera-core:${camerax_version}"
 
   // Requirements for our custom image labeling and processing

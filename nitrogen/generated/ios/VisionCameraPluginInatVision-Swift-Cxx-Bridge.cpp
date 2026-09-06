@@ -8,7 +8,6 @@
 #include "VisionCameraPluginInatVision-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
-#include "HybridVisionCameraPluginInatVisionFactorySpecSwift.hpp"
 #include "HybridVisionCameraPluginInatVisionSpecSwift.hpp"
 #include "VisionCameraPluginInatVision-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
@@ -39,38 +38,6 @@ namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
     }
     #endif
     VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
-    return swiftPart.toUnsafe();
-  }
-  
-  // pragma MARK: std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>
-  Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ create_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraPluginInatVision::Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& result) mutable -> void {
-      swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = VisionCameraPluginInatVision::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
-    };
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>
-  std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_(void* NON_NULL swiftUnsafePointer) noexcept {
-    VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionFactorySpec_cxx swiftPart = VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionFactorySpec_cxx::fromUnsafe(swiftUnsafePointer);
-    return std::make_shared<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionFactorySpecSwift>(swiftPart);
-  }
-  void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ cppType) {
-    std::shared_ptr<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionFactorySpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::visioncameraplugininatvision::HybridVisionCameraPluginInatVisionFactorySpecSwift>(cppType);
-    #ifdef NITRO_DEBUG
-    if (swiftWrapper == nullptr) [[unlikely]] {
-      throw std::runtime_error("Class \"HybridVisionCameraPluginInatVisionFactorySpec\" is not implemented in Swift!");
-    }
-    #endif
-    VisionCameraPluginInatVision::HybridVisionCameraPluginInatVisionFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
     return swiftPart.toUnsafe();
   }
 

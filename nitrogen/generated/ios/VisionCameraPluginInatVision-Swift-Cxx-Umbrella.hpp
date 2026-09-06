@@ -10,30 +10,16 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
-// Forward declaration of `HybridVisionCameraPluginInatVisionFactorySpec` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionFactorySpec; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
 namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
-// Forward declaration of `Location` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { struct Location; }
-// Forward declaration of `VisionCameraPluginInatVisionOptions` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { struct VisionCameraPluginInatVisionOptions; }
 
 // Include C++ defined types
-#include "HybridVisionCameraPluginInatVisionFactorySpec.hpp"
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"
-#include "Location.hpp"
-#include "VisionCameraPluginInatVisionOptions.hpp"
 #include <NitroModules/AnyMap.hpp>
-#include <NitroModules/Null.hpp>
-#include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
 #include <memory>
-#include <optional>
-#include <string>
-#include <variant>
 
 // C++ helpers for Swift
 #include "VisionCameraPluginInatVision-Swift-Cxx-Bridge.hpp"
@@ -47,8 +33,6 @@ namespace margelo::nitro::visioncameraplugininatvision { struct VisionCameraPlug
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridFrameSpec_cxx` to properly resolve imports.
 namespace VisionCamera { class HybridFrameSpec_cxx; }
-// Forward declaration of `HybridVisionCameraPluginInatVisionFactorySpec_cxx` to properly resolve imports.
-namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionFactorySpec_cxx; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec_cxx` to properly resolve imports.
 namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionSpec_cxx; }
 

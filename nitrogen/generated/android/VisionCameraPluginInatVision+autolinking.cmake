@@ -34,7 +34,6 @@ target_sources(
   ../nitrogen/generated/android/VisionCameraPluginInatVisionOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridVisionCameraPluginInatVisionSpec.cpp
-  ../nitrogen/generated/shared/c++/HybridVisionCameraPluginInatVisionFactorySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridVisionCameraPluginInatVisionSpec.cpp
 )

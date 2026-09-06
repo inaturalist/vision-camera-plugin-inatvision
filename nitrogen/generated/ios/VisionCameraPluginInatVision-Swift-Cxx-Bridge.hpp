@@ -10,37 +10,22 @@
 // Forward declarations of C++ defined types
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
-// Forward declaration of `HybridVisionCameraPluginInatVisionFactorySpec` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionFactorySpec; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec` to properly resolve imports.
 namespace margelo::nitro::visioncameraplugininatvision { class HybridVisionCameraPluginInatVisionSpec; }
-// Forward declaration of `Location` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { struct Location; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridFrameSpec_cxx` to properly resolve imports.
 namespace VisionCamera { class HybridFrameSpec_cxx; }
-// Forward declaration of `HybridVisionCameraPluginInatVisionFactorySpec_cxx` to properly resolve imports.
-namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionFactorySpec_cxx; }
 // Forward declaration of `HybridVisionCameraPluginInatVisionSpec_cxx` to properly resolve imports.
 namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisionSpec_cxx; }
 
 // Include C++ defined types
-#include "HybridVisionCameraPluginInatVisionFactorySpec.hpp"
 #include "HybridVisionCameraPluginInatVisionSpec.hpp"
-#include "Location.hpp"
 #include <NitroModules/AnyMap.hpp>
-#include <NitroModules/Null.hpp>
-#include <NitroModules/Promise.hpp>
-#include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
-#include <functional>
 #include <memory>
-#include <optional>
-#include <string>
-#include <variant>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -79,231 +64,6 @@ namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
   }
   inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<AnyMap>>::withError(error);
-  }
-  
-  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>`.
-   */
-  using std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>;
-  inline std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___() noexcept {
-    return Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>::create();
-  }
-  inline PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> promise) noexcept {
-    return PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>
-  /**
-   * Specialized version of `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>&)>`.
-   */
-  using Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper final {
-  public:
-    explicit Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>>(std::move(func))) {}
-    inline void call(std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ create_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ value) noexcept {
-    return Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<double>
-  /**
-   * Specialized version of `std::optional<double>`.
-   */
-  using std__optional_double_ = std::optional<double>;
-  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
-    return std::optional<double>(value);
-  }
-  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<bool>
-  /**
-   * Specialized version of `std::optional<bool>`.
-   */
-  using std__optional_bool_ = std::optional<bool>;
-  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
-    return std::optional<bool>(value);
-  }
-  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<Location>
-  /**
-   * Specialized version of `std::optional<Location>`.
-   */
-  using std__optional_Location_ = std::optional<Location>;
-  inline std::optional<Location> create_std__optional_Location_(const Location& value) noexcept {
-    return std::optional<Location>(value);
-  }
-  inline bool has_value_std__optional_Location_(const std::optional<Location>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline Location get_std__optional_Location_(const std::optional<Location>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<std::string>
-  /**
-   * Specialized version of `std::optional<std::string>`.
-   */
-  using std__optional_std__string_ = std::optional<std::string>;
-  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
-    return std::optional<std::string>(value);
-  }
-  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::variant<nitro::NullType, std::string>
-  /**
-   * Wrapper struct for `std::variant<nitro::NullType, std::string>`.
-   * std::variant cannot be used in Swift because of a Swift bug.
-   * Not even specializing it works. So we create a wrapper struct.
-   */
-  struct std__variant_nitro__NullType__std__string_ final {
-    std::variant<nitro::NullType, std::string> variant;
-    std__variant_nitro__NullType__std__string_(std::variant<nitro::NullType, std::string> variant): variant(variant) { }
-    operator std::variant<nitro::NullType, std::string>() const noexcept {
-      return variant;
-    }
-    inline size_t index() const noexcept {
-      return variant.index();
-    }
-    inline nitro::NullType get_0() const noexcept {
-      return std::get<0>(variant);
-    }
-    inline std::string get_1() const noexcept {
-      return std::get<1>(variant);
-    }
-  };
-  inline std__variant_nitro__NullType__std__string_ create_std__variant_nitro__NullType__std__string_(nitro::NullType value) noexcept {
-    return std__variant_nitro__NullType__std__string_(value);
-  }
-  inline std__variant_nitro__NullType__std__string_ create_std__variant_nitro__NullType__std__string_(const std::string& value) noexcept {
-    return std__variant_nitro__NullType__std__string_(value);
-  }
-  
-  // pragma MARK: std::optional<std::variant<nitro::NullType, std::string>>
-  /**
-   * Specialized version of `std::optional<std::variant<nitro::NullType, std::string>>`.
-   */
-  using std__optional_std__variant_nitro__NullType__std__string__ = std::optional<std::variant<nitro::NullType, std::string>>;
-  inline std::optional<std::variant<nitro::NullType, std::string>> create_std__optional_std__variant_nitro__NullType__std__string__(const std::variant<nitro::NullType, std::string>& value) noexcept {
-    return std::optional<std::variant<nitro::NullType, std::string>>(value);
-  }
-  inline bool has_value_std__optional_std__variant_nitro__NullType__std__string__(const std::optional<std::variant<nitro::NullType, std::string>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::variant<nitro::NullType, std::string> get_std__optional_std__variant_nitro__NullType__std__string__(const std::optional<std::variant<nitro::NullType, std::string>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::variant<nitro::NullType, bool>
-  /**
-   * Wrapper struct for `std::variant<nitro::NullType, bool>`.
-   * std::variant cannot be used in Swift because of a Swift bug.
-   * Not even specializing it works. So we create a wrapper struct.
-   */
-  struct std__variant_nitro__NullType__bool_ final {
-    std::variant<nitro::NullType, bool> variant;
-    std__variant_nitro__NullType__bool_(std::variant<nitro::NullType, bool> variant): variant(variant) { }
-    operator std::variant<nitro::NullType, bool>() const noexcept {
-      return variant;
-    }
-    inline size_t index() const noexcept {
-      return variant.index();
-    }
-    inline nitro::NullType get_0() const noexcept {
-      return std::get<0>(variant);
-    }
-    inline bool get_1() const noexcept {
-      return std::get<1>(variant);
-    }
-  };
-  inline std__variant_nitro__NullType__bool_ create_std__variant_nitro__NullType__bool_(nitro::NullType value) noexcept {
-    return std__variant_nitro__NullType__bool_(value);
-  }
-  inline std__variant_nitro__NullType__bool_ create_std__variant_nitro__NullType__bool_(bool value) noexcept {
-    return std__variant_nitro__NullType__bool_(value);
-  }
-  
-  // pragma MARK: std::optional<std::variant<nitro::NullType, bool>>
-  /**
-   * Specialized version of `std::optional<std::variant<nitro::NullType, bool>>`.
-   */
-  using std__optional_std__variant_nitro__NullType__bool__ = std::optional<std::variant<nitro::NullType, bool>>;
-  inline std::optional<std::variant<nitro::NullType, bool>> create_std__optional_std__variant_nitro__NullType__bool__(const std::variant<nitro::NullType, bool>& value) noexcept {
-    return std::optional<std::variant<nitro::NullType, bool>>(value);
-  }
-  inline bool has_value_std__optional_std__variant_nitro__NullType__bool__(const std::optional<std::variant<nitro::NullType, bool>>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline std::variant<nitro::NullType, bool> get_std__optional_std__variant_nitro__NullType__bool__(const std::optional<std::variant<nitro::NullType, bool>>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>`.
-   */
-  using std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ = std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>;
-  std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridVisionCameraPluginInatVisionFactorySpec>
-  using std__weak_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ = std::weak_ptr<HybridVisionCameraPluginInatVisionFactorySpec>;
-  inline std__weak_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ weakify_std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_(const std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>>
-  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>>;
-  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec____(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>>::withError(error);
   }
 
 } // namespace margelo::nitro::visioncameraplugininatvision::bridge::swift

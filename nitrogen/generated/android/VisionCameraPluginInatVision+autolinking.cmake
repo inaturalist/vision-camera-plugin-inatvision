@@ -37,6 +37,8 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridVisionCameraPluginInatVisionFactorySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridVisionCameraPluginInatVisionSpec.cpp
+  ../nitrogen/generated/android/c++/JVariant_NullType_String.cpp
+  ../nitrogen/generated/android/c++/JVariant_NullType_Boolean.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

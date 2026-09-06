@@ -33,7 +33,7 @@ abstract class HybridVisionCameraPluginInatVisionSpec: HybridObject() {
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun call(frame: com.margelo.nitro.camera.HybridFrameSpec, options: AnyMap): AnyMap
+  abstract fun call(frame: com.margelo.nitro.camera.HybridFrameSpec, options: VisionCameraPluginInatVisionOptions): AnyMap
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

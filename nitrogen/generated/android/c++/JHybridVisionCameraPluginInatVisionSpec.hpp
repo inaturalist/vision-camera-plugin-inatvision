@@ -54,7 +54,7 @@ namespace margelo::nitro::visioncameraplugininatvision {
 
   public:
     // Methods
-    std::shared_ptr<AnyMap> call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) override;
+    std::shared_ptr<AnyMap> call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const VisionCameraPluginInatVisionOptions& options) override;
 
   private:
     jni::global_ref<JHybridVisionCameraPluginInatVisionSpec::JavaPart> _javaPart;

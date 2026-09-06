@@ -7,7 +7,7 @@ interface Location {
   elevation?: number;
 }
 
-export interface VisionCameraPluginInatVisionOptions {
+interface VisionCameraPluginInatVisionOptions {
   version: string;
   modelPath: string;
   taxonomyPath: string;

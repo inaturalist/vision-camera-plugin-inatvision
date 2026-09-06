@@ -126,13 +126,13 @@ open class HybridVisionCameraPluginInatVisionSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func call(frame: bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_, options: VisionCameraPluginInatVisionOptions) -> bridge.Result_std__shared_ptr_AnyMap__ {
+  public final func call(frame: bridge.std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_, options: margelo.nitro.SharedAnyMap) -> bridge.Result_std__shared_ptr_AnyMap__ {
     do {
       let __result = try self.__implementation.call(frame: { () -> any HybridFrameSpec in
         let __unsafePointer = bridge.get_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(frame)
         let __instance = HybridFrameSpec_cxx.fromUnsafe(__unsafePointer)
         return __instance.getHybridFrameSpec()
-      }(), options: options)
+      }(), options: AnyMap(withCppPart: options))
       let __resultCpp = __result.cppPart
       return bridge.create_Result_std__shared_ptr_AnyMap__(__resultCpp)
     } catch (let __error) {

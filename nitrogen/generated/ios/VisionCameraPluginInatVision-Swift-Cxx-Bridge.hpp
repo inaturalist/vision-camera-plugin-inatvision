@@ -60,6 +60,83 @@ namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
   using std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::weak_ptr<margelo::nitro::camera::HybridFrameSpec>;
   inline std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ weakify_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& strong) noexcept { return strong; }
   
+  // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>`.
+   */
+  using std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>;
+  std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>
+  using std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>;
+  inline std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ weakify_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<std::shared_ptr<AnyMap>>
+  using Result_std__shared_ptr_AnyMap__ = Result<std::shared_ptr<AnyMap>>;
+  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::shared_ptr<AnyMap>& value) noexcept {
+    return Result<std::shared_ptr<AnyMap>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<AnyMap>>::withError(error);
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ create_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::optional<double>
   /**
    * Specialized version of `std::optional<double>`.
@@ -206,83 +283,6 @@ namespace margelo::nitro::visioncameraplugininatvision::bridge::swift {
   }
   inline std::variant<nitro::NullType, bool> get_std__optional_std__variant_nitro__NullType__bool__(const std::optional<std::variant<nitro::NullType, bool>>& optional) noexcept {
     return optional.value();
-  }
-  
-  // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>
-  /**
-   * Specialized version of `std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>`.
-   */
-  using std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>;
-  std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> create_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
-  void* NON_NULL get_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ cppType);
-  
-  // pragma MARK: std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>
-  using std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::weak_ptr<HybridVisionCameraPluginInatVisionSpec>;
-  inline std__weak_ptr_HybridVisionCameraPluginInatVisionSpec_ weakify_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& strong) noexcept { return strong; }
-  
-  // pragma MARK: Result<std::shared_ptr<AnyMap>>
-  using Result_std__shared_ptr_AnyMap__ = Result<std::shared_ptr<AnyMap>>;
-  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::shared_ptr<AnyMap>& value) noexcept {
-    return Result<std::shared_ptr<AnyMap>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_AnyMap__ create_Result_std__shared_ptr_AnyMap__(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<AnyMap>>::withError(error);
-  }
-  
-  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>`.
-   */
-  using std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>>;
-  inline std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___() noexcept {
-    return Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>::create();
-  }
-  inline PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>> promise) noexcept {
-    return PromiseHolder<std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>
-  /**
-   * Specialized version of `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>&)>`.
-   */
-  using Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ = std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper final {
-  public:
-    explicit Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>>(std::move(func))) {}
-    inline void call(std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::shared_ptr<HybridVisionCameraPluginInatVisionSpec>& /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ create_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_(Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ value) noexcept {
-    return Func_void_std__shared_ptr_HybridVisionCameraPluginInatVisionSpec__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec>

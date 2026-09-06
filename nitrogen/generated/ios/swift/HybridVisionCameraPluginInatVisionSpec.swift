@@ -14,7 +14,7 @@ public protocol HybridVisionCameraPluginInatVisionSpec_protocol: HybridObject {
   
 
   // Methods
-  func call(frame: (any HybridFrameSpec), options: VisionCameraPluginInatVisionOptions) throws -> AnyMap
+  func call(frame: (any HybridFrameSpec), options: AnyMap) throws -> AnyMap
 }
 
 public extension HybridVisionCameraPluginInatVisionSpec_protocol {

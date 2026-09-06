@@ -14,20 +14,10 @@ namespace VisionCameraPluginInatVision { class HybridVisionCameraPluginInatVisio
 
 // Forward declaration of `HybridFrameSpec` to properly resolve imports.
 namespace margelo::nitro::camera { class HybridFrameSpec; }
-// Forward declaration of `VisionCameraPluginInatVisionOptions` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { struct VisionCameraPluginInatVisionOptions; }
-// Forward declaration of `Location` to properly resolve imports.
-namespace margelo::nitro::visioncameraplugininatvision { struct Location; }
 
 #include <NitroModules/AnyMap.hpp>
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
-#include "VisionCameraPluginInatVisionOptions.hpp"
-#include <string>
-#include <optional>
-#include "Location.hpp"
-#include <NitroModules/Null.hpp>
-#include <variant>
 
 #include "VisionCameraPluginInatVision-Swift-Cxx-Umbrella.hpp"
 
@@ -79,8 +69,8 @@ namespace margelo::nitro::visioncameraplugininatvision {
 
   public:
     // Methods
-    inline std::shared_ptr<AnyMap> call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const VisionCameraPluginInatVisionOptions& options) override {
-      auto __result = _swiftPart.call(frame, std::forward<decltype(options)>(options));
+    inline std::shared_ptr<AnyMap> call(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame, const std::shared_ptr<AnyMap>& options) override {
+      auto __result = _swiftPart.call(frame, options);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

@@ -1,6 +1,7 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import type { EmitterSubscription } from 'react-native';
 import { NitroModules } from 'react-native-nitro-modules';
+import type { AnyMap } from 'react-native-nitro-modules';
 import type { Frame } from 'react-native-vision-camera';
 import { createSynchronizable } from 'react-native-worklets';
 import type { Synchronizable } from 'react-native-worklets';
@@ -778,7 +779,7 @@ export function inatVision(frame: Frame, options: Options): Result {
     throw new Error("Couldn't find the 'inatVision' plugin.");
   }
   optionsAreValidForFrame(options);
-  const result = plugin.call(frame, options);
+  const result = plugin.call(frame, options as unknown as AnyMap);
   const handledResult: Result = handleResult(result, options);
   return handledResult;
 }

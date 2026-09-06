@@ -1,11 +1,10 @@
-package com.visioncameraplugininatvision
+package com.margelo.nitro.visioncameraplugininatvision
 
 // import android.media.Image
 // import androidx.camera.core.ExperimentalGetImage
 import com.margelo.nitro.camera.HybridFrameSpec
 // import com.margelo.nitro.camera.public.NativeFrame
 import com.margelo.nitro.core.AnyMap
-import com.margelo.nitro.visioncameraplugininatvision.HybridVisionCameraPluginInatVisionSpec
 
 // import com.visioncameraplugininatvision.VisionCameraPluginInatVisionPlugin
 

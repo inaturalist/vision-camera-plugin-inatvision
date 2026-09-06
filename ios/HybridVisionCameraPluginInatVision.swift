@@ -5,7 +5,7 @@ import VisionCamera
 class HybridVisionCameraPluginInatVision: HybridVisionCameraPluginInatVisionSpec {
   private let plugin = VisionCameraPluginInatVisionPlugin()
 
-  func call(frame: any HybridFrameSpec, options: VisionCameraPluginInatVisionOptions) throws -> AnyMap {
+  func call(frame: any HybridFrameSpec, options: AnyMap) throws -> AnyMap {
 
     let sampleBuffer = try sampleBuffer(from: frame)
     let pixelBuffer = try pixelBuffer(from: sampleBuffer)

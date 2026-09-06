@@ -76,12 +76,12 @@
     "@eslint/compat": "^1.4.1",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
-    "@react-native/babel-preset": "0.83.10",
-    "@react-native/eslint-config": "0.83.10",
-    "@react-native/typescript-config": "0.83.10",
+    "@react-native/babel-preset": "0.84.1",
+    "@react-native/eslint-config": "0.84.1",
+    "@react-native/typescript-config": "0.84.1",
     "@release-it/conventional-changelog": "^9.0.2",
     "@types/jest": "^29.5.13",
-    "@types/react": "^19.2.0",
+    "@types/react": "^19.2.3",
     "csv-parser": "^3.2.0",
     "del-cli": "^5.1.0",
     "download": "^8.0.0",
@@ -92,8 +92,8 @@
     "nitrogen": "0.36.5",
     "pod-install": "^0.1.0",
     "prettier": "^3.0.3",
-    "react": "19.2.0",
-    "react-native": "0.83.10",
+    "react": "19.2.3",
+    "react-native": "0.84.1",
     "react-native-builder-bob": "^0.40.17",
     "react-native-monorepo-config": "^0.3.1",
     "react-native-nitro-image": "0.15.1",
@@ -118,7 +118,7 @@
     }
   },
   "engines": {
-    "node": ">= 20.0.0"
+    "node": ">= 22.11.0"
   },
   "react-native-builder-bob": {
     "source": "src",

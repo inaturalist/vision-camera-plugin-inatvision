@@ -16,7 +16,6 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridVisionCameraPluginInatVisionSpec.hpp"
-#include "JHybridVisionCameraPluginInatVisionFactorySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::visioncameraplugininatvision {
@@ -27,12 +26,12 @@ int initialize(JavaVM* vm) {
   });
 }
 
-struct JHybridVisionCameraPluginInatVisionFactorySpecImpl: public jni::JavaClass<JHybridVisionCameraPluginInatVisionFactorySpecImpl, JHybridVisionCameraPluginInatVisionFactorySpec::JavaPart> {
-  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/visioncameraplugininatvision/HybridVisionCameraPluginInatVisionFactory;";
-  static std::shared_ptr<JHybridVisionCameraPluginInatVisionFactorySpec> create() {
-    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridVisionCameraPluginInatVisionFactorySpecImpl::javaobject()>();
-    jni::local_ref<JHybridVisionCameraPluginInatVisionFactorySpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
-    return javaPart->getJHybridVisionCameraPluginInatVisionFactorySpec();
+struct JHybridVisionCameraPluginInatVisionSpecImpl: public jni::JavaClass<JHybridVisionCameraPluginInatVisionSpecImpl, JHybridVisionCameraPluginInatVisionSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/visioncameraplugininatvision/HybridVisionCameraPluginInatVision;";
+  static std::shared_ptr<JHybridVisionCameraPluginInatVisionSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridVisionCameraPluginInatVisionSpecImpl::javaobject()>();
+    jni::local_ref<JHybridVisionCameraPluginInatVisionSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridVisionCameraPluginInatVisionSpec();
   }
 };
 
@@ -45,9 +44,9 @@ void registerAllNatives() {
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(
-    "VisionCameraPluginInatVisionFactory",
+    "VisionCameraPluginInatVision",
     []() -> std::shared_ptr<HybridObject> {
-      return JHybridVisionCameraPluginInatVisionFactorySpecImpl::create();
+      return JHybridVisionCameraPluginInatVisionSpecImpl::create();
     }
   );
 }

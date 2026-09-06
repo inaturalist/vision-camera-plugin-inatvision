@@ -12,15 +12,15 @@ import NitroModules
 public final class VisionCameraPluginInatVisionAutolinking {
   public typealias bridge = margelo.nitro.visioncameraplugininatvision.bridge.swift
 
-  public static func createVisionCameraPluginInatVisionFactory() -> bridge.std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ {
-    let hybridObject = HybridVisionCameraPluginInatVisionFactory()
-    return { () -> bridge.std__shared_ptr_HybridVisionCameraPluginInatVisionFactorySpec_ in
+  public static func createVisionCameraPluginInatVision() -> bridge.std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ {
+    let hybridObject = HybridVisionCameraPluginInatVision()
+    return { () -> bridge.std__shared_ptr_HybridVisionCameraPluginInatVisionSpec_ in
       let __cxxWrapped = hybridObject.getCxxWrapper()
       return __cxxWrapped.getCxxPart()
     }()
   }
   
-  public static func isVisionCameraPluginInatVisionFactoryRecyclable() -> Bool {
-    return HybridVisionCameraPluginInatVisionFactory.self is any RecyclableView.Type
+  public static func isVisionCameraPluginInatVisionRecyclable() -> Bool {
+    return HybridVisionCameraPluginInatVision.self is any RecyclableView.Type
   }
 }

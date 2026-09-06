@@ -10,7 +10,7 @@
 #import "VisionCameraPluginInatVision-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
-#include "HybridVisionCameraPluginInatVisionSpecSwift.hpp"
+#include "HybridVisionCameraPluginInatVisionFactorySpecSwift.hpp"
 
 @interface VisionCameraPluginInatVisionAutolinking : NSObject
 @end
@@ -22,9 +22,9 @@
   using namespace margelo::nitro::visioncameraplugininatvision;
 
   HybridObjectRegistry::registerHybridObjectConstructor(
-    "VisionCameraPluginInatVision",
+    "VisionCameraPluginInatVisionFactory",
     []() -> std::shared_ptr<HybridObject> {
-      std::shared_ptr<HybridVisionCameraPluginInatVisionSpec> hybridObject = VisionCameraPluginInatVision::VisionCameraPluginInatVisionAutolinking::createVisionCameraPluginInatVision();
+      std::shared_ptr<HybridVisionCameraPluginInatVisionFactorySpec> hybridObject = VisionCameraPluginInatVision::VisionCameraPluginInatVisionAutolinking::createVisionCameraPluginInatVisionFactory();
       return hybridObject;
     }
   );

@@ -9,14 +9,14 @@
     "androidCxxLibName": "VisionCameraPluginInatVision"
   },
   "autolinking": {
-    "VisionCameraPluginInatVision": {
+    "VisionCameraPluginInatVisionFactory": {
       "ios": {
         "language": "swift",
-        "implementationClassName": "HybridVisionCameraPluginInatVision"
+        "implementationClassName": "HybridVisionCameraPluginInatVisionFactory"
       },
       "android": {
         "language": "kotlin",
-        "implementationClassName": "HybridVisionCameraPluginInatVision"
+        "implementationClassName": "HybridVisionCameraPluginInatVisionFactory"
       }
     }
   },

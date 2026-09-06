@@ -1,9 +1,7 @@
 package com.margelo.nitro.visioncameraplugininatvision
 
-// import android.media.Image
-// import androidx.camera.core.ExperimentalGetImage
 import com.margelo.nitro.camera.HybridFrameSpec
-// import com.margelo.nitro.camera.public.NativeFrame
+import com.margelo.nitro.camera.barcodescanner.extensions.toImage
 import com.margelo.nitro.core.AnyMap
 
 // import com.visioncameraplugininatvision.VisionCameraPluginInatVisionPlugin
@@ -12,11 +10,11 @@ class HybridVisionCameraPluginInatVision : HybridVisionCameraPluginInatVisionSpe
   // private val plugin = VisionCameraPluginInatVisionPlugin()
 
   override fun call(frame: HybridFrameSpec, options: AnyMap): AnyMap {
-    // val image = image(from = frame)
     // val response = plugin.callback(image, options.toHashMap())
     // val dict = jsonSafe(response) as? Map<String, Any> ?: emptyMap()
     // return AnyMap.fromMap(dict, true)
     return options;
+    val image = frame.toImage()
   }
 
 //  private fun image(from: HybridFrameSpec): Image {
